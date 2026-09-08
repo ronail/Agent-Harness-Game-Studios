@@ -84,7 +84,7 @@ Read `docs/architecture/control-manifest.md`. Extract the rules for this story's
 - Performance guardrails
 
 Check: does the story's embedded Manifest Version match the current manifest header date?
-If they differ, use `AskUserQuestion` before proceeding:
+If they differ, use `AskUserQuestion` or `clarify` before proceeding:
 - Prompt: "Story was written against manifest v[story-date]. Current manifest is v[current-date]. New rules may apply. How do you want to proceed?"
 - Options:
   - `[A] Update story manifest version and implement with current rules (Recommended)`
@@ -102,7 +102,7 @@ After extracting the **Dependencies** list from the story file, validate each:
 1. Glob `production/epics/**/*.md` to find each dependency story file.
 2. Read its `Status:` field.
 3. If any dependency has Status other than `Complete` or `Done`:
-   - Use `AskUserQuestion`:
+   - Use `AskUserQuestion` or `clarify`:
      - Prompt: "Story '[current story]' depends on '[dependency title]' which is currently [status], not Complete. How do you want to proceed?"
      - Options:
        - `[A] Proceed anyway — I accept the dependency risk`

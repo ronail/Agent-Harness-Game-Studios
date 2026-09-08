@@ -170,7 +170,7 @@ or explicitly accepted as an intentional exception.
 
 Before asking anything, derive the skill's best guesses from the context already
 gathered (GDDs read, engine reference loaded, existing ADRs scanned). Then present
-a **confirm/adjust** prompt using `AskUserQuestion` — not open-ended questions.
+a **confirm/adjust** prompt using `AskUserQuestion` or `clarify` — not open-ended questions.
 
 **Derive assumptions first:**
 - **Problem**: Infer from the title + GDD context what decision needs to be made
@@ -372,7 +372,7 @@ developers reading the GDD from implementing the wrong interface.
 
 If no inconsistencies: skip this block silently.
 
-5. **Write approval** — Use `AskUserQuestion`:
+5. **Write approval** — Use `AskUserQuestion` or `clarify`:
 
 If GDD sync issues were found:
 - "ADR draft is complete. How would you like to proceed?"
@@ -415,7 +415,7 @@ Registry candidates from this ADR:
 
 **BLOCKING — do not write to `docs/registry/architecture.yaml` without explicit user approval.**
 
-Ask using `AskUserQuestion`:
+Ask using `AskUserQuestion` or `clarify`:
 - "May I update `docs/registry/architecture.yaml` with these [N] new stances?"
   - Options: "Yes — update the registry", "Not yet — I want to review the candidates", "Skip registry update"
 

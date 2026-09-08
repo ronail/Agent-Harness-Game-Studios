@@ -12,7 +12,7 @@ Then stop immediately without spawning any subagents or reading any files.
 
 When this skill is invoked with a valid argument, orchestrate the combat team through a structured pipeline.
 
-**Decision Points:** At each phase transition, use `AskUserQuestion` to present
+**Decision Points:** At each phase transition, use `AskUserQuestion` or `clarify` to present
 the user with the subagent's proposals as selectable options. Write the agent's
 full analysis in conversation, then capture the decision with concise labels.
 The user must approve before moving to the next phase.
@@ -72,7 +72,7 @@ Then spawn the **primary engine specialist** to validate the proposed architectu
 - Any proposed APIs that are deprecated or changed in the pinned engine version?
 - Output: engine architecture notes — incorporate into the architecture before Phase 3 begins
 
-Use `AskUserQuestion`:
+Use `AskUserQuestion` or `clarify`:
 - Prompt: "Architecture sketch complete. Approve to proceed with parallel implementation."
 - Options:
   - `[A] Proceed — spawn implementation agents (gameplay-programmer, ai-programmer, technical-artist, sound-designer)`

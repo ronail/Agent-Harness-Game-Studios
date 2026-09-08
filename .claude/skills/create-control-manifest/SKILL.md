@@ -113,7 +113,7 @@ Total rules extracted:
   - Global: [N] naming conventions, [M] forbidden APIs, [P] approved libraries
 ```
 
-Use `AskUserQuestion`:
+Use `AskUserQuestion` or `clarify`:
 - Prompt: "Does this rule summary look complete?"
 - Options:
   - `[A] Yes — looks good, run the director review and write the manifest`
@@ -149,7 +149,7 @@ Apply the verdict:
 
 ## 5. Write the Control Manifest
 
-Use `AskUserQuestion`:
+Use `AskUserQuestion` or `clarify`:
 - Prompt: "May I write the Control Manifest?"
 - Options:
   - `[A] Yes — write to docs/architecture/control-manifest.md`

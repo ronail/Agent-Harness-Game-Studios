@@ -36,7 +36,7 @@ read that file directly.
 1. Check `production/session-state/active.md` for the currently active story.
 2. If not found there, read the most recent file in `production/sprints/` and
    look for stories marked IN PROGRESS.
-3. If multiple in-progress stories are found, use `AskUserQuestion`:
+3. If multiple in-progress stories are found, use `AskUserQuestion` or `clarify`:
    - "Which story are we completing?"
    - Options: list the in-progress story file names.
 4. If no story can be found, ask the user to provide the path.
@@ -86,7 +86,7 @@ three methods:
   that should be in localization files.
 - **Dependency check**: if a criterion says "depends on X", check that X exists.
 
-### Manual verification with confirmation (use `AskUserQuestion`)
+### Manual verification with confirmation (use `AskUserQuestion` or `clarify`)
 
 - Criteria about subjective qualities ("feels responsive", "animations play correctly")
 - Criteria about gameplay behaviour ("player takes damage when...", "enemy responds to...")
@@ -257,7 +257,7 @@ Skip this phase for Config/Data stories (no code tests required).
 
 **Review mode check** — apply before spawning LP-CODE-REVIEW:
 - `solo` → skip. Note: "LP-CODE-REVIEW skipped — Solo mode." Proceed to Phase 6 (completion report).
-- `lean` → use `AskUserQuestion` before proceeding:
+- `lean` → use `AskUserQuestion` or `clarify` before proceeding:
   - Prompt: "Code review is skipped in lean mode. Did you run `/code-review` on the implemented files?"
   - Options:
     - `Yes — /code-review passed or was approved with suggestions`
@@ -329,7 +329,7 @@ fixed. Offer to help fix the blocking items.
 
 ## Phase 7: Update Story Status
 
-Use `AskUserQuestion` before writing anything:
+Use `AskUserQuestion` or `clarify` before writing anything:
 - Prompt: "Verification complete. How do you want to proceed?"
 - Options:
   - `Close the story — update file, mark Complete, log notes (Recommended)`
@@ -447,7 +447,7 @@ If no more stories are ready but Must Have stories are still In Progress (not Co
   decides if they are acceptable.
 - **BLOCKED verdict is advisory** — the user can override and mark complete
   anyway; document the risk explicitly if they do.
-- Use `AskUserQuestion` for the code review prompt and for batching manual
+- Use `AskUserQuestion` or `clarify` for the code review prompt and for batching manual
   criteria confirmations.
 
 ---

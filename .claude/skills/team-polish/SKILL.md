@@ -11,7 +11,7 @@ If no argument is provided, output usage guidance and exit without spawning any 
 
 When this skill is invoked with an argument, orchestrate the polish team through a structured pipeline.
 
-**Decision Points:** At each phase transition, use `AskUserQuestion` to present
+**Decision Points:** At each phase transition, use `AskUserQuestion` or `clarify` to present
 the user with the subagent's proposals as selectable options. Write the agent's
 full analysis in conversation, then capture the decision with concise labels.
 The user must approve before moving to the next phase.
