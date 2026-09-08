@@ -116,7 +116,7 @@ For each acceptance criterion in the story:
    - **Unit test**: check `tests/unit/` for a test file or function name that
      matches the criterion's subject (use `Glob` and `Grep`)
    - **Integration test**: check `tests/integration/` similarly
-   - **Manual confirmation**: if the criterion was verified via `AskUserQuestion`
+   - **Manual confirmation**: if the criterion was verified via `AskUserQuestion` or clarify
      above with a "Yes — passes" answer, count that as a manual test
 
 2. Produce a traceability table:
@@ -270,7 +270,7 @@ Spawn `lead-programmer` via Task using gate **LP-CODE-REVIEW** (`.claude/docs/di
 
 Pass: implementation file paths, story file path, relevant GDD section, governing ADR.
 
-Present the verdict to the user. If CONCERNS, surface them via `AskUserQuestion`:
+Present the verdict to the user. If CONCERNS, surface them via `AskUserQuestion` or clarify:
 - Options: `Revise flagged issues` / `Accept and proceed` / `Discuss further`
 If REJECT, do not proceed to Phase 6 verdict until the issues are resolved.
 

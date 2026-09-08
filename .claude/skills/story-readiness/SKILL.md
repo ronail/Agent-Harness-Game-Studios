@@ -342,7 +342,7 @@ Pass the following context:
 
 Handle the verdict per standard rules in `director-gates.md`:
 - **ADEQUATE** → story is cleared. Proceed to close.
-- **GAPS [list]** → surface the specific gaps to the user via `AskUserQuestion`:
+- **GAPS [list]** → surface the specific gaps to the user via `AskUserQuestion` or clarify:
   options: `Update story with suggested gaps` / `Accept and proceed anyway` / `Discuss further`.
 - **INADEQUATE** → surface the specific gaps; ask user whether to update the story or proceed anyway.
 
