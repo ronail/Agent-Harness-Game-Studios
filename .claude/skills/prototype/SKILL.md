@@ -3,7 +3,7 @@ name: prototype
 description: "Concept prototype — validate the core idea is worth designing before writing GDDs. Run right after /brainstorm and /setup-engine. Routes to HTML, Engine, or Paper path based on game type. Produces a throwaway build and a PROCEED/PIVOT/KILL verdict."
 argument-hint: "[concept-description] [--path html|engine|paper] [--review full|lean|solo] [--spike]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Bash, Task, AskUserQuestion
+allowed-tools: Read, Glob, Grep, Write, Edit, Bash, Task, AskUserQuestion, clarify
 model: sonnet
 agent: prototyper
 isolation: worktree
@@ -37,7 +37,7 @@ Resolve the review mode (once, store for all gate spawns this run):
 **Check for spike mode:** If `--spike` was passed, skip to the **Spike Mode** section
 at the bottom of this skill.
 
-Otherwise, use `AskUserQuestion` to confirm intent before proceeding:
+Otherwise, use `AskUserQuestion` or `clarify` to confirm intent before proceeding:
 
 - **Prompt**: "How would you like to use this prototype session?"
 - **Options**:
@@ -225,7 +225,7 @@ the player feels something? If it takes more than 3-4 exchanges, the opening is 
 
 ---
 
-Assess which path best fits the hypothesis, then use `AskUserQuestion` with your
+Assess which path best fits the hypothesis, then use `AskUserQuestion` or `clarify` with your
 recommendation pre-stated:
 
 - **Prompt**: "Which prototype path would you like to use? (Based on your concept, I'd recommend [path] — [one sentence reason].)"

@@ -3,7 +3,7 @@ name: design-review
 description: "Reviews a game design document for completeness, internal consistency, implementability, and adherence to project design standards. Run this before handing a design document to programmers."
 argument-hint: "[path-to-design-doc] [--depth full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Task, AskUserQuestion
+allowed-tools: Read, Glob, Grep, Write, Edit, Task, AskUserQuestion, clarify
 model: sonnet
 ---
 
@@ -188,7 +188,7 @@ This skill is read-only — no files are written during Phase 4.
 
 ## Phase 5: Next Steps
 
-Use `AskUserQuestion` for ALL closing interactions. Never plain text.
+Use `AskUserQuestion` or `clarify` for ALL closing interactions. Never plain text.
 
 **First widget — what to do next:**
 
@@ -203,7 +203,7 @@ If NEEDS REVISION or MAJOR REVISION NEEDED, options:
 
 Work through all blocking items, asking for design decisions only where you cannot resolve the issue from the GDD and existing docs alone. Group all design-decision questions into a single multi-tab `AskUserQuestion` before making any edits — do not interrupt mid-revision for each blocker individually.
 
-After all revisions are complete, show a summary table (blocker → fix applied) and use `AskUserQuestion` for a **post-revision closing widget**:
+After all revisions are complete, show a summary table (blocker → fix applied) and use `AskUserQuestion` or `clarify` for a **post-revision closing widget**:
 
 - Prompt: "Revisions complete — [N] blockers resolved. What next?"
 - Note current context usage: if context is above ~50%, add: "(Recommended: /clear before re-review — this session has used X% context. A full re-review runs 5 agents and needs clean context.)"

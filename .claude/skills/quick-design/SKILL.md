@@ -3,7 +3,7 @@ name: quick-design
 description: "Lightweight design spec for small changes — tuning adjustments, minor mechanics, balance tweaks. Skips full GDD authoring when a system GDD already exists or the change is too small to warrant one. Produces a Quick Design Spec that embeds directly into story files."
 argument-hint: "[brief description of the change]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion
+allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, clarify
 model: sonnet
 ---
 
@@ -46,7 +46,7 @@ and redirect to `/design-system` instead.
 
 If there is no argument, ask the user to describe the change (plain text prompt), then classify it using the criteria above.
 
-Present the inferred classification using `AskUserQuestion`:
+Present the inferred classification using `AskUserQuestion` or `clarify`:
 - Prompt: "I've classified this as **[inferred type]** — [brief reason]. Is that correct?"
 - Options:
   - `[A] Yes — [inferred type] is correct`
@@ -222,7 +222,7 @@ tracking threshold — quick spec is sufficient."]
 
 ## 4. Approval and Filing
 
-Present the draft to the user in full. Then use `AskUserQuestion`:
+Present the draft to the user in full. Then use `AskUserQuestion` or `clarify`:
 - Prompt: "Here's the Quick Design Spec draft. How do you want to proceed?"
 - Options:
   - `[A] Approve — write it as shown`

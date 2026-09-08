@@ -3,7 +3,7 @@ name: brainstorm
 description: "Guided game concept ideation — from zero idea to a structured game concept document. Uses professional studio ideation techniques, player psychology frameworks, and structured creative exploration."
 argument-hint: "[genre or theme hint, or 'open'] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, WebSearch, Task, AskUserQuestion
+allowed-tools: Read, Glob, Grep, Write, WebSearch, Task, AskUserQuestion, clarify
 model: sonnet
 ---
 
@@ -27,7 +27,7 @@ When this skill is invoked:
    exploration** where the AI acts as a creative facilitator, not a replacement
    for the human's vision.
 
-   **Use `AskUserQuestion`** at key decision points throughout brainstorming:
+   **Use `AskUserQuestion` or `clarify`** at key decision points throughout brainstorming:
    - Constrained taste questions (genre preferences, scope, team size)
    - Concept selection ("Which 2-3 concepts resonate?") after presenting options
    - Direction choices ("Develop further, explore more, or prototype?")
@@ -61,7 +61,7 @@ conversationally (not as a checklist):
   Do NOT put this in an AskUserQuestion with preset options.)*
 - Are there genres you love? Genres you avoid? Why?
 - Do you prefer games that challenge you, relax you, tell you stories,
-  or let you express yourself? *(Use `AskUserQuestion` for this — constrained choice.)*
+  or let you express yourself? *(Use `AskUserQuestion` or `clarify` for this — constrained choice.)*
 
 **Practical constraints** (shape the sandbox before brainstorming).
 Bundle these into a single multi-tab `AskUserQuestion` with these exact tab labels:
@@ -107,7 +107,7 @@ For each concept, present:
 - **Why It Could Work** (1 sentence on market/audience fit)
 - **Biggest Risk** (1 sentence on the hardest unanswered question)
 
-Present all three. Then use `AskUserQuestion` to capture the selection.
+Present all three. Then use `AskUserQuestion` or `clarify` to capture the selection.
 
 **CRITICAL**: This MUST be a plain list call — no tabs, no form fields. Use exactly this structure:
 
@@ -187,11 +187,11 @@ Then define **3+ anti-pillars** (what this game is NOT):
   be cool if..." features that don't serve the core vision
 - Frame as: "We will NOT do [thing] because it would compromise [pillar]"
 
-**Pillar confirmation**: After presenting the full pillar set, use `AskUserQuestion`:
+**Pillar confirmation**: After presenting the full pillar set, use `AskUserQuestion` or `clarify`:
 - Prompt: "Do these pillars feel right for your game?"
 - Options: `[A] Lock these in` / `[B] Rename or reframe one` / `[C] Swap a pillar out` / `[D] Something else`
 
-If the user selects B, C, or D, make the revision, then use `AskUserQuestion` again:
+If the user selects B, C, or D, make the revision, then use `AskUserQuestion` or `clarify` again:
 - Prompt: "Pillars updated. Ready to lock these in?"
 - Options: `[A] Lock these in` / `[B] Revise another pillar` / `[C] Something else`
 
@@ -239,12 +239,12 @@ who this game is actually for:
 
 Ground the concept in reality:
 
-- **Target platform**: Use `AskUserQuestion` — "What platforms are you targeting for this game?"
+- **Target platform**: Use `AskUserQuestion` or `clarify` — "What platforms are you targeting for this game?"
   Options: `PC (Steam / Epic)` / `Mobile (iOS / Android)` / `Console` / `Web / Browser` / `Multiple platforms`
   Record the answer — it directly shapes the engine recommendation and will be passed to `/setup-engine`.
   Note platform implications if relevant (e.g., mobile means Unity is strongly preferred; console means Godot has limitations; web means Godot exports cleanly).
 
-- **Engine experience**: Use `AskUserQuestion` — "Do you already have an engine you work in?"
+- **Engine experience**: Use `AskUserQuestion` or `clarify` — "Do you already have an engine you work in?"
   Options: `Godot` / `Unity` / `Unreal Engine 5` / `No preference — help me decide`
   - If they pick an engine → record it as their preference and move on. Do NOT second-guess it.
   - If "No preference" → tell them: "Run `/setup-engine` after this session — it will walk you through the full decision based on your concept and platform target." Do not make a recommendation here.
@@ -293,13 +293,13 @@ Present the assessment to the user. If UNREALISTIC, offer to adjust the MVP defi
    This section is the seed of the art bible — it captures the "everything must
    move" decision before it can be forgotten between sessions.
 
-5. Use `AskUserQuestion` for write approval:
+5. Use `AskUserQuestion` or `clarify` for write approval:
 - Prompt: "Game concept is ready. May I write it to `design/gdd/game-concept.md`?"
 - Options: `[A] Yes — write it` / `[B] Not yet — revise a section first`
 
-If [B]: ask which section to revise using `AskUserQuestion` with options: `Elevator Pitch` / `Core Fantasy & Unique Hook` / `Pillars` / `Core Loop` / `MVP Definition` / `Scope Tiers` / `Risks` / `Something else — I'll describe`
+If [B]: ask which section to revise using `AskUserQuestion` or `clarify` with options: `Elevator Pitch` / `Core Fantasy & Unique Hook` / `Pillars` / `Core Loop` / `MVP Definition` / `Scope Tiers` / `Risks` / `Something else — I'll describe`
 
-After revising, show the updated section as a diff or clear before/after, then use `AskUserQuestion` — "Ready to write the updated concept document?"
+After revising, show the updated section as a diff or clear before/after, then use `AskUserQuestion` or `clarify` — "Ready to write the updated concept document?"
 Options: `[A] Yes — write it` / `[B] Revise another section`
 Repeat until the user selects [A].
 
