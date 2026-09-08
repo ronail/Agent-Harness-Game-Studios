@@ -3,7 +3,7 @@ name: qa-plan
 description: "Generate a QA test plan for a sprint or feature. Reads GDDs and story files, classifies stories by test type (Logic/Integration/Visual/UI), and produces a structured test plan covering automated tests required, manual test cases, smoke test scope, and playtest sign-off requirements. Run before sprint begins or when starting a major feature."
 argument-hint: "[sprint | feature: system-name | story: path]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, AskUserQuestion
+allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, clarify
 model: sonnet
 agent: qa-lead
 ---
@@ -26,7 +26,7 @@ plan.
 
 ## Phase 1: Parse Scope
 
-**Argument:** `$ARGUMENTS` (blank = ask user via AskUserQuestion)
+**Argument:** `$ARGUMENTS` (blank = ask user via AskUserQuestion or clarify)
 
 Determine scope from the argument:
 
