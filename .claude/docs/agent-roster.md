@@ -87,3 +87,9 @@ domain lead) should delegate to specialists.
 | `godot-csharp-specialist` | C# / .NET | Sonnet | .NET patterns, [Signal] delegates, async, nullable types, type-safe node access |
 | `godot-shader-specialist` | Shaders/Rendering | Sonnet | Godot shading language, visual shaders, particles, post-processing |
 | `godot-gdextension-specialist` | GDExtension | Sonnet | C++/Rust bindings, native performance, custom nodes, build systems |
+
+---
+
+When using Hermes as the harness, the Model column above is advisory only.
+Actual model resolution is controlled by Hermes profile configuration, not
+agent frontmatter. Run `/start hermes` to set up profile mappings.
