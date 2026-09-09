@@ -1,9 +1,9 @@
 ---
 name: start
 description: "First-time onboarding — asks where you are, then guides you to the right workflow. No assumptions."
-argument-hint: "[no arguments]"
+argument-hint: "[hermes]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, clarify
+allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, Bash, clarify
 model: sonnet
 ---
 
@@ -180,6 +180,60 @@ Stage mapping:
 Do this silently — no "May I write?" needed for this single-line file.
 
 Say: "I've set `production/stage.txt` to `[stage]` — this anchors your status line and stage detection."
+
+---
+
+## Phase 3d: Configure Hermes Profile Mapping for Agent Roles
+
+**Only applicable when using Hermes as the harness.** This phase requires
+invoking `/start hermes` — otherwise it is skipped entirely.
+
+Check if `production/hermes-profile-mapping.json` already exists.
+
+**If it exists**: Read it and say: "Hermes profile mappings are configured:
+`[show mapping]`." — then proceed to Phase 3b. Do not ask again.
+
+**If it does not exist** and you invoked `/start hermes`: Use `Bash` to check
+if the Hermes CLI is installed (`command -v hermes`).
+
+- **If Hermes is installed**: Discover available profiles via `Bash`
+  (`hermes profiles list` or list `~/.hermes/profiles/`), then use
+  `AskUserQuestion` to ask:
+  - **Prompt**: "Would you like to set Hermes profile mappings for each agent
+    role? This determines which model/provider each role uses when spawned as
+    a subagent."
+  - **Options**:
+    - `Assign profiles interactively` — I'll go through each role and assign a profile.
+    - `Auto-assign defaults` — Map roles to matching profiles automatically.
+    - `Skip for now` — I'll configure this later.
+
+- **If Hermes is not installed**: Say: "Hermes not detected. Model resolution
+  will use the agent definitions' `model` fields directly." and proceed to
+  Phase 3b.
+
+Create the `production/` directory if it does not exist.
+
+### If "Assign profiles interactively":
+- For each agent in `.claude/agents/*.md` (sorted by name):
+  - Prompt: "Which Hermes profile should `<agent-name>` (model: `<model-tier>`) use?"
+  - Present discovered profiles as options
+  - Record the mapping
+- Write `production/hermes-profile-mapping.json` with format:
+  `{"role-name": "profile-name", ...}`
+- Say: "Created `production/hermes-profile-mapping.json` with your profile mappings."
+
+### If "Auto-assign defaults":
+- For each agent, assign the `default` profile (or the one whose model tier
+  best matches the agent's `model:` field)
+- Write `production/hermes-profile-mapping.json`
+- Say: "Created `production/hermes-profile-mapping.json` with default profile
+  assignments."
+
+### If "Skip for now":
+- Say: "You can configure Hermes profile mappings anytime by running
+  `/start hermes` again or manually creating
+  `production/hermes-profile-mapping.json`."
+- Proceed to Phase 3b.
 
 ---
 
