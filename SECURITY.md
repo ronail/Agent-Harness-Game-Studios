@@ -11,7 +11,7 @@ not supported.
 
 Use GitHub's private vulnerability reporting instead:
 
-**[Report a vulnerability →](https://github.com/Donchitos/Claude-Code-Game-Studios/security/advisories/new)**
+**[Report a vulnerability →](https://github.com/ronail/Agent-Harness-Game-Studios/security/advisories/new)**
 
 Include as much detail as possible:
 - Description of the vulnerability and what it affects
@@ -26,7 +26,7 @@ Include as much detail as possible:
 
 ## What Is In Scope
 
-CCGS is a **local development tool** — it installs shell hooks and coordinates
+AHGS is a **local development tool** — it installs shell hooks and coordinates
 AI agents that run directly on your machine. Security issues are primarily about
 contributed code that executes in users' environments without their awareness.
 

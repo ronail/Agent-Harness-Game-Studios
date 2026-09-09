@@ -1,18 +1,18 @@
-# CCGS Skill Testing Framework
+# AHGS Skill Testing Framework
 
-Quality assurance infrastructure for the **Claude Code Game Studios** framework.
+Quality assurance infrastructure for the **Agent Harness Game Studios** framework.
 Tests the skills and agents themselves — not any game built with them.
 
 > **This folder is self-contained and optional.**
-> Game developers using CCGS don't need it. To remove it entirely:
-> `rm -rf "CCGS Skill Testing Framework"` — nothing in `.claude/` depends on it.
+> Game developers using AHGS don't need it. To remove it entirely:
+> `rm -rf "AHGS Skill Testing Framework"` — nothing in `.claude/` depends on it.
 
 ---
 
 ## What's in here
 
 ```
-CCGS Skill Testing Framework/
+AHGS Skill Testing Framework/
 ├── README.md              ← you are here
 ├── CLAUDE.md              ← tells Claude how to use this framework
 ├── catalog.yaml           ← master registry: all 73 skills + 49 agents, coverage tracking
@@ -142,7 +142,7 @@ All testing is driven by two skills already in the framework:
 This folder has no hooks into the main project. To remove:
 
 ```bash
-rm -rf "CCGS Skill Testing Framework"
+rm -rf "AHGS Skill Testing Framework"
 ```
 
 The skills `/skill-test` and `/skill-improve` will still function — they'll simply

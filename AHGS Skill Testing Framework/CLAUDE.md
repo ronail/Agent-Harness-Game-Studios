@@ -1,6 +1,6 @@
-# CCGS Skill Testing Framework — Claude Instructions
+# AHGS Skill Testing Framework — Claude Instructions
 
-This folder is the quality assurance layer for the Claude Code Game Studios skill/agent
+This folder is the quality assurance layer for the Agent Harness Game Studios skill/agent
 framework. It is self-contained and separate from any game project.
 
 ## Key files
@@ -17,10 +17,10 @@ framework. It is self-contained and separate from any game project.
 
 ## Path conventions
 
-- Skill specs: `CCGS Skill Testing Framework/skills/[category]/[name].md`
-- Agent specs: `CCGS Skill Testing Framework/agents/[tier]/[name].md`
-- Catalog: `CCGS Skill Testing Framework/catalog.yaml`
-- Rubric: `CCGS Skill Testing Framework/quality-rubric.md`
+- Skill specs: `AHGS Skill Testing Framework/skills/[category]/[name].md`
+- Agent specs: `AHGS Skill Testing Framework/agents/[tier]/[name].md`
+- Catalog: `AHGS Skill Testing Framework/catalog.yaml`
+- Rubric: `AHGS Skill Testing Framework/quality-rubric.md`
 
 The `spec:` field in `catalog.yaml` is the authoritative path for each skill/agent spec.
 Always read it rather than guessing the path.
@@ -89,5 +89,5 @@ Treat spec failures as "this needs investigation," not "the skill is definitivel
 ## This folder is deletable
 
 Nothing in `.claude/` imports from here. Deleting this folder has no effect on the
-CCGS skills or agents themselves. `/skill-test` and `/skill-improve` will report that
+AHGS skills or agents themselves. `/skill-test` and `/skill-improve` will report that
 `catalog.yaml` is missing and guide the user to initialize it.
