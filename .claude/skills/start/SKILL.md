@@ -198,7 +198,7 @@ if the Hermes CLI is installed (`command -v hermes`).
 
 - **If Hermes is installed**: Discover available profiles via `Bash`
   (`hermes profiles list` or list `~/.hermes/profiles/`), then use
-  `AskUserQuestion` to ask:
+  `AskUserQuestion` or `clarify` to ask:
   - **Prompt**: "Would you like to set Hermes profile mappings for each agent
     role? This determines which model/provider each role uses when spawned as
     a subagent."
