@@ -1,9 +1,9 @@
 ---
 name: start
 description: "First-time onboarding — asks where you are, then guides you to the right workflow. No assumptions."
-argument-hint: "[no arguments]"
+argument-hint: "[claude|hermes]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, clarify
+allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, Bash, clarify
 model: sonnet
 ---
 
@@ -12,6 +12,12 @@ model: sonnet
 This skill writes one file: `production/review-mode.txt` (review mode config set in Phase 3b).
 
 This skill is the entry point for new users. It does NOT assume you have a game idea, an engine preference, or any prior experience. It asks first, then routes you to the right workflow.
+
+**Optional argument**: `/start [claude|hermes]`
+
+- Omitting the argument defaults to `claude` mode
+- `/start hermes` — enables Hermes-specific profile mapping (Phase 3d)
+- `/start claude` (explicit) — standard Claude Code mode without Hermes profile mapping
 
 ---
 
@@ -180,6 +186,64 @@ Stage mapping:
 Do this silently — no "May I write?" needed for this single-line file.
 
 Say: "I've set `production/stage.txt` to `[stage]` — this anchors your status line and stage detection."
+
+---
+
+## Phase 3d: Configure Hermes Profile Mapping for Agent Roles
+
+**Only applicable when the `hermes` argument is provided.** This phase is
+skipped if the argument is omitted or if `claude` is explicitly provided.
+
+Check if `production/hermes-profile-mapping.json` already exists.
+
+**If it exists**: Read it and say: "Hermes profile mappings are configured:
+`[show mapping]`." — then proceed to Phase 3b. Do not ask again.
+
+**If it does not exist** and the `hermes` argument was provided: Use `Bash` to check
+if the Hermes CLI is installed (`command -v hermes`).
+
+- **If Hermes is installed**: Discover available profiles via `Bash`
+  (`hermes profiles list` or list `~/.hermes/profiles/`), then use
+  `AskUserQuestion` or `clarify` to ask:
+  - **Prompt**: "Would you like to set Hermes profile mappings for each agent
+    role? This determines which model/provider each role uses when spawned as
+    a subagent."
+  - **Options**:
+    - `Assign profiles interactively` — I'll go through each role and assign a profile.
+    - `Auto-assign defaults` — Map roles to matching profiles automatically.
+    - `Skip for now` — I'll configure this later.
+
+- **If Hermes is not installed**: Say: "Hermes not detected. Model resolution
+  will use the agent definitions' `model` fields directly." and proceed to
+  Phase 3b.
+
+**If the `hermes` argument was not provided** (default `claude` mode): Proceed
+directly to Phase 3b. Model resolution uses the agent definitions' `model`
+fields directly.
+
+Create the `production/` directory if it does not exist.
+
+### If "Assign profiles interactively":
+- For each agent in `.claude/agents/*.md` (sorted by name):
+  - Prompt: "Which Hermes profile should `<agent-name>` (model: `<model-tier>`) use?"
+  - Present discovered profiles as options
+  - Record the mapping
+- Write `production/hermes-profile-mapping.json` with format:
+  `{"role-name": "profile-name", ...}`
+- Say: "Created `production/hermes-profile-mapping.json` with your profile mappings."
+
+### If "Auto-assign defaults":
+- For each agent, assign the `default` profile (or the one whose model tier
+  best matches the agent's `model:` field)
+- Write `production/hermes-profile-mapping.json`
+- Say: "Created `production/hermes-profile-mapping.json` with default profile
+  assignments."
+
+### If "Skip for now":
+- Say: "You can configure Hermes profile mappings anytime by running
+  `/start hermes` again or manually creating
+  `production/hermes-profile-mapping.json`."
+- Proceed to Phase 3b.
 
 ---
 

@@ -32,6 +32,12 @@ These are the things that will get your PR rejected if you miss them.
 - Model tier: `haiku` for read-only status checks, `opus` for multi-document
   synthesis and phase gates, `sonnet` for everything else
 
+> **Hermes Profile Mapping (optional)**: When using Hermes as the harness, the
+> `model` tier field in agent/skill frontmatter is advisory only. Actual model
+> resolution is controlled by Hermes profile configuration
+> (`~/.hermes/profiles/<name>/config.yaml`). Run `/start hermes` during onboarding
+> to set up profile mappings interactively.
+
 **Hooks**
 - Use `grep -E` — never `grep -P` (Perl regex breaks on Windows Git Bash)
 - Include fallbacks for systems without `jq` or `python` installed

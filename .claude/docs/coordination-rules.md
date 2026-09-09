@@ -31,6 +31,12 @@ All other skills default to Sonnet. When creating new skills, assign Haiku if th
 skill only reads and formats; assign Opus if it must synthesize 5+ documents with
 high-stakes output; otherwise leave unset (Sonnet).
 
+> **Hermes Profile Mapping (optional)**: When using Hermes as the harness, model
+> tier assignments in skill/agent frontmatter are advisory only. Actual model
+> resolution is controlled by Hermes profile configuration. Run `/start hermes`
+> during onboarding to set up profile mappings interactively. See
+> `.claude/docs/quick-start.md` → Optional: Hermes Profile Mapping.
+
 ## Subagents vs Agent Teams
 
 This project uses two distinct multi-agent patterns:

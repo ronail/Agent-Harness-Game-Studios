@@ -289,3 +289,26 @@ CLAUDE.md                          -- Master config (read this first, ~60 lines)
     settings-local-template.md     -- Personal settings.local.json guide
     templates/                     -- 41 document templates
 ```
+
+---
+
+## Optional: Hermes Profile Mapping
+
+When using **Hermes as the harness**, models are resolved through Hermes profile
+configuration (`~/.hermes/profiles/<name>/config.yaml`) rather than the `model:`
+field in skill/agent frontmatter. The frontmatter `model` values (haiku/sonnet/opus)
+remain as documentation of intended tier, but actual provider/model selection is
+governed by the active Hermes profile.
+
+To configure profile mappings for agent roles:
+
+```bash
+/start hermes
+```
+
+This runs Phase 3d of the `/start` flow, which interactively discovers your
+Hermes profiles and helps you assign them to agent roles. The result is saved to
+`production/hermes-profile-mapping.json`.
+
+If you are **not** using Hermes, the `model:` field in each agent/skill definition
+is used directly — no changes are needed.
