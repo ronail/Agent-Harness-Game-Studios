@@ -19,7 +19,7 @@ Brief description of what this PR does.
 
 ## Checklist
 
-- [ ] I've tested this in the relevant agent environment(s) (Claude Code, Codex, or both)
+- [ ] I've tested this in the relevant agent environment(s) (Claude Code, Codex, Hermes, or any applicable combination)
 - [ ] New agents or subagents include the Collaboration Protocol section
 - [ ] New skills follow the convention for the target agent
 - [ ] Reference docs are updated (agent roster, skills, hooks, and rules)
