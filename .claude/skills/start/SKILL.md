@@ -1,7 +1,7 @@
 ---
 name: start
 description: "First-time onboarding — asks where you are, then guides you to the right workflow. No assumptions."
-argument-hint: "[hermes]"
+argument-hint: "[claude|hermes]"
 user-invocable: true
 allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, Bash, clarify
 model: sonnet
@@ -12,6 +12,12 @@ model: sonnet
 This skill writes one file: `production/review-mode.txt` (review mode config set in Phase 3b).
 
 This skill is the entry point for new users. It does NOT assume you have a game idea, an engine preference, or any prior experience. It asks first, then routes you to the right workflow.
+
+**Optional argument**: `/start [claude|hermes]`
+
+- Omitting the argument defaults to `claude` mode
+- `/start hermes` — enables Hermes-specific profile mapping (Phase 3d)
+- `/start claude` (explicit) — standard Claude Code mode without Hermes profile mapping
 
 ---
 
@@ -185,15 +191,15 @@ Say: "I've set `production/stage.txt` to `[stage]` — this anchors your status 
 
 ## Phase 3d: Configure Hermes Profile Mapping for Agent Roles
 
-**Only applicable when using Hermes as the harness.** This phase requires
-invoking `/start hermes` — otherwise it is skipped entirely.
+**Only applicable when the `hermes` argument is provided.** This phase is
+skipped if the argument is omitted or if `claude` is explicitly provided.
 
 Check if `production/hermes-profile-mapping.json` already exists.
 
 **If it exists**: Read it and say: "Hermes profile mappings are configured:
 `[show mapping]`." — then proceed to Phase 3b. Do not ask again.
 
-**If it does not exist** and you invoked `/start hermes`: Use `Bash` to check
+**If it does not exist** and the `hermes` argument was provided: Use `Bash` to check
 if the Hermes CLI is installed (`command -v hermes`).
 
 - **If Hermes is installed**: Discover available profiles via `Bash`
@@ -210,6 +216,10 @@ if the Hermes CLI is installed (`command -v hermes`).
 - **If Hermes is not installed**: Say: "Hermes not detected. Model resolution
   will use the agent definitions' `model` fields directly." and proceed to
   Phase 3b.
+
+**If the `hermes` argument was not provided** (default `claude` mode): Proceed
+directly to Phase 3b. Model resolution uses the agent definitions' `model`
+fields directly.
 
 Create the `production/` directory if it does not exist.
 
