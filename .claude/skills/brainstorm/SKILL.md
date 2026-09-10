@@ -33,7 +33,7 @@ When this skill is invoked:
    - Direction choices ("Develop further, explore more, or prototype?")
    - Pillar ranking after concepts are refined
    Write full creative analysis in conversation text first, then use
-   `AskUserQuestion` or `request_user_input` to capture the decision with concise labels.
+   `AskUserQuestion`, `request_user_input` or `clarify` to capture the decision with concise labels.
 
    Professional studio brainstorming principles to follow:
    - Withhold judgment — no idea is bad during exploration
@@ -64,7 +64,7 @@ conversationally (not as a checklist):
   or let you express yourself? *(Use `AskUserQuestion`, `request_user_input` or `clarify` for this — constrained choice.)*
 
 **Practical constraints** (shape the sandbox before brainstorming).
-Bundle these into a single multi-tab `AskUserQuestion` or `request_user_input` with these exact tab labels:
+Bundle these into a single multi-tab `AskUserQuestion`, `request_user_input` or `clarify` with these exact tab labels:
 - Tab "Experience" — "What kind of experience do you most want players to have?" (Challenge & Mastery / Story & Discovery / Expression & Creativity / Relaxation & Flow)
 - Tab "Timeline" — "What's your realistic development timeline?" (Weeks / Months / 1-2 years / Multi-year)
 - Tab "Dev level" — "Where are you in your dev journey?" (First game / Shipped before / Professional background)
@@ -138,7 +138,7 @@ isolation, no amount of content or polish will save the game.
 
 **30-Second Loop** (moment-to-moment):
 
-Ask these as `AskUserQuestion` or `request_user_input` calls — derive the options from the chosen concept, don't hardcode them:
+Ask these as `AskUserQuestion`, `request_user_input` or `clarify` calls — derive the options from the chosen concept, don't hardcode them:
 
 1. **Core action feel** — prompt: "What's the primary feel of the core action?" Generate 3-4 options that fit the concept's genre and tone, plus a free-text escape (`I'll describe it`).
 
@@ -210,7 +210,7 @@ Repeat until the user selects [A] Lock these in.
 - **`art-director`** — gate **AD-CONCEPT-VISUAL** (`.claude/docs/director-gates.md`)
   Pass: game concept elevator pitch, full pillar set with design tests, target platform (if known), any reference games or visual touchstones the user mentioned.
 
-Collect both verdicts, then present them together using a two-tab `AskUserQuestion` or `request_user_input`:
+Collect both verdicts, then present them together using a two-tab `AskUserQuestion`, `request_user_input` or `clarify`:
 - Tab **"Pillars"**: present creative-director feedback. Options mirror the standard CD-PILLARS handling — `Lock in as-is` / `Revise [specific pillar]` / `Discuss further`.
 - Tab **"Visual anchor"**: present the art-director's 2-3 named visual direction options. Options: each named direction (one per option) + `Combine elements across directions` + `Describe my own direction`.
 

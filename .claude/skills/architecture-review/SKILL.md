@@ -379,7 +379,7 @@ Then use `AskUserQuestion`, `request_user_input` or `clarify`:
 
 If [A]: apply the updates. Status field must be exactly `Needs Revision` — no parentheticals
 (other skills match that exact string and parentheticals break the match).
-If [B]: display the complete proposed systems-index section, then re-ask with `AskUserQuestion` or `request_user_input`.
+If [B]: display the complete proposed systems-index section, then re-ask with `AskUserQuestion`, `request_user_input` or `clarify`.
 
 ---
 
@@ -617,7 +617,7 @@ After completing the review and writing approved files, present:
 3. **Rerun trigger**: "Re-run `/architecture-review` after each new ADR is written
    to verify coverage improves"
 
-Then close with `AskUserQuestion` or `request_user_input` tailored to the pre-gate checklist state:
+Then close with `AskUserQuestion`, `request_user_input` or `clarify` tailored to the pre-gate checklist state:
 - If ADR gaps remain or any pre-gate item is ❌:
   - "Architecture review complete. What would you like to do next?"
     - [A] Write a missing ADR — open a fresh session and run `/architecture-decision [system]`

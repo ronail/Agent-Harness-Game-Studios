@@ -201,7 +201,7 @@ If NEEDS REVISION or MAJOR REVISION NEEDED, options:
 
 **If user selects [A] — Revise now:**
 
-Work through all blocking items, asking for design decisions only where you cannot resolve the issue from the GDD and existing docs alone. Group all design-decision questions into a single multi-tab `AskUserQuestion` or `request_user_input` before making any edits — do not interrupt mid-revision for each blocker individually.
+Work through all blocking items, asking for design decisions only where you cannot resolve the issue from the GDD and existing docs alone. Group all design-decision questions into a single multi-tab `AskUserQuestion`, `request_user_input` or `clarify` before making any edits — do not interrupt mid-revision for each blocker individually.
 
 After all revisions are complete, show a summary table (blocker → fix applied) and use `AskUserQuestion`, `request_user_input` or `clarify` for a **post-revision closing widget**:
 
@@ -217,7 +217,7 @@ Never end the revision flow with plain text. Always close with this widget.
 
 **Second widget — tracking records (combined, for APPROVED path):**
 
-When the verdict is APPROVED, use a single `AskUserQuestion` or `request_user_input` with `multiSelect: true` to batch the two tracking updates:
+When the verdict is APPROVED, use a single `AskUserQuestion`, `request_user_input` or `clarify` with `multiSelect: true` to batch the two tracking updates:
 - Prompt: "Verdict: APPROVED. I can update the tracking records now. Select any you'd like me to complete:"
 - Options:
   - `Update systems-index.md status to 'Approved' for [system]`
@@ -227,11 +227,11 @@ If the review-log option is selected, append the same format as below. Execute b
 
 When the verdict is NEEDS REVISION or MAJOR REVISION NEEDED, use separate widgets as before:
 
-Use a second `AskUserQuestion` or `request_user_input`:
+Use a second `AskUserQuestion`, `request_user_input` or `clarify`:
 - Prompt: "May I update `design/gdd/systems-index.md` to mark [system] as [In Review / Approved]?"
 - Options: `[A] Yes — update it` / `[B] No — leave it as-is`
 
-Use a third `AskUserQuestion` or `request_user_input`:
+Use a third `AskUserQuestion`, `request_user_input` or `clarify`:
 - Prompt: "May I append this review summary to `design/gdd/reviews/[doc-name]-review-log.md`? This creates a revision history so future re-reviews can track what changed."
 - Options: `[A] Yes — append to review log` / `[B] No — skip`
 
@@ -249,7 +249,7 @@ Prior verdict resolved: [Yes / No / First review]
 
 **Final closing widget — always show after all file writes complete:**
 
-Once the systems-index and review-log widgets are answered, check project state and show one final `AskUserQuestion` or `request_user_input`:
+Once the systems-index and review-log widgets are answered, check project state and show one final `AskUserQuestion`, `request_user_input` or `clarify`:
 
 Before building options, read:
 - `design/gdd/systems-index.md` — find any system with Status: In Review or NEEDS REVISION (other than the one just reviewed)
