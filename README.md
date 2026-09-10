@@ -181,6 +181,16 @@ Claude Code is the primary workflow runtime. Codex can use the project-local
 `.codex/` configuration, and Hermes can follow the repository's shared agent,
 skill, hook, and rule conventions.
 
+Codex discovers the project skills through the `.agents/skills` symlink, which
+keeps `.claude/skills` as the canonical source while exposing each skill's
+`agents/openai.yaml` metadata. Custom roles are generated into `.codex/agents/`.
+After changing a skill or role definition, regenerate the Codex compatibility
+files with:
+
+```bash
+python3 .codex/generate_compat.py
+```
+
 All hooks fail gracefully if optional tools are missing — nothing breaks, you just lose validation.
 
 ### Setup
