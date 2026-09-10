@@ -8,7 +8,7 @@ model: sonnet
 ---
 **Argument check:** If no version number is provided:
 1. Read `production/session-state/active.md` and the most recent file in `production/milestones/` (if they exist) to infer the target version.
-2. If a version is found: report "No version argument provided — inferred [version] from milestone data. Proceeding." Then confirm with `AskUserQuestion` or `request_user_input`: "Releasing [version]. Is this correct?"
+2. If a version is found: report "No version argument provided — inferred [version] from milestone data. Proceeding." Then confirm with `AskUserQuestion`, `request_user_input` or `clarify`: "Releasing [version]. Is this correct?"
 3. If no version is discoverable: use `AskUserQuestion`, `request_user_input` or `clarify` to ask "What version number should be released? (e.g., v1.0.0)" and wait for user input before proceeding. Do NOT default to a hardcoded version string.
 
 When this skill is invoked, orchestrate the release team through a structured pipeline.

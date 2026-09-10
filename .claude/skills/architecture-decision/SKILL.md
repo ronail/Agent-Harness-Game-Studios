@@ -179,11 +179,11 @@ a **confirm/adjust** prompt using `AskUserQuestion`, `request_user_input` or `cl
 - **GDD linkage**: Extract which GDD systems the title directly relates to
 - **Status**: Always `Proposed` for new ADRs — never ask the user what the status is
 
-**Scope of assumptions tab**: Assumptions cover only: problem framing, alternative approaches, upstream dependencies, GDD linkage, and status. Schema design questions (e.g., "How should spawn timing work?", "Should data be inline or external?") are NOT assumptions — they are design decisions belonging to a separate step after the assumptions are confirmed. Do not include schema design questions in the assumptions AskUserQuestion or request_user_input widget.
+**Scope of assumptions tab**: Assumptions cover only: problem framing, alternative approaches, upstream dependencies, GDD linkage, and status. Schema design questions (e.g., "How should spawn timing work?", "Should data be inline or external?") are NOT assumptions — they are design decisions belonging to a separate step after the assumptions are confirmed. Do not include schema design questions in the assumptions AskUserQuestion, request_user_input or clarify widget.
 
-**After assumptions are confirmed**, if the ADR involves schema or data design choices, use a separate multi-tab `AskUserQuestion` or `request_user_input` to ask each design question independently before drafting.
+**After assumptions are confirmed**, if the ADR involves schema or data design choices, use a separate multi-tab `AskUserQuestion`, `request_user_input` or `clarify` to ask each design question independently before drafting.
 
-**Present assumptions with `AskUserQuestion` or `request_user_input`:**
+**Present assumptions with `AskUserQuestion`, `request_user_input` or `clarify`:**
 
 ```
 Here's what I'm assuming before drafting:
@@ -207,7 +207,7 @@ Status: Proposed
 Do not generate the ADR until the user confirms assumptions or provides corrections.
 
 **After engine specialist and TD reviews return** (Step 5.5/5.6), if unresolved
-decisions remain, present each one as a separate `AskUserQuestion` or `request_user_input` with the proposed
+decisions remain, present each one as a separate `AskUserQuestion`, `request_user_input` or `clarify` with the proposed
 options as choices plus a free-text escape:
 
 ```
@@ -426,7 +426,7 @@ changing, set the old entry to `status: superseded_by: ADR-[NNNN]` and add the n
 
 ## 6. Closing Next Steps
 
-After the ADR is written (and registry optionally updated), close with `AskUserQuestion` or `request_user_input`.
+After the ADR is written (and registry optionally updated), close with `AskUserQuestion`, `request_user_input` or `clarify`.
 
 Before generating the widget:
 1. Read `docs/registry/architecture.yaml` — check if any priority ADRs are still unwritten (look for ADRs flagged in technical-preferences.md or systems-index.md as prerequisites)

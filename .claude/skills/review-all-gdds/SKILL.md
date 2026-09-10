@@ -556,7 +556,7 @@ Use `AskUserQuestion`, `request_user_input` or `clarify` for write permission:
 - Prompt: "May I write this review to `design/gdd/gdd-cross-review-[date].md`?"
 - Options: `[A] Yes — write the report` / `[B] No — skip`
 
-If any GDDs are flagged for revision, use a second `AskUserQuestion` or `request_user_input`:
+If any GDDs are flagged for revision, use a second `AskUserQuestion`, `request_user_input` or `clarify`:
 - Prompt: "Should I update the systems index to mark these GDDs as needing revision? ([list of flagged GDDs])"
 - Options: `[A] Yes — update systems index` / `[B] No — leave as-is`
 - If yes: update each flagged GDD's Status field in systems-index.md to "Needs Revision".

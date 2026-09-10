@@ -92,7 +92,7 @@ three methods:
 - Criteria about gameplay behaviour ("player takes damage when...", "enemy responds to...")
 - Performance criteria ("completes within Xms") — ask if profiled or accept as assumed
 
-Batch up to 4 manual verification questions into a single `AskUserQuestion` or `request_user_input` call:
+Batch up to 4 manual verification questions into a single `AskUserQuestion`, `request_user_input` or `clarify` call:
 
 ```
 question: "Does [criterion]?"
