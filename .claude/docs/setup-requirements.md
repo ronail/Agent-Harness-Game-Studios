@@ -11,6 +11,12 @@ you'll lose validation features.
 | **Git** | Version control, branch management | [git-scm.com](https://git-scm.com/) |
 | **Claude Code** | AI agent CLI | `npm install -g @anthropic-ai/claude-code` |
 
+Claude Code is the primary workflow runtime. Codex users should also install
+the [Codex CLI](https://developers.openai.com/codex/cli) to use the project
+configuration in `.codex/`. Hermes users can follow the shared repository
+conventions, but this template does not currently provide Hermes-specific
+configuration files.
+
 ## Recommended
 
 | Tool | Used By | Purpose | Install |
