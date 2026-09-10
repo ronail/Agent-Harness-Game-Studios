@@ -3,7 +3,7 @@ name: create-epics
 description: "Translate approved GDDs + architecture into epics — one epic per architectural module. Defines scope, governing ADRs, engine risk, and untraced requirements. Does NOT break into stories — run /create-stories [epic-slug] after each epic is created."
 argument-hint: "[system-name | layer: foundation|core|feature|presentation | all] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Task, AskUserQuestion, clarify
+allowed-tools: Read, Glob, Grep, Write, Task, AskUserQuestion, request_user_input, clarify
 model: sonnet
 agent: technical-director
 ---
@@ -116,7 +116,7 @@ If there are untraced requirements:
 > stories for these requirements will be marked Blocked until ADRs exist.
 > Run `/architecture-decision` first, or proceed with placeholders."
 
-Use `AskUserQuestion` or `clarify`:
+Use `AskUserQuestion` or `request_user_input` or `clarify`:
 - Prompt: "Shall I create Epic: [name]?"
 - Options:
   - `[A] Yes, create it`
@@ -140,7 +140,7 @@ Present the producer's assessment.
 
 If UNREALISTIC: offer to revise epic boundaries (split overscoped or merge underscoped epics). Revise and re-run the gate before writing.
 
-If CONCERNS, use `AskUserQuestion` or `clarify`:
+If CONCERNS, use `AskUserQuestion` or `request_user_input` or `clarify`:
 - Prompt: "Producer raised concerns about the epic structure. How do you want to proceed?"
 - Options:
   - `[A] Proceed as planned — I accept the producer's concerns`

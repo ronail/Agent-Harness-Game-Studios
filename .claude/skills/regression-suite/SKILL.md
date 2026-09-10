@@ -3,7 +3,7 @@ name: regression-suite
 description: "Map test coverage to GDD critical paths, identify fixed bugs without regression tests, flag coverage drift from new features, and maintain tests/regression-suite.md. Run after implementing a bug fix or before a release gate."
 argument-hint: "[update | audit | report]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, clarify
+allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, request_user_input, clarify
 model: sonnet
 ---
 
@@ -36,7 +36,7 @@ and known failure points. This skill maintains that list.
   existing test coverage; flag paths with no regression test
 - `/regression-suite report` — read-only status report (no writes); suitable
   for sprint reviews
-- No argument — if a sprint is clearly active (sprint plan exists with in-progress stories), run `update`. If ambiguous or no active sprint is detected, use `AskUserQuestion` or `clarify`:
+- No argument — if a sprint is clearly active (sprint plan exists with in-progress stories), run `update`. If ambiguous or no active sprint is detected, use `AskUserQuestion` or `request_user_input` or `clarify`:
   - Prompt: "No subcommand specified. Which mode do you want to run?"
   - Options:
     - `[A] update — scan new bug fixes this sprint and add missing regression tests`

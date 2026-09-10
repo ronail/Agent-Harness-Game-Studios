@@ -3,7 +3,7 @@ name: consistency-check
 description: "Scan all GDDs against the entity registry to detect cross-document inconsistencies: same entity with different stats, same item with different values, same formula with different variables. Grep-first approach — reads registry then targets only conflicting GDD sections rather than full document reads."
 argument-hint: "[full | since-last-review | entity:<name> | item:<name>]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Bash, AskUserQuestion, clarify
+allowed-tools: Read, Glob, Grep, Write, Edit, Bash, AskUserQuestion, request_user_input, clarify
 model: sonnet
 ---
 
@@ -284,7 +284,7 @@ Silently append to `production/session-state/active.md` (create the file if it d
 <!-- CONSISTENCY-CHECK: [date] | GDDs checked: [N] | Conflicts found: [N] | Report: docs/consistency-report-[date].md -->
 ```
 
-Then close with an `AskUserQuestion` widget:
+Then close with an `AskUserQuestion` or `request_user_input` widget:
 
 - **Prompt**: "Consistency check complete — [N] conflicts found. What next?"
 - **Options**:

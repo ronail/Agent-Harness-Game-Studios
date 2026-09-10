@@ -3,7 +3,7 @@ name: balance-check
 description: "Analyzes game balance data files, formulas, and configuration to identify outliers, broken progressions, degenerate strategies, and economy imbalances. Use after modifying any balance-related data or design. Use when user says 'balance report', 'check game balance', 'run a balance check'."
 argument-hint: "[system-name|path-to-data-file]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, clarify
+allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, request_user_input, clarify
 model: sonnet
 agent: economy-designer
 ---
@@ -101,7 +101,7 @@ Run domain-specific checks:
 
 ## Phase 6: Fix & Verify Cycle
 
-After presenting the report, use `AskUserQuestion` or `clarify`:
+After presenting the report, use `AskUserQuestion` or `request_user_input` or `clarify`:
 - Prompt: "Balance check complete. What would you like to do next?"
 - Options:
   - `[A] Fix highest-priority issue now — walk me through it`
