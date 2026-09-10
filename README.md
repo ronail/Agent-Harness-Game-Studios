@@ -165,8 +165,11 @@ mapping is:
 | Sonnet | `gpt-5.6-terra` |
 | Opus | `gpt-5.6-sol` |
 
-The standard tier is the project default (`gpt-5.6-terra`). Run `/start codex`
-to review the mapping and choose a session model.
+The standard tier is the project default (`gpt-5.6-terra`). The complete
+machine-readable mapping is in `.codex/agent-models.toml`. When Codex spawns a
+studio agent, it reads that agent's `model:` tier from `.claude/agents/` and
+passes the mapped model explicitly; `model: opus` therefore uses
+`gpt-5.6-sol`. Run `/start codex` to verify the setup.
 
 ## Getting Started
 

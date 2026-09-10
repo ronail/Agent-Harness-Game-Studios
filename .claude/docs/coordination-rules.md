@@ -39,9 +39,11 @@ high-stakes output; otherwise leave unset (Sonnet).
 
 > **Codex Model Setup**: When using Codex as the harness, the `model:` fields
 > in skill/agent frontmatter remain the shared tier labels. The project-local
-> `.codex/config.toml` sets the standard GPT model. Run `/start codex` during
-> onboarding to review the full tier mapping and choose the model for the
-> session.
+> `.codex/config.toml` sets only the standard GPT fallback. Before spawning a
+> studio agent, read `.codex/agent-models.toml`, resolve the target definition's
+> `model:` tier, and pass the resulting GPT model explicitly. Run `/start codex`
+> during onboarding to verify this setup. For example, `model: opus` must spawn
+> with `gpt-5.6-sol`, even when the project default is Terra.
 
 ## Subagents vs Agent Teams
 
