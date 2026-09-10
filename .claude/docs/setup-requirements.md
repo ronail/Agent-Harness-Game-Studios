@@ -6,10 +6,10 @@ you'll lose validation features.
 
 ## Required
 
-|| Tool | Purpose | Install |
-|| ---- | ---- | ---- |
-|| **Git** | Version control, branch management | [git-scm.com](https://git-scm.com/) |
-|| **Claude Code** | AI agent CLI | `npm install -g @anthropic-ai/claude-code` |
+| Tool | Purpose | Install |
+| ---- | ---- | ---- |
+| **Git** | Version control, branch management | [git-scm.com](https://git-scm.com/) |
+| **Claude Code** | AI agent CLI | `npm install -g @anthropic-ai/claude-code` |
 
 Claude Code is the primary workflow runtime. Codex users should also install
 the [Codex CLI](https://developers.openai.com/codex/cli) to use the project
@@ -19,11 +19,11 @@ conventions and configure profile mapping interactively via `/start hermes`
 
 ## Recommended
 
-|| Tool | Used By | Purpose | Install |
-|| ---- | ---- | ---- | ---- |
-|| **jq** | Hooks (7 of 12) | JSON parsing in commit/push/asset/agent hooks | See below |
-|| **Python 3** | Hooks (2 of 12) | JSON validation for data files | [python.org](https://www.python.org/) |
-|| **Bash** | All hooks | Shell script execution | Included with Git for Windows |
+| Tool | Used By | Purpose | Install |
+| ---- | ---- | ---- | ---- |
+| **jq** | Hooks (7 of 12) | JSON parsing in commit/push/asset/agent hooks | See below |
+| **Python 3** | Hooks (2 of 12) | JSON validation for data files | [python.org](https://www.python.org/) |
+| **Bash** | All hooks | Shell script execution | Included with Git for Windows |
 
 ### Installing jq
 
@@ -72,11 +72,11 @@ python3 --version      # Should show python version (optional)
 
 ## What Happens Without Optional Tools
 
-|| Missing Tool | Effect |
-|| ---- | ---- |
-|| **jq** | Commit validation, push protection, asset validation, and agent audit hooks silently skip their checks. Commits and pushes still work. |
-|| **Python 3** | JSON data file validation in commit and asset hooks is skipped. Invalid JSON can be committed without warning. |
-|| **Both** | All hooks still execute without error (exit 0) but provide no validation. You're flying without safety nets. |
+| Missing Tool | Effect |
+| ---- | ---- |
+| **jq** | Commit validation, push protection, asset validation, and agent audit hooks silently skip their checks. Commits and pushes still work. |
+| **Python 3** | JSON data file validation in commit and asset hooks is skipped. Invalid JSON can be committed without warning. |
+| **Both** | All hooks still execute without error (exit 0) but provide no validation. You're flying without safety nets. |
 
 ## Hermes Setup (Alternative Harness)
 

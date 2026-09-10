@@ -169,7 +169,7 @@ This skill is read-only — no files are written.
 
 ## Phase 9: Next Steps
 
-Use `AskUserQuestion` or `request_user_input` or `clarify`:
+Use `AskUserQuestion`, `request_user_input` or `clarify`:
 - Prompt: "Code review complete — verdict: [APPROVED / CHANGES REQUIRED / MAJOR REVISION]. How would you like to proceed?"
 - Options (adjust based on verdict):
   - If APPROVED:

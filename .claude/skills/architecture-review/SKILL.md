@@ -371,7 +371,7 @@ are consistent with verified engine behaviour."
 
 Before asking, display the proposed change inline — show the current systems-index row for each flagged GDD and the proposed updated row side by side so the user can see exactly what will change.
 
-Then use `AskUserQuestion` or `request_user_input` or `clarify`:
+Then use `AskUserQuestion`, `request_user_input` or `clarify`:
 - "I found [N] GDD revision flag(s). May I update the systems index?"
   - [A] Yes — apply all [N] updates to the systems index now
   - [B] Show me the full diff first, then ask again
@@ -456,7 +456,7 @@ FAIL: Critical gaps (Foundation/Core layer requirements uncovered),
 
 ## Phase 8: Write and Update Traceability Index
 
-Use `AskUserQuestion` or `request_user_input` or `clarify` for the write approval:
+Use `AskUserQuestion`, `request_user_input` or `clarify` for the write approval:
 - "Review complete. What would you like to write?"
   - [A] Write all three files (review report + traceability index + TR registry)
   - [B] Write review report only — `docs/architecture/architecture-review-[date].md`
@@ -464,7 +464,7 @@ Use `AskUserQuestion` or `request_user_input` or `clarify` for the write approva
 
 ### RTM Output (rtm mode only)
 
-For `rtm` mode, use `AskUserQuestion` or `request_user_input` or `clarify`:
+For `rtm` mode, use `AskUserQuestion`, `request_user_input` or `clarify`:
 - "May I write the full Requirements Traceability Matrix?"
   - [A] Yes — write to `docs/architecture/requirements-traceability.md`
   - [B] Not yet — show me the full RTM data first, then ask again
@@ -638,7 +638,7 @@ If any spawned agent returns BLOCKED, errors, or fails to complete:
 
 1. **Surface immediately**: Report "[AgentName]: BLOCKED — [reason]" before continuing
 2. **Assess dependencies**: If the blocked agent's output is required by a later phase, do not proceed past that phase without user input
-3. **Offer options** via AskUserQuestion or request_user_input or clarify with three choices:
+3. **Offer options** via AskUserQuestion, request_user_input or clarify with three choices:
    - Skip this agent and note the gap in the final report
    - Retry with narrower scope (fewer GDDs, single-system focus)
    - Stop here and resolve the blocker first
@@ -656,7 +656,7 @@ If any spawned agent returns BLOCKED, errors, or fails to complete:
 4. **Draft before approval** — always show the content that will be written (the
    report, the updated ADR section, the systems-index row) inline in the conversation
    before requesting approval. Never ask to write something the user has not yet seen.
-5. **Use `AskUserQuestion` or `request_user_input` or `clarify` for write approvals** — plain text "May I?" is not
+5. **Use `AskUserQuestion`, `request_user_input` or `clarify` for write approvals** — plain text "May I?" is not
    sufficient. Use the structured tool with labeled options [A]/[B]/[C] so the
    user can choose between "write now", "show full draft first", and "not yet".
    Multi-file changesets must list every file and what changes, then ask once

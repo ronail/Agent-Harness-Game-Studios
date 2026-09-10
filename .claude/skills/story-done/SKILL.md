@@ -36,7 +36,7 @@ read that file directly.
 1. Check `production/session-state/active.md` for the currently active story.
 2. If not found there, read the most recent file in `production/sprints/` and
    look for stories marked IN PROGRESS.
-3. If multiple in-progress stories are found, use `AskUserQuestion` or `request_user_input` or `clarify`:
+3. If multiple in-progress stories are found, use `AskUserQuestion`, `request_user_input` or `clarify`:
    - "Which story are we completing?"
    - Options: list the in-progress story file names.
 4. If no story can be found, ask the user to provide the path.
@@ -86,7 +86,7 @@ three methods:
   that should be in localization files.
 - **Dependency check**: if a criterion says "depends on X", check that X exists.
 
-### Manual verification with confirmation (use `AskUserQuestion` or `request_user_input` or `clarify`)
+### Manual verification with confirmation (use `AskUserQuestion`, `request_user_input` or `clarify`)
 
 - Criteria about subjective qualities ("feels responsive", "animations play correctly")
 - Criteria about gameplay behaviour ("player takes damage when...", "enemy responds to...")
@@ -116,7 +116,7 @@ For each acceptance criterion in the story:
    - **Unit test**: check `tests/unit/` for a test file or function name that
      matches the criterion's subject (use `Glob` and `Grep`)
    - **Integration test**: check `tests/integration/` similarly
-   - **Manual confirmation**: if the criterion was verified via `AskUserQuestion` or `request_user_input` or clarify
+   - **Manual confirmation**: if the criterion was verified via `AskUserQuestion`, `request_user_input` or clarify
      above with a "Yes — passes" answer, count that as a manual test
 
 2. Produce a traceability table:
@@ -257,7 +257,7 @@ Skip this phase for Config/Data stories (no code tests required).
 
 **Review mode check** — apply before spawning LP-CODE-REVIEW:
 - `solo` → skip. Note: "LP-CODE-REVIEW skipped — Solo mode." Proceed to Phase 6 (completion report).
-- `lean` → use `AskUserQuestion` or `request_user_input` or `clarify` before proceeding:
+- `lean` → use `AskUserQuestion`, `request_user_input` or `clarify` before proceeding:
   - Prompt: "Code review is skipped in lean mode. Did you run `/code-review` on the implemented files?"
   - Options:
     - `Yes — /code-review passed or was approved with suggestions`
@@ -270,7 +270,7 @@ Spawn `lead-programmer` via Task using gate **LP-CODE-REVIEW** (`.claude/docs/di
 
 Pass: implementation file paths, story file path, relevant GDD section, governing ADR.
 
-Present the verdict to the user. If CONCERNS, surface them via `AskUserQuestion` or `request_user_input` or clarify:
+Present the verdict to the user. If CONCERNS, surface them via `AskUserQuestion`, `request_user_input` or clarify:
 - Options: `Revise flagged issues` / `Accept and proceed` / `Discuss further`
 If REJECT, do not proceed to Phase 6 verdict until the issues are resolved.
 
@@ -329,7 +329,7 @@ fixed. Offer to help fix the blocking items.
 
 ## Phase 7: Update Story Status
 
-Use `AskUserQuestion` or `request_user_input` or `clarify` before writing anything:
+Use `AskUserQuestion`, `request_user_input` or `clarify` before writing anything:
 - Prompt: "Verification complete. How do you want to proceed?"
 - Options:
   - `Close the story — update file, mark Complete, log notes (Recommended)`
@@ -447,7 +447,7 @@ If no more stories are ready but Must Have stories are still In Progress (not Co
   decides if they are acceptable.
 - **BLOCKED verdict is advisory** — the user can override and mark complete
   anyway; document the risk explicitly if they do.
-- Use `AskUserQuestion` or `request_user_input` or `clarify` for the code review prompt and for batching manual
+- Use `AskUserQuestion`, `request_user_input` or `clarify` for the code review prompt and for batching manual
   criteria confirmations.
 
 ---

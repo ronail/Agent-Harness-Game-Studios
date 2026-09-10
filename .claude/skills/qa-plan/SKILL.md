@@ -26,7 +26,7 @@ plan.
 
 ## Phase 1: Parse Scope
 
-**Argument:** `$ARGUMENTS` (blank = ask user via AskUserQuestion or request_user_input or clarify)
+**Argument:** `$ARGUMENTS` (blank = ask user via AskUserQuestion, request_user_input or clarify)
 
 Determine scope from the argument:
 
@@ -38,7 +38,7 @@ Determine scope from the argument:
   to stories whose file path or title contains the system name. Also check the
   epic index file (`EPIC.md`) in that system's directory.
 - **`story: [path]`** — validate that the path exists and load that single file.
-- **No argument** — use `AskUserQuestion` or `request_user_input` or `clarify`:
+- **No argument** — use `AskUserQuestion`, `request_user_input` or `clarify`:
   - "What is the scope for this QA plan?"
   - Options: "Current sprint", "Specific feature (enter system name)",
     "Specific story (enter path)", "Full epic"
@@ -231,7 +231,7 @@ test entry should reflect the real requirements of these specific stories.
 ## Phase 5: Write Output
 
 Show the complete plan in conversation (or a summary if the plan is very long),
-then ask two questions together using `AskUserQuestion` or `request_user_input` or `clarify`:
+then ask two questions together using `AskUserQuestion`, `request_user_input` or `clarify`:
 
 ```
 question: "Ready to write the QA plan. Choose output options:"
@@ -273,6 +273,6 @@ Silently append to `production/session-state/active.md` (create the file if it d
   support. If a formula is absent from the GDD, flag it rather than guessing.
 - **Playtest requirements are advisory**: the user decides whether a playtest
   is warranted for borderline Visual/Feel stories. Flag the case; do not mandate.
-- Use `AskUserQuestion` or `request_user_input` or `clarify` for scope selection when no argument is provided.
+- Use `AskUserQuestion`, `request_user_input` or `clarify` for scope selection when no argument is provided.
   Keep all other phases non-interactive — present findings, then ask once to
   approve the write.

@@ -37,7 +37,7 @@ Resolve the review mode (once, store for all gate spawns this run):
 **Check for spike mode:** If `--spike` was passed, skip to the **Spike Mode** section
 at the bottom of this skill.
 
-Otherwise, use `AskUserQuestion` or `request_user_input` or `clarify` to confirm intent before proceeding:
+Otherwise, use `AskUserQuestion`, `request_user_input` or `clarify` to confirm intent before proceeding:
 
 - **Prompt**: "How would you like to use this prototype session?"
 - **Options**:
@@ -225,7 +225,7 @@ the player feels something? If it takes more than 3-4 exchanges, the opening is 
 
 ---
 
-Assess which path best fits the hypothesis, then use `AskUserQuestion` or `request_user_input` or `clarify` with your
+Assess which path best fits the hypothesis, then use `AskUserQuestion`, `request_user_input` or `clarify` with your
 recommendation pre-stated:
 
 - **Prompt**: "Which prototype path would you like to use? (Based on your concept, I'd recommend [path] — [one sentence reason].)"

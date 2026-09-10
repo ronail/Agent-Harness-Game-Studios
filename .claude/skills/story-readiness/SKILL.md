@@ -35,7 +35,7 @@ See `.claude/docs/director-gates.md` for the full check pattern and mode definit
 
 ## 1. Parse Arguments
 
-**Scope:** `$ARGUMENTS[0]` (blank = ask user via AskUserQuestion or request_user_input or clarify)
+**Scope:** `$ARGUMENTS[0]` (blank = ask user via AskUserQuestion, request_user_input or clarify)
 
 - **Specific path** (e.g., `/story-readiness production/epics/combat/story-001-basic-attack.md`):
   validate that single story file.
@@ -45,7 +45,7 @@ See `.claude/docs/director-gates.md` for the full check pattern and mode definit
   validate every story file found.
 - **No argument**: ask the user which scope to validate.
 
-If no argument is given, use `AskUserQuestion` or `request_user_input` or `clarify`:
+If no argument is given, use `AskUserQuestion`, `request_user_input` or `clarify`:
 - "What would you like to validate?"
   - Options: "A specific story file", "All stories in the current sprint",
     "All stories in production/epics/", "Stories for a specific epic"
@@ -342,7 +342,7 @@ Pass the following context:
 
 Handle the verdict per standard rules in `director-gates.md`:
 - **ADEQUATE** → story is cleared. Proceed to close.
-- **GAPS [list]** → surface the specific gaps to the user via `AskUserQuestion` or `request_user_input` or clarify:
+- **GAPS [list]** → surface the specific gaps to the user via `AskUserQuestion`, `request_user_input` or clarify:
   options: `Update story with suggested gaps` / `Accept and proceed anyway` / `Discuss further`.
 - **INADEQUATE** → surface the specific gaps; ask user whether to update the story or proceed anyway.
 
