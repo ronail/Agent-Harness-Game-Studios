@@ -152,12 +152,33 @@ one to each agent role, writing the result to `production/hermes-profile-mapping
 If you are **not** using Hermes, the `model:` field in each agent/skill
 definition is used directly — no changes are needed.
 
+### Codex Model Setup
+
+When using **Codex as the harness**, the `model:` fields in skill and agent
+frontmatter remain the shared `haiku` / `sonnet` / `opus` tier labels. The
+project-local `.codex/config.toml` sets the standard GPT model and reasoning
+effort, while the other tier launch commands are:
+
+| Shared tier | Codex launch command | GPT model | Reasoning |
+|-------------|----------------------|-----------|-----------|
+| Haiku | `codex --model gpt-5.6-luna -c model_reasoning_effort="low"` | `gpt-5.6-luna` | `low` |
+| Sonnet | `codex --model gpt-5.6-terra -c model_reasoning_effort="medium"` | `gpt-5.6-terra` | `medium` |
+| Opus | `codex --model gpt-5.6-sol -c model_reasoning_effort="high"` | `gpt-5.6-sol` | `high` |
+
+The standard tier is the project default. Run `/start codex` to review the
+mapping and choose a session command, then start Codex with for example:
+
+```bash
+codex --model gpt-5.6-terra -c model_reasoning_effort="medium"
+```
+
 ## Getting Started
 
 ### Prerequisites
 
 - [Git](https://git-scm.com/)
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (`npm install -g @anthropic-ai/claude-code`)
+- [Codex CLI](https://developers.openai.com/codex/cli)
 - **Recommended**: [jq](https://jqlang.github.io/jq/) (for hook validation) and Python 3 (for JSON validation)
 
 Claude Code is the primary workflow runtime. Codex can use the project-local
@@ -174,12 +195,17 @@ All hooks fail gracefully if optional tools are missing — nothing breaks, you 
    cd my-game
    ```
 
-2. **Open Claude Code** and start a session:
+2. **Open your harness** and start a session:
    ```bash
+   # Claude Code
    claude
+
+   # Codex
+   codex
    ```
 
-3. **Run `/start`** — the system asks where you are (no idea, vague concept,
+3. **Run `/start`** — in Claude Code, or `/start codex` when using Codex. The
+   system asks where you are (no idea, vague concept,
    clear design, existing work) and guides you to the right workflow. No assumptions.
 
    Or jump directly to a specific skill if you already know what you need:
@@ -208,7 +234,7 @@ CLAUDE.md                           # Master configuration
     workflow-catalog.yaml           # 7-phase pipeline definition (read by /help)
     templates/                      # 41 document templates
 .codex/
-  config.toml                       # Approval policy, sandbox mode, and feature flags
+  config.toml                       # Approval policy, model default, sandbox, and feature flags
   hooks.json                        # Codex lifecycle and validation hook wiring
   hooks/                            # Codex command guard and adapter hooks
   rules/                            # Codex command-specific safety rules
@@ -280,6 +306,7 @@ follows:
 | `.claude/settings.json` permissions | `.codex/config.toml` | Approval policy and sandbox mode |
 | Permission rules | `.codex/rules/*.rules` | Command-specific allow, prompt, and forbidden decisions |
 | Claude hooks | `.codex/hooks.json` | Codex lifecycle and validation hook wiring |
+| Claude model tiers | `.codex/config.toml` and `codex --model` | GPT model and reasoning-effort equivalents |
 | User settings | `~/.codex/config.toml`, `~/.codex/hooks.json` | Personal Codex overrides |
 | Managed settings | Managed `requirements.toml` | Organization-enforced Codex settings |
 

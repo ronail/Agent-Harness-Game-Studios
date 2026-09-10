@@ -312,3 +312,19 @@ Hermes profiles and helps you assign them to agent roles. The result is saved to
 
 If you are **not** using Hermes, the `model:` field in each agent/skill definition
 is used directly — no changes are needed.
+
+## Optional: Codex Model Setup
+
+When using **Codex as the harness**, the `model:` fields in skill and agent
+frontmatter remain the shared `haiku` / `sonnet` / `opus` tier labels. The
+project-local `.codex/config.toml` sets the standard GPT model and reasoning
+effort. Use the corresponding launch command for another tier:
+
+| Shared tier | Codex launch command | GPT model | Reasoning |
+|-------------|----------------------|-----------|-----------|
+| Haiku | `codex --model gpt-5.6-luna -c model_reasoning_effort="low"` | `gpt-5.6-luna` | `low` |
+| Sonnet | `codex --model gpt-5.6-terra -c model_reasoning_effort="medium"` | `gpt-5.6-terra` | `medium` |
+| Opus | `codex --model gpt-5.6-sol -c model_reasoning_effort="high"` | `gpt-5.6-sol` | `high` |
+
+The standard tier is the project default. Run `/start codex` during onboarding
+to review the mapping and choose a session command.
