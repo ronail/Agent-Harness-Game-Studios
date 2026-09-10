@@ -89,6 +89,10 @@ Types: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`
 
 ## PR Process
 
+- **Use the PR template** — start from `.github/PULL_REQUEST_TEMPLATE.md` and
+  retain every heading, checkbox, and section in the final PR body. Fill in
+  the template instead of replacing it with a custom summary. Mark checklist
+  items accurately and include the actual verification performed.
 - Your PR will be auto-assigned to the maintainer via CODEOWNERS
 - Reviews happen when they happen — this is a solo-maintained project
 - If your PR sits open without feedback for a few weeks, a nudge comment is fine

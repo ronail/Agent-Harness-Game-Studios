@@ -1,3 +1,6 @@
+<!-- Keep every section in this template. Fill it in rather than replacing it
+     with a custom PR body. -->
+
 ## Summary
 
 Brief description of what this PR does.
