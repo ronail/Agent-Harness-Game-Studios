@@ -52,7 +52,7 @@ sudo pacman -S jq       # Arch
 - Git for Windows includes **Git Bash**, which provides the `bash` command
   used by all hooks in `settings.json`
 - Ensure Git Bash is on your PATH (default if installed via the Git installer)
-- Hooks use `bash .clane/hooks/[name].sh` — this works on Windows because
+- Hooks use `bash .claude/hooks/[name].sh` — this works on Windows because
   Claude Code invokes commands through a shell that can find `bash.exe`
 
 ### macOS / Linux
@@ -77,49 +77,6 @@ python3 --version      # Should show python version (optional)
 | **jq** | Commit validation, push protection, asset validation, and agent audit hooks silently skip their checks. Commits and pushes still work. |
 | **Python 3** | JSON data file validation in commit and asset hooks is skipped. Invalid JSON can be committed without warning. |
 | **Both** | All hooks still execute without error (exit 0) but provide no validation. You're flying without safety nets. |
-
-## Hermes Setup (Alternative Harness)
-
-Hermes is supported as an alternative harness to Claude Code. The repository
-provides shared conventions (skills, agents, hooks) that work with Hermes
-profiles for model routing and provider selection.
-
-### Installing Hermes
-
-See the [Hermes Agent documentation](https://hermes-agent.nousresearch.com/docs)
-for installation instructions. Once installed, verify with:
-
-```bash
-hermes --version
-```
-
-### Profile Configuration
-
-Hermes profiles reside in `~/.hermes/profiles/<name>/config.yaml` and control
-model resolution, API keys, and provider settings. This repository does not
-ship Hermes-specific configuration — you manage profiles in your Hermes
-installation.
-
-To map agent roles to Hermes profiles:
-
-1. Run `/start hermes` during onboarding
-2. Phase 3d discovers your available profiles and interactively assigns each
-   agent role to a profile
-3. The mapping is written to `production/hermes-profile-mapping.json`
-
-When using Hermes, the `model:` fields in skill/agent frontmatter are advisory
-only — the active Hermes profile determines which model actually runs. Without
-Hermes (e.g., using Claude Code directly), those `model:` fields are used directly.
-
-### Verifying Hermes Integration
-
-After running `/start hermes`, check that profile mapping was written:
-
-```bash
-cat production/hermes-profile-mapping.json
-```
-
-Expected format: `{"agent-name": "profile-name", ...}`
 
 ## Hermes Setup (Alternative Harness)
 
