@@ -12,13 +12,29 @@ fi
 
 [ -z "$COMMAND" ] && exit 0
 
+is_codex_pr_rebase_push() {
+    local current_branch
+    current_branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null || true)
+    case "$current_branch" in
+        codex/*)
+            [[ "$COMMAND" == *"--force-with-lease"* ]] \
+                && [[ "$COMMAND" == *"$current_branch"* ]]
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
 REASON=""
 if [[ "$COMMAND" =~ rm[[:space:]]+(-rf|-fr)([[:space:]]|$) ]] \
     || [[ "$COMMAND" =~ rm[[:space:]]+(-r[[:space:]]+-f|-f[[:space:]]+-r|--recursive[[:space:]]+--force|--force[[:space:]]+--recursive)([[:space:]]|$) ]]; then
     REASON="recursive force deletion"
 elif [[ "$COMMAND" =~ git[[:space:]]+push([[:space:]]|$) ]] \
     && [[ "$COMMAND" =~ (--force([[:space:]]|[-]|$)|[[:space:]]-f([[:space:]]|$)) ]]; then
-    REASON="force-pushing"
+    if ! is_codex_pr_rebase_push; then
+        REASON="force-pushing"
+    fi
 elif [[ "$COMMAND" =~ git[[:space:]]+reset[[:space:]]+--hard([[:space:]]|$) ]]; then
     REASON="hard reset"
 elif [[ "$COMMAND" =~ git[[:space:]]+clean[[:space:]]+-f ]]; then
