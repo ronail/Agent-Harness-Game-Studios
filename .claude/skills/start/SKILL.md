@@ -3,7 +3,7 @@ name: start
 description: "First-time onboarding — asks where you are, then guides you to the right workflow. No assumptions."
 argument-hint: "[claude|codex|hermes]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, Bash, clarify
+allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, request_user_input, Bash, clarify
 model: sonnet
 ---
 
@@ -40,7 +40,7 @@ Store these findings internally to validate the user's self-assessment and tailo
 
 ## Phase 2: Ask Where the User Is
 
-This is the first thing the user sees. Use `AskUserQuestion` or `clarify` with these exact options so the user can click rather than type:
+This is the first thing the user sees. Use `AskUserQuestion`, `request_user_input` or `clarify` with these exact options so the user can click rather than type:
 
 - **Prompt**: "Welcome to Agent Harness Game Studios! Before I suggest anything, I'd like to understand where you're starting from. Where are you at with your game idea right now?"
 - **Options**:
@@ -118,7 +118,7 @@ The user needs creative exploration before anything else.
 #### If C: Clear concept
 
 1. Ask them to describe their concept in one sentence — genre and core mechanic. Use plain text, not AskUserQuestion (it's an open response).
-2. Acknowledge the concept, then use `AskUserQuestion` or `clarify` to offer two paths:
+2. Acknowledge the concept, then use `AskUserQuestion`, `request_user_input` or `clarify` to offer two paths:
    - **Prompt**: "How would you like to proceed?"
    - **Options**:
      - `Formalize it first` — Run `/brainstorm [concept]` to structure it into a proper game concept document
@@ -205,7 +205,7 @@ if the Hermes CLI is installed (`command -v hermes`).
 
 - **If Hermes is installed**: Discover available profiles via `Bash`
   (`hermes profiles list` or list `~/.hermes/profiles/`), then use
-  `AskUserQuestion` or `clarify` to ask:
+  `AskUserQuestion`, `request_user_input` or `clarify` to ask:
   - **Prompt**: "Would you like to set Hermes profile mappings for each agent
     role? This determines which model/provider each role uses when spawned as
     a subagent."
@@ -281,7 +281,7 @@ Codex model:
 | Sonnet | `gpt-5.6-terra` |
 | Opus | `gpt-5.6-sol` |
 
-The standard tier is the project default. Use `AskUserQuestion` or `clarify` to
+The standard tier is the project default. Use `AskUserQuestion`, `request_user_input` or `clarify` to
 ask:
 
 - **Prompt**: "Which Codex model tier would you like to use for this session?"
@@ -319,7 +319,7 @@ Check if `production/review-mode.txt` already exists.
 
 **If it exists**: Read it and show the current mode — "Review mode is set to `[current]`." — then proceed to Phase 4. Do not ask again.
 
-**If it does not exist**: Use `AskUserQuestion` or `clarify`:
+**If it does not exist**: Use `AskUserQuestion`, `request_user_input` or `clarify`:
 
 - **Prompt**: "One setup choice: how much design review would you want as you work through the workflow?"
 - **Options**:
@@ -340,7 +340,7 @@ Create the `production/` directory if it does not exist.
 
 ## Phase 4: Confirm Before Proceeding
 
-After presenting the recommended path, use `AskUserQuestion` or `clarify` to ask the user which step they'd like to take first. Never auto-run the next skill.
+After presenting the recommended path, use `AskUserQuestion`, `request_user_input` or `clarify` to ask the user which step they'd like to take first. Never auto-run the next skill.
 
 - **Prompt**: "Would you like to start with [recommended first step]?"
 - **Options**:

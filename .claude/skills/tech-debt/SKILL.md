@@ -3,7 +3,7 @@ name: tech-debt
 description: "Track, categorize, and prioritize technical debt across the codebase. Scans for debt indicators, maintains a debt register, and recommends repayment scheduling."
 argument-hint: "[scan|add|prioritize|report]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, clarify
+allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, request_user_input, clarify
 model: sonnet
 ---
 
@@ -55,7 +55,7 @@ If no, stop here. Verdict: **BLOCKED** — user declined write.
 
 Ask the user for the description, affected files, and impact if left unfixed (plain text prompts).
 
-Then use `AskUserQuestion` or `clarify` to collect the **category**:
+Then use `AskUserQuestion`, `request_user_input` or `clarify` to collect the **category**:
 - Prompt: "What category does this tech debt belong to?"
 - Options:
   - `[A] Architecture Debt — wrong abstractions, missing patterns, coupling issues`
@@ -65,7 +65,7 @@ Then use `AskUserQuestion` or `clarify` to collect the **category**:
   - `[E] Dependency Debt — outdated packages, deprecated APIs, version conflicts`
   - `[F] Performance Debt — known slow paths, memory issues, unoptimized queries`
 
-Then use `AskUserQuestion` or `clarify` to collect the **estimated fix effort**:
+Then use `AskUserQuestion`, `request_user_input` or `clarify` to collect the **estimated fix effort**:
 - Prompt: "What is the estimated effort to fix this item?"
 - Options:
   - `[A] S — Small (under 1 day)`

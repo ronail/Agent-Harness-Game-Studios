@@ -3,7 +3,7 @@ name: code-review
 description: "Performs an architectural and quality code review on a specified file or set of files. Checks for coding standard compliance, architectural pattern adherence, SOLID principles, testability, and performance concerns."
 argument-hint: "[path-to-file-or-directory]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Bash, Task, AskUserQuestion, clarify
+allowed-tools: Read, Glob, Grep, Bash, Task, AskUserQuestion, request_user_input, clarify
 model: sonnet
 agent: lead-programmer
 ---
@@ -169,7 +169,7 @@ This skill is read-only — no files are written.
 
 ## Phase 9: Next Steps
 
-Use `AskUserQuestion` or `clarify`:
+Use `AskUserQuestion`, `request_user_input` or `clarify`:
 - Prompt: "Code review complete — verdict: [APPROVED / CHANGES REQUIRED / MAJOR REVISION]. How would you like to proceed?"
 - Options (adjust based on verdict):
   - If APPROVED:

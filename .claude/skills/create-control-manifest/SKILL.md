@@ -3,7 +3,7 @@ name: create-control-manifest
 description: "After architecture is complete, produces a flat actionable rules sheet for programmers — what you must do, what you must never do, per system and per layer. Extracted from all Accepted ADRs, technical preferences, and engine reference docs. More immediately actionable than ADRs (which explain why)."
 argument-hint: "[update — regenerate from current ADRs]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Task
+allowed-tools: Read, Glob, Grep, Write, Task, AskUserQuestion, request_user_input, clarify
 model: sonnet
 agent: technical-director
 ---
@@ -113,7 +113,7 @@ Total rules extracted:
   - Global: [N] naming conventions, [M] forbidden APIs, [P] approved libraries
 ```
 
-Use `AskUserQuestion` or `clarify`:
+Use `AskUserQuestion`, `request_user_input` or `clarify`:
 - Prompt: "Does this rule summary look complete?"
 - Options:
   - `[A] Yes — looks good, run the director review and write the manifest`
@@ -142,14 +142,14 @@ The technical-director reviews whether:
 
 Apply the verdict:
 - **APPROVE** → proceed to Phase 5
-- **CONCERNS** → surface via `AskUserQuestion` or clarify with options: `Revise flagged rules` / `Accept and proceed` / `Discuss further`
+- **CONCERNS** → surface via `AskUserQuestion`, `request_user_input` or clarify with options: `Revise flagged rules` / `Accept and proceed` / `Discuss further`
 - **REJECT** → do not write the manifest; fix the flagged rules and re-present the summary
 
 ---
 
 ## 5. Write the Control Manifest
 
-Use `AskUserQuestion` or `clarify`:
+Use `AskUserQuestion`, `request_user_input` or `clarify`:
 - Prompt: "May I write the Control Manifest?"
 - Options:
   - `[A] Yes — write to docs/architecture/control-manifest.md`

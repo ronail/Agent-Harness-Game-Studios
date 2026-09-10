@@ -3,7 +3,7 @@ name: hotfix
 description: "Emergency fix workflow that bypasses normal sprint processes with a full audit trail. Creates hotfix branch, tracks approvals, and ensures the fix is backported correctly."
 argument-hint: "[bug-id or description]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Bash, Task, AskUserQuestion, clarify
+allowed-tools: Read, Glob, Grep, Write, Edit, Bash, Task, AskUserQuestion, request_user_input, clarify
 model: sonnet
 ---
 
@@ -17,7 +17,7 @@ Read the bug description or ID. Assess severity using these criteria:
 - **S2 (Major)**: Significant feature broken, workaround exists
 - **S3 or lower**: Minor issue — normal bug fix workflow applies
 
-Confirm with `AskUserQuestion` or `clarify`:
+Confirm with `AskUserQuestion`, `request_user_input` or `clarify`:
 - Prompt: "I've assessed this as **[assessed severity]** — [brief rationale]. Confirm severity to proceed:"
 - Options:
   - `[A] S1 (Critical) — game unplayable, data loss, or security issue`
@@ -74,7 +74,7 @@ Check whether this is a git repository:
 
 If this command fails or returns empty: note "Not a git repository — create the branch manually." and skip branch creation.
 
-If the check passes, use `AskUserQuestion` or `clarify` before creating the branch:
+If the check passes, use `AskUserQuestion`, `request_user_input` or `clarify` before creating the branch:
 - Prompt: "Ready to create hotfix branch 'hotfix/[short-name]' from [base-ref]?"
 - Options:
   - `[A] Yes — create branch`
@@ -172,7 +172,7 @@ If STILL PRESENT: the hotfix failed — immediately re-open, assess rollback, an
 
 Schedule a post-incident review within 48 hours using `/retrospective hotfix`.
 
-Use `AskUserQuestion` or `clarify`:
+Use `AskUserQuestion`, `request_user_input` or `clarify`:
 - Prompt: "Hotfix complete. What's the next step?"
 - Options:
   - `[A] Run /smoke-check to verify the fix`

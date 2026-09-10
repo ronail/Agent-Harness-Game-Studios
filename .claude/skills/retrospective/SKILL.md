@@ -3,7 +3,7 @@ name: retrospective
 description: "Generates a sprint or milestone retrospective by analyzing completed work, velocity, blockers, and patterns. Produces actionable insights for the next iteration."
 argument-hint: "[sprint-N|milestone-name]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Bash, AskUserQuestion, clarify
+allowed-tools: Read, Glob, Grep, Write, Bash, AskUserQuestion, request_user_input, clarify
 model: sonnet
 ---
 
@@ -21,7 +21,7 @@ Before loading any data, glob for an existing retrospective file:
   (also check `production/sprints/sprint-[N]-retrospective.md` as an alternate location)
 - For milestone retrospectives: `production/retrospectives/retro-[milestone-name]-*.md`
 
-If a matching file is found, use `AskUserQuestion` or `clarify`:
+If a matching file is found, use `AskUserQuestion`, `request_user_input` or `clarify`:
 - Prompt: "An existing retrospective was found: [filename]. How do you want to proceed?"
 - Options:
   - `[A] Update existing — load it and add/revise sections with new data`
@@ -46,7 +46,7 @@ Read the sprint or milestone plan from the appropriate location:
 > "No sprint data found for [sprint/milestone]. Run `/sprint-status` to generate
 > sprint data first, or provide the sprint details manually."
 
-Then use `AskUserQuestion` or `clarify` to present two options:
+Then use `AskUserQuestion`, `request_user_input` or `clarify` to present two options:
 
 - **[A] Provide data manually** — ask the user to paste or describe the sprint
   tasks, dates, and outcomes; use that as the source of truth for the retrospective.
@@ -201,7 +201,7 @@ If no, stop here. Verdict: **BLOCKED** — user declined write.
 
 ## Phase 6: Next Steps
 
-Use `AskUserQuestion` or `clarify`:
+Use `AskUserQuestion`, `request_user_input` or `clarify`:
 - Prompt: "Retrospective complete. The action items and velocity data are ready. Would you like to start sprint planning now with this data pre-loaded?"
 - Options:
   - `[A] Yes — open sprint planning with retro action items and velocity delta pre-populated`
