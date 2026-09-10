@@ -175,6 +175,7 @@ to review the mapping and choose a session model.
 - [Git](https://git-scm.com/)
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (`npm install -g @anthropic-ai/claude-code`)
 - [Codex CLI](https://developers.openai.com/codex/cli)
+- [Hermes Agent](https://hermes-agent.nousresearch.com/docs) (optional alternative harness)
 - **Recommended**: [jq](https://jqlang.github.io/jq/) (for hook validation) and Python 3 (for JSON validation)
 
 Claude Code is the primary workflow runtime. Codex can use the project-local
@@ -198,11 +199,15 @@ All hooks fail gracefully if optional tools are missing — nothing breaks, you 
 
    # Codex
    codex
+
+   # Hermes (optional)
+   hermes
    ```
 
-3. **Run `/start`** — in Claude Code, or `/start codex` when using Codex. The
-   system asks where you are (no idea, vague concept,
-   clear design, existing work) and guides you to the right workflow. No assumptions.
+3. **Run `/start`** — in Claude Code, or `/start codex` when using Codex, or
+   `/start hermes` when using Hermes. The system asks where you are (no idea,
+   vague concept, clear design, existing work) and guides you to the right
+   workflow. No assumptions.
 
    Or jump directly to a specific skill if you already know what you need:
    - `/brainstorm` — explore game ideas from scratch
