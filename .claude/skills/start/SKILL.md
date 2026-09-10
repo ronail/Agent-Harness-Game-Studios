@@ -266,6 +266,12 @@ configuration exists. If it is missing, say:
 "No project-local Codex configuration was found. Add `.codex/config.toml` or
 continue with your existing Codex user configuration."
 
+Read `.codex/agent-models.toml` as well. This file is required for spawning
+studio agents because `.codex/config.toml` contains only the project-wide
+fallback model. If it is missing, say:
+"No Codex agent model map was found. Add `.codex/agent-models.toml` before
+spawning studio agents so their model tiers resolve explicitly."
+
 If the file exists, explain the shared model-tier mapping and the corresponding
 Codex model:
 
@@ -289,6 +295,21 @@ After the user selects a tier, show its corresponding model from the table
 above. If they choose `Keep current setting`, say: "Your current Codex model
 setting will remain active." Do not change the user's global Codex
 configuration from this skill.
+
+### Codex agent spawn rule
+
+When Codex creates a game-studio subagent, it must:
+
+1. Read the target definition in `.claude/agents/<agent-name>.md`.
+2. Read its YAML frontmatter `model` field. Treat an omitted field as `sonnet`.
+3. Resolve that tier through `.codex/agent-models.toml`.
+4. Pass the resolved model explicitly on the subagent or child-task request.
+
+For example, `producer`, `creative-director`, and `technical-director` use
+`model: opus`, so Codex must spawn them with `gpt-5.6-sol`; the project-wide
+Terra default must not silently replace that selection. The model mapping does
+not replace the original agent or skill instructions: read and follow those
+references as part of the same spawn.
 
 ---
 

@@ -6,9 +6,9 @@ approval_policy = "on-request"
 sandbox_mode = "workspace-write"
 
 # The Claude-compatible skill and agent frontmatter uses three model tiers:
-# haiku, sonnet, and opus. Codex uses a model identifier for each tier.
-# The standard tier is the project default. Use the model documented by
-# `/start codex` when a different tier is needed.
+# haiku, sonnet, and opus. Their Codex model IDs are defined in
+# .codex/agent-models.toml. Codex must pass the resolved ID explicitly when
+# spawning a studio agent; this setting is only the project-wide fallback.
 model = "gpt-5.6-terra"
 
 [features]
