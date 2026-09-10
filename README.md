@@ -157,20 +157,16 @@ definition is used directly — no changes are needed.
 When using **Codex as the harness**, the `model:` fields in skill and agent
 frontmatter remain the shared `haiku` / `sonnet` / `opus` tier labels. The
 project-local `.codex/config.toml` sets the standard GPT model and reasoning
-effort, while the other tier launch commands are:
+effort, while the tier mapping is:
 
-| Shared tier | Codex launch command | GPT model | Reasoning |
-|-------------|----------------------|-----------|-----------|
-| Haiku | `codex --model gpt-5.6-luna -c model_reasoning_effort="low"` | `gpt-5.6-luna` | `low` |
-| Sonnet | `codex --model gpt-5.6-terra -c model_reasoning_effort="medium"` | `gpt-5.6-terra` | `medium` |
-| Opus | `codex --model gpt-5.6-sol -c model_reasoning_effort="high"` | `gpt-5.6-sol` | `high` |
+| Shared tier | Codex model | Reasoning |
+|-------------|-------------|-----------|
+| Haiku | `gpt-5.6-luna` | `low` |
+| Sonnet | `gpt-5.6-terra` | `medium` |
+| Opus | `gpt-5.6-sol` | `high` |
 
-The standard tier is the project default. Run `/start codex` to review the
-mapping and choose a session command, then start Codex with for example:
-
-```bash
-codex --model gpt-5.6-terra -c model_reasoning_effort="medium"
-```
+The standard tier is the project default (`gpt-5.6-terra`). Run `/start codex`
+to review the mapping and choose a session model.
 
 ## Getting Started
 
@@ -306,7 +302,7 @@ follows:
 | `.claude/settings.json` permissions | `.codex/config.toml` | Approval policy and sandbox mode |
 | Permission rules | `.codex/rules/*.rules` | Command-specific allow, prompt, and forbidden decisions |
 | Claude hooks | `.codex/hooks.json` | Codex lifecycle and validation hook wiring |
-| Claude model tiers | `.codex/config.toml` and `codex --model` | GPT model and reasoning-effort equivalents |
+| Claude model tiers | `.codex/config.toml` model setting | GPT model and reasoning-effort equivalents |
 | User settings | `~/.codex/config.toml`, `~/.codex/hooks.json` | Personal Codex overrides |
 | Managed settings | Managed `requirements.toml` | Organization-enforced Codex settings |
 

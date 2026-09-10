@@ -16,11 +16,11 @@
 
 Skills and agents are assigned to model tiers based on task complexity:
 
-| Tier | Claude model | Codex command / GPT model | When to use |
-|------|--------------|---------------------------|-------------|
-| **Haiku** | `claude-haiku-4-5-20251001` | `codex --model gpt-5.6-luna -c model_reasoning_effort="low"` | Read-only status checks, formatting, simple lookups — no creative judgment needed |
-| **Sonnet** | `claude-sonnet-4-6` | `codex --model gpt-5.6-terra -c model_reasoning_effort="medium"` | Implementation, design authoring, analysis of individual systems — default for most work |
-| **Opus** | `claude-opus-4-6` | `codex --model gpt-5.6-sol -c model_reasoning_effort="high"` | Multi-document synthesis, high-stakes phase gate verdicts, cross-system holistic review |
+| Tier | Claude model | Codex model | When to use |
+|------|--------------|-------------|-------------|
+| **Haiku** | `claude-haiku-4-5-20251001` | `gpt-5.6-luna` (`low`) | Read-only status checks, formatting, simple lookups — no creative judgment needed |
+| **Sonnet** | `claude-sonnet-4-6` | `gpt-5.6-terra` (`medium`) | Implementation, design authoring, analysis of individual systems — default for most work |
+| **Opus** | `claude-opus-4-6` | `gpt-5.6-sol` (`high`) | Multi-document synthesis, high-stakes phase gate verdicts, cross-system holistic review |
 
 Skills with `model: haiku`: `/help`, `/sprint-status`, `/story-readiness`, `/scope-check`,
 `/project-stage-detect`, `/changelog`, `/patch-notes`, `/onboard`

@@ -318,13 +318,13 @@ is used directly — no changes are needed.
 When using **Codex as the harness**, the `model:` fields in skill and agent
 frontmatter remain the shared `haiku` / `sonnet` / `opus` tier labels. The
 project-local `.codex/config.toml` sets the standard GPT model and reasoning
-effort. Use the corresponding launch command for another tier:
+effort. The tier mapping is:
 
-| Shared tier | Codex launch command | GPT model | Reasoning |
-|-------------|----------------------|-----------|-----------|
-| Haiku | `codex --model gpt-5.6-luna -c model_reasoning_effort="low"` | `gpt-5.6-luna` | `low` |
-| Sonnet | `codex --model gpt-5.6-terra -c model_reasoning_effort="medium"` | `gpt-5.6-terra` | `medium` |
-| Opus | `codex --model gpt-5.6-sol -c model_reasoning_effort="high"` | `gpt-5.6-sol` | `high` |
+| Shared tier | Codex model | Reasoning |
+|-------------|-------------|-----------|
+| Haiku | `gpt-5.6-luna` | `low` |
+| Sonnet | `gpt-5.6-terra` | `medium` |
+| Opus | `gpt-5.6-sol` | `high` |
 
 The standard tier is the project default. Run `/start codex` during onboarding
-to review the mapping and choose a session command.
+to review the mapping and choose a session model.

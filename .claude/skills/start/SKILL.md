@@ -267,14 +267,13 @@ configuration exists. If it is missing, say:
 continue with your existing Codex user configuration."
 
 If the file exists, explain the shared model-tier mapping and the corresponding
-Codex launch commands. Codex model selection is a command-line setting, so do
-not describe these commands as project profile names:
+Codex model and reasoning effort:
 
-| Shared tier | Codex launch command | GPT model | Reasoning |
-|-------------|----------------------|-----------|-----------|
-| Haiku | `codex --model gpt-5.6-luna -c model_reasoning_effort="low"` | `gpt-5.6-luna` | `low` |
-| Sonnet | `codex --model gpt-5.6-terra -c model_reasoning_effort="medium"` | `gpt-5.6-terra` | `medium` |
-| Opus | `codex --model gpt-5.6-sol -c model_reasoning_effort="high"` | `gpt-5.6-sol` | `high` |
+| Shared tier | Codex model | Reasoning |
+|-------------|-------------|-----------|
+| Haiku | `gpt-5.6-luna` | `low` |
+| Sonnet | `gpt-5.6-terra` | `medium` |
+| Opus | `gpt-5.6-sol` | `high` |
 
 The standard tier is the project default. Use `AskUserQuestion` or `clarify` to
 ask:
@@ -286,9 +285,9 @@ ask:
   - `Deep` — Use `gpt-5.6-sol` with high reasoning for multi-document synthesis and phase gates.
   - `Keep current setting` — Leave the active Codex model unchanged.
 
-After the user selects a tier, show its corresponding launch command from the
-table above. If they choose `Keep current setting`, say: "Your current Codex
-model setting will remain active." Do not change the user's global Codex
+After the user selects a tier, show its corresponding model and reasoning effort
+from the table above. If they choose `Keep current setting`, say: "Your current
+Codex model setting will remain active." Do not change the user's global Codex
 configuration from this skill.
 
 ---
