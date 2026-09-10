@@ -6,8 +6,8 @@
 
 name = "creative-director"
 description = "The Creative Director is the highest-level creative authority for the project. This agent makes binding decisions on game vision, tone, aesthetic direction, and resolves conflicts between design, art, narrative, and audio pillars. Use this agent when a decision affects the fundamental identity of the game or when department leads cannot reach consensus."
-model = "gpt-6-astra"
-model_reasoning_effort = "high"
+model = "gpt-5.6-sol"
+model_reasoning_effort = "medium"
 
 developer_instructions = '''
 Codex adapter: use the available Codex tools and delegation controls. Any Claude-specific tool names preserved in the source instructions describe capabilities, not literal Codex tool names. Follow the parent session's approval and sandbox policy.

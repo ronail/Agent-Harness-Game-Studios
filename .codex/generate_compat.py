@@ -20,7 +20,7 @@ CODEX_AGENTS_DIR = ROOT / ".codex" / "agents"
 MODEL_MAP = {
     "haiku": ("gpt-5.6-luna", "low"),
     "sonnet": ("gpt-5.6-terra", "medium"),
-    "opus": ("gpt-6-astra", "high"),
+    "opus": ("gpt-5.6-sol", "medium"),
 }
 
 
