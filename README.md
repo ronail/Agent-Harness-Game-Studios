@@ -1,7 +1,7 @@
 <p align="center">
   <h1 align="center">Agent Harness Game Studios</h1>
   <p align="center">
-    Turn a single Claude Code session into a full game development studio.
+    Turn an AI coding session into a full game development studio.
     <br />
     49 agents. 73 skills. One coordinated AI team.
   </p>
@@ -13,7 +13,8 @@
   <a href=".claude/skills"><img src="https://img.shields.io/badge/skills-73-green" alt="73 Skills"></a>
   <a href=".claude/hooks"><img src="https://img.shields.io/badge/hooks-12-orange" alt="12 Hooks"></a>
   <a href=".claude/rules"><img src="https://img.shields.io/badge/rules-11-red" alt="11 Rules"></a>
-  <a href="https://docs.anthropic.com/en/docs/claude-code"><img src="https://img.shields.io/badge/built%20for-Claude%20Code-f5f5f5?logo=anthropic" alt="Built for Claude Code"></a>
+  <a href="https://docs.anthropic.com/en/docs/claude-code"><img src="https://img.shields.io/badge/Claude%20Code-supported-f5f5f5?logo=anthropic" alt="Claude Code supported"></a>
+  <a href="https://developers.openai.com/codex/cli"><img src="https://img.shields.io/badge/Codex-supported-412991?logo=openai&logoColor=white" alt="Codex supported"></a>
   <a href="https://www.buymeacoffee.com/donchitos3"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Support%20this%20project-FFDD00?logo=buymeacoffee&logoColor=black" alt="Buy Me a Coffee"></a>
   <a href="https://github.com/sponsors/Donchitos"><img src="https://img.shields.io/badge/GitHub%20Sponsors-Support%20this%20project-ea4aaa?logo=githubsponsors&logoColor=white" alt="GitHub Sponsors"></a>
 </p>
@@ -24,7 +25,7 @@
 
 Building a game solo with AI is powerful — but a single chat session has no structure. No one stops you from hardcoding magic numbers, skipping design docs, or writing spaghetti code. There's no QA pass, no design review, no one asking "does this actually fit the game's vision?"
 
-**Agent Harness Game Studios** solves this by giving your AI session the structure of a real studio. Instead of one general-purpose assistant, you get 49 specialized agents organized into a studio hierarchy — directors who guard the vision, department leads who own their domains, and specialists who do the hands-on work. Each agent has defined responsibilities, escalation paths, and quality gates.
+**Agent Harness Game Studios** solves this by giving your AI session the structure of a real studio. Instead of one general-purpose assistant, you get 49 specialized agents organized into a studio hierarchy — directors who guard the vision, department leads who own their domains, and specialists who do the hands-on work. Each agent has defined responsibilities, escalation paths, and quality gates. The repository's workflows are Claude Code-first, with project-level safety configuration for Codex and shared conventions that can also be used with Hermes.
 
 The result: you still make every decision, but now you have a team that asks the right questions, catches mistakes early, and keeps your project organized from first brainstorm to launch.
 
@@ -159,6 +160,10 @@ definition is used directly — no changes are needed.
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (`npm install -g @anthropic-ai/claude-code`)
 - **Recommended**: [jq](https://jqlang.github.io/jq/) (for hook validation) and Python 3 (for JSON validation)
 
+Claude Code is the primary workflow runtime. Codex can use the project-local
+`.codex/` configuration, and Hermes can follow the repository's shared agent,
+skill, hook, and rule conventions.
+
 All hooks fail gracefully if optional tools are missing — nothing breaks, you just lose validation.
 
 ### Setup
@@ -202,6 +207,11 @@ CLAUDE.md                           # Master configuration
   docs/
     workflow-catalog.yaml           # 7-phase pipeline definition (read by /help)
     templates/                      # 41 document templates
+.codex/
+  config.toml                       # Approval policy, sandbox mode, and feature flags
+  hooks.json                        # Codex lifecycle and validation hook wiring
+  hooks/                            # Codex command guard and adapter hooks
+  rules/                            # Codex command-specific safety rules
 src/                                # Game source code
 assets/                             # Art, audio, VFX, shaders, data files
 design/                             # GDDs, narrative docs, level designs
@@ -257,7 +267,24 @@ You stay in control. The agents provide structure and expertise, not autonomy.
 
 > **Note**: `validate-commit.sh`, `validate-assets.sh`, and `validate-skill-change.sh` fire on every Bash/Write tool call and exit immediately (exit 0) when the command or file path is not relevant. This is normal hook behavior — not a performance concern.
 
-**Permission rules** in `settings.json` auto-allow safe operations (git status, test runs) and block dangerous ones (force push, `rm -rf`, reading `.env` files).
+**Permission rules** in `.claude/settings.json` auto-allow safe operations and block dangerous ones (force push, `rm -rf`, reading `.env` files). Codex uses `.codex/config.toml` for approval and sandbox defaults, `.codex/rules/*.rules` for command-specific policy, and `.codex/hooks.json` for lifecycle hooks. The Codex command guard applies the same destructive-command and secret-file protections to Bash calls.
+
+### Agent Configuration Compatibility
+
+The project keeps its detailed workflow definitions in `.claude/`, so Claude
+Code remains the primary supported runtime. The configuration layers map as
+follows:
+
+| Claude Code | Codex | Purpose |
+|-------------|-------|---------|
+| `.claude/settings.json` permissions | `.codex/config.toml` | Approval policy and sandbox mode |
+| Permission rules | `.codex/rules/*.rules` | Command-specific allow, prompt, and forbidden decisions |
+| Claude hooks | `.codex/hooks.json` | Codex lifecycle and validation hook wiring |
+| User settings | `~/.codex/config.toml`, `~/.codex/hooks.json` | Personal Codex overrides |
+| Managed settings | Managed `requirements.toml` | Organization-enforced Codex settings |
+
+Hermes does not have a project-specific configuration layer in this repository;
+it can use the shared repository conventions and documentation.
 
 ### Path-Scoped Rules
 
