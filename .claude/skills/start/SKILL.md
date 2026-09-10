@@ -1,7 +1,7 @@
 ---
 name: start
 description: "First-time onboarding — asks where you are, then guides you to the right workflow. No assumptions."
-argument-hint: "[claude|hermes]"
+argument-hint: "[claude|codex|hermes]"
 user-invocable: true
 allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, Bash, clarify
 model: sonnet
@@ -13,9 +13,10 @@ This skill writes one file: `production/review-mode.txt` (review mode config set
 
 This skill is the entry point for new users. It does NOT assume you have a game idea, an engine preference, or any prior experience. It asks first, then routes you to the right workflow.
 
-**Optional argument**: `/start [claude|hermes]`
+**Optional argument**: `/start [claude|codex|hermes]`
 
 - Omitting the argument defaults to `claude` mode
+- `/start codex` — reviews the project-local Codex model setup (Phase 3e)
 - `/start hermes` — enables Hermes-specific profile mapping (Phase 3d)
 - `/start claude` (explicit) — standard Claude Code mode without Hermes profile mapping
 
@@ -217,9 +218,10 @@ if the Hermes CLI is installed (`command -v hermes`).
   will use the agent definitions' `model` fields directly." and proceed to
   Phase 3b.
 
-**If the `hermes` argument was not provided** (default `claude` mode): Proceed
+**If the argument is omitted or `claude` is provided** (Claude mode): Proceed
 directly to Phase 3b. Model resolution uses the agent definitions' `model`
-fields directly.
+fields directly. If `codex` is provided, skip this phase and continue to
+Phase 3e.
 
 Create the `production/` directory if it does not exist.
 
@@ -244,6 +246,49 @@ Create the `production/` directory if it does not exist.
   `/start hermes` again or manually creating
   `production/hermes-profile-mapping.json`."
 - Proceed to Phase 3b.
+
+---
+
+## Phase 3e: Configure Codex Model Setup
+
+**Only applicable when the `codex` argument is provided.** This phase is
+skipped if the argument is omitted or if `claude` or `hermes` is explicitly
+provided.
+
+Use `Bash` to check whether the Codex CLI is installed (`command -v codex`). If
+it is not installed, say: "Codex CLI not detected. Install it from
+https://developers.openai.com/codex/cli, then run `/start codex` again to
+configure model selection." Continue to the configuration check so the user
+can still review the project files.
+
+Read `.codex/config.toml` and confirm that the project-local Codex
+configuration exists. If it is missing, say:
+"No project-local Codex configuration was found. Add `.codex/config.toml` or
+continue with your existing Codex user configuration."
+
+If the file exists, explain the shared model-tier mapping and the corresponding
+Codex model:
+
+| Shared tier | Codex model |
+|-------------|-------------|
+| Haiku | `gpt-5.6-luna` |
+| Sonnet | `gpt-5.6-terra` |
+| Opus | `gpt-5.6-sol` |
+
+The standard tier is the project default. Use `AskUserQuestion` or `clarify` to
+ask:
+
+- **Prompt**: "Which Codex model tier would you like to use for this session?"
+- **Options**:
+  - `Fast` — Use `gpt-5.6-luna` for quick status checks and simple lookups.
+  - `Standard (recommended)` — Use `gpt-5.6-terra` for implementation and design work.
+  - `Deep` — Use `gpt-5.6-sol` for multi-document synthesis and phase gates.
+  - `Keep current setting` — Leave the active Codex model unchanged.
+
+After the user selects a tier, show its corresponding model from the table
+above. If they choose `Keep current setting`, say: "Your current Codex model
+setting will remain active." Do not change the user's global Codex
+configuration from this skill.
 
 ---
 

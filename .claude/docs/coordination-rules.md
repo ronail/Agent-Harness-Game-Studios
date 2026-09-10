@@ -16,11 +16,11 @@
 
 Skills and agents are assigned to model tiers based on task complexity:
 
-| Tier | Model | When to use |
-|------|-------|-------------|
-| **Haiku** | `claude-haiku-4-5-20251001` | Read-only status checks, formatting, simple lookups — no creative judgment needed |
-| **Sonnet** | `claude-sonnet-4-6` | Implementation, design authoring, analysis of individual systems — default for most work |
-| **Opus** | `claude-opus-4-6` | Multi-document synthesis, high-stakes phase gate verdicts, cross-system holistic review |
+| Tier | Claude model | Codex model | When to use |
+|------|--------------|-------------|-------------|
+| **Haiku** | `claude-haiku-4-5-20251001` | `gpt-5.6-luna` | Read-only status checks, formatting, simple lookups — no creative judgment needed |
+| **Sonnet** | `claude-sonnet-4-6` | `gpt-5.6-terra` | Implementation, design authoring, analysis of individual systems — default for most work |
+| **Opus** | `claude-opus-4-6` | `gpt-5.6-sol` | Multi-document synthesis, high-stakes phase gate verdicts, cross-system holistic review |
 
 Skills with `model: haiku`: `/help`, `/sprint-status`, `/story-readiness`, `/scope-check`,
 `/project-stage-detect`, `/changelog`, `/patch-notes`, `/onboard`
@@ -36,6 +36,12 @@ high-stakes output; otherwise leave unset (Sonnet).
 > resolution is controlled by Hermes profile configuration. Run `/start hermes`
 > during onboarding to set up profile mappings interactively. See
 > `.claude/docs/quick-start.md` → Optional: Hermes Profile Mapping.
+
+> **Codex Model Setup**: When using Codex as the harness, the `model:` fields
+> in skill/agent frontmatter remain the shared tier labels. The project-local
+> `.codex/config.toml` sets the standard GPT model. Run `/start codex` during
+> onboarding to review the full tier mapping and choose the model for the
+> session.
 
 ## Subagents vs Agent Teams
 

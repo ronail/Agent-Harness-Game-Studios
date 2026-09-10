@@ -6,7 +6,7 @@
 
 | Command | Purpose |
 |---------|---------|
-| `/start` | First-time onboarding — asks where you are, then guides you to the right workflow |
+| `/start` | First-time onboarding — asks where you are, then guides you to the right workflow; supports Claude, Codex model setup, and Hermes profile mapping |
 | `/help` | Context-aware "what do I do next?" — reads current stage and surfaces the required next step |
 | `/project-stage-detect` | Full project audit — detect phase, identify existence gaps, recommend next steps |
 | `/setup-engine` | Configure engine + version, detect knowledge gaps, populate version-aware reference docs |
