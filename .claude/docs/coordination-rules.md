@@ -18,9 +18,9 @@ Skills and agents are assigned to model tiers based on task complexity:
 
 | Tier | Claude model | Codex model | When to use |
 |------|--------------|-------------|-------------|
-| **Haiku** | `claude-haiku-4-5-20251001` | `gpt-5.6-luna` (`low`) | Read-only status checks, formatting, simple lookups — no creative judgment needed |
-| **Sonnet** | `claude-sonnet-4-6` | `gpt-5.6-terra` (`medium`) | Implementation, design authoring, analysis of individual systems — default for most work |
-| **Opus** | `claude-opus-4-6` | `gpt-5.6-sol` (`high`) | Multi-document synthesis, high-stakes phase gate verdicts, cross-system holistic review |
+| **Haiku** | `claude-haiku-4-5-20251001` | `gpt-5.6-luna` | Read-only status checks, formatting, simple lookups — no creative judgment needed |
+| **Sonnet** | `claude-sonnet-4-6` | `gpt-5.6-terra` | Implementation, design authoring, analysis of individual systems — default for most work |
+| **Opus** | `claude-opus-4-6` | `gpt-5.6-sol` | Multi-document synthesis, high-stakes phase gate verdicts, cross-system holistic review |
 
 Skills with `model: haiku`: `/help`, `/sprint-status`, `/story-readiness`, `/scope-check`,
 `/project-stage-detect`, `/changelog`, `/patch-notes`, `/onboard`
@@ -39,9 +39,9 @@ high-stakes output; otherwise leave unset (Sonnet).
 
 > **Codex Model Setup**: When using Codex as the harness, the `model:` fields
 > in skill/agent frontmatter remain the shared tier labels. The project-local
-> `.codex/config.toml` sets the standard GPT model and reasoning effort. Run
-> `/start codex` during onboarding to review the full tier mapping and choose
-> the launch command for the session.
+> `.codex/config.toml` sets the standard GPT model. Run `/start codex` during
+> onboarding to review the full tier mapping and choose the model for the
+> session.
 
 ## Subagents vs Agent Teams
 

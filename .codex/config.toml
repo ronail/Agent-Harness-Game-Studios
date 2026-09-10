@@ -6,11 +6,10 @@ approval_policy = "on-request"
 sandbox_mode = "workspace-write"
 
 # The Claude-compatible skill and agent frontmatter uses three model tiers:
-# haiku, sonnet, and opus. Codex uses a model plus a reasoning effort instead.
-# The standard tier is the project default. Use the commands documented by
+# haiku, sonnet, and opus. Codex uses a model identifier for each tier.
+# The standard tier is the project default. Use the model documented by
 # `/start codex` when a different tier is needed.
 model = "gpt-5.6-terra"
-model_reasoning_effort = "medium"
 
 [features]
 hooks = true

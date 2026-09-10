@@ -267,27 +267,27 @@ configuration exists. If it is missing, say:
 continue with your existing Codex user configuration."
 
 If the file exists, explain the shared model-tier mapping and the corresponding
-Codex model and reasoning effort:
+Codex model:
 
-| Shared tier | Codex model | Reasoning |
-|-------------|-------------|-----------|
-| Haiku | `gpt-5.6-luna` | `low` |
-| Sonnet | `gpt-5.6-terra` | `medium` |
-| Opus | `gpt-5.6-sol` | `high` |
+| Shared tier | Codex model |
+|-------------|-------------|
+| Haiku | `gpt-5.6-luna` |
+| Sonnet | `gpt-5.6-terra` |
+| Opus | `gpt-5.6-sol` |
 
 The standard tier is the project default. Use `AskUserQuestion` or `clarify` to
 ask:
 
 - **Prompt**: "Which Codex model tier would you like to use for this session?"
 - **Options**:
-  - `Fast` — Use `gpt-5.6-luna` with low reasoning for quick status checks and simple lookups.
-  - `Standard (recommended)` — Use `gpt-5.6-terra` with medium reasoning for implementation and design work.
-  - `Deep` — Use `gpt-5.6-sol` with high reasoning for multi-document synthesis and phase gates.
+  - `Fast` — Use `gpt-5.6-luna` for quick status checks and simple lookups.
+  - `Standard (recommended)` — Use `gpt-5.6-terra` for implementation and design work.
+  - `Deep` — Use `gpt-5.6-sol` for multi-document synthesis and phase gates.
   - `Keep current setting` — Leave the active Codex model unchanged.
 
-After the user selects a tier, show its corresponding model and reasoning effort
-from the table above. If they choose `Keep current setting`, say: "Your current
-Codex model setting will remain active." Do not change the user's global Codex
+After the user selects a tier, show its corresponding model from the table
+above. If they choose `Keep current setting`, say: "Your current Codex model
+setting will remain active." Do not change the user's global Codex
 configuration from this skill.
 
 ---
