@@ -1,3 +1,4 @@
+# Canonical source: ../SKILL.md
 interface:
   display_name: "Security Audit"
   short_description: "Audit the game for security vulnerabilities: save tampering, cheat vectors, network exploits, data exposure, and input validation gaps. Produces a prioritise..."

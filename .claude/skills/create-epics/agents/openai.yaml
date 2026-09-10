@@ -1,3 +1,4 @@
+# Canonical source: ../SKILL.md
 interface:
   display_name: "Create Epics"
   short_description: "Translate approved GDDs + architecture into epics — one epic per architectural module. Defines scope, governing ADRs, engine risk, and untraced requirements...."

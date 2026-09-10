@@ -1,3 +1,4 @@
+# Canonical source: ../SKILL.md
 interface:
   display_name: "Vertical Slice"
   short_description: "Pre-Production validation — build a production-quality end-to-end build to confirm the full game loop is achievable before committing to Production. Run afte..."

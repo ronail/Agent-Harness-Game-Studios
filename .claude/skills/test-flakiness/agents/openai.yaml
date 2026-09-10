@@ -1,3 +1,4 @@
+# Canonical source: ../SKILL.md
 interface:
   display_name: "Test Flakiness"
   short_description: "Detect non-deterministic (flaky) tests by reading CI run logs or test result history. Aggregates pass rates per test, identifies intermittent failures, recom..."

@@ -1,3 +1,4 @@
+# Canonical source: ../SKILL.md
 interface:
   display_name: "Team Level"
   short_description: "Orchestrate level design team: level-designer + narrative-director + world-builder + art-director + systems-designer + qa-tester for complete area/level crea..."

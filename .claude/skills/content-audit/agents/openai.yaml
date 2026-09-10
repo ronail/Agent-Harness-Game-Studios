@@ -1,3 +1,4 @@
+# Canonical source: ../SKILL.md
 interface:
   display_name: "Content Audit"
   short_description: "Audit GDD-specified content counts against implemented content. Identifies what's planned vs built."
