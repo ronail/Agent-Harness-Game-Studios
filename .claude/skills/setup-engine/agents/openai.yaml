@@ -1,4 +1,3 @@
-# Canonical source: ../SKILL.md
 interface:
   display_name: "Setup Engine"
   short_description: "Configure the project's game engine and version. Pins the engine in CLAUDE.md, detects knowledge gaps, and populates engine reference docs via WebSearch when..."

@@ -1,4 +1,3 @@
-# Canonical source: ../SKILL.md
 interface:
   display_name: "Quick Design"
   short_description: "Lightweight design spec for small changes — tuning adjustments, minor mechanics, balance tweaks. Skips full GDD authoring when a system GDD already exists or..."

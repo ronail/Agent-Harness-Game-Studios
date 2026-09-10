@@ -1,4 +1,3 @@
-# Canonical source: ../SKILL.md
 interface:
   display_name: "Test Helpers"
   short_description: "Generate engine-specific test helper libraries for the project's test suite. Reads existing test patterns and produces tests/helpers/ with assertion utilitie..."

@@ -1,4 +1,3 @@
-# Canonical source: ../SKILL.md
 interface:
   display_name: "Sprint Plan"
   short_description: "Generates a new sprint plan or updates an existing one based on the current milestone, completed work, and available capacity. Pulls context from production..."

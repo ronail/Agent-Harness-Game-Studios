@@ -1,4 +1,3 @@
-# Canonical source: ../SKILL.md
 interface:
   display_name: "Architecture Review"
   short_description: "Validates completeness and consistency of the project architecture against all GDDs. Builds a traceability matrix mapping every GDD technical requirement to..."

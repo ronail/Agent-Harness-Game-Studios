@@ -1,4 +1,3 @@
-# Canonical source: ../SKILL.md
 interface:
   display_name: "Changelog"
   short_description: "Auto-generates a changelog from git commits, sprint data, and design documents. Produces both internal and player-facing versions."

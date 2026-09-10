@@ -80,7 +80,6 @@ def generate_skill_metadata() -> int:
         target.write_text(
             "".join(
                 [
-                    "# Canonical source: ../SKILL.md\n",
                     "interface:\n",
                     f"  display_name: {yaml_string(display_name(name))}\n",
                     f"  short_description: {yaml_string(short_description(description))}\n",
