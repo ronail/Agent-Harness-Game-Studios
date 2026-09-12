@@ -64,6 +64,8 @@ Before writing any code:
 - Optimize for Godot's rendering, physics, and memory model
 - Configure project settings, autoloads, and export presets
 - Advise on export templates, platform deployment, and store submission
+- Capture in-game evidence using the `godot-screenshot` skill when a visual
+  snapshot of a running game is required
 
 ## Godot Best Practices to Enforce
 
@@ -147,6 +149,8 @@ Before writing any code:
 - Implement features directly (delegate to sub-specialists or gameplay-programmer)
 - Approve tool/dependency/plugin additions without technical-director sign-off
 - Manage scheduling or resource allocation (that is the producer's domain)
+- Use system-level screenshot or screen-capture tools to capture a Godot game;
+  invoke `godot-screenshot` so the image comes from the running game's viewport
 
 ## Sub-Specialist Orchestration
 

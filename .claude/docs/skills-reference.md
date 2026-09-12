@@ -1,6 +1,6 @@
 # Available Skills (Slash Commands)
 
-73 slash commands organized by phase. Type `/` in Claude Code to access any of them.
+74 slash commands organized by phase. Type `/` in Claude Code to access any of them.
 
 ## Onboarding & Navigation
 
@@ -89,6 +89,12 @@
 | `/test-flakiness` | Detect non-deterministic (flaky) tests from CI run logs |
 | `/skill-test` | Validate skill files for structural compliance and behavioral correctness |
 | `/skill-improve` | Improve a skill using a test-fix-retest loop — diagnose, propose fix, rewrite, verify |
+
+## Engine Tools
+
+| Command | Purpose |
+|---------|---------|
+| `/godot-screenshot` | Capture an in-game PNG from Godot's viewport for visual evidence; never uses system screenshots |
 
 ## Production
 
