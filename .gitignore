@@ -44,6 +44,10 @@ dist/
 export_presets.cfg
 # Uncomment if using Godot:
 # *.import
+# NOTE: *.uid files must NOT be ignored — commit them (see docs/architecture/ADR-godot-uid-vcs-policy.md).
+# Godot 4.4+ *.uid files are deterministic, stable resource identities referenced by
+# committed uid:// links in .tscn/.tres files; gitignoring them causes UID drift and
+# broken references across clones.
 
 # === Engine: Unity ===
 [Ll]ibrary/
