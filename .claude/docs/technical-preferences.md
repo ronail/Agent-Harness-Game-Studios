@@ -47,7 +47,7 @@
 ## Forbidden Patterns
 
 <!-- Add patterns that should never appear in this project's codebase -->
-- [None configured yet — add as architectural decisions are made]
+- Gitignoring `*.uid` files (Godot). `.uid` files must always be committed to git, same as `.import` files — see [ADR-godot-uid-vcs-policy.md](../../docs/architecture/ADR-godot-uid-vcs-policy.md). Gitignoring them causes UID drift between clones and breaks `uid://` references committed in scenes/resources.
 
 ## Allowed Libraries / Addons
 
