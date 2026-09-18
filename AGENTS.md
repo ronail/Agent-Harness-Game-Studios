@@ -25,3 +25,13 @@ Example: `producer`, `creative-director`, and `technical-director` declare
 Before spawning, also read any original skill referenced by the agent or
 orchestration workflow. The Codex model mapping changes execution selection;
 it does not replace the original skill or agent instructions.
+
+## Feature Request & Bug Report Handling Protocol
+
+Every feature request or bug report follows a **3-phase protocol**:
+
+1. **Digest & Breakdown (Producer)**: The `producer` agent reads and decomposes the request into tasks with acceptance criteria.
+2. **Coordinate & Handle**: The producer delegates tasks to responsible domain agents. Agents must not begin until assigned.
+3. **Verify**: The producer (or originating director) verifies all acceptance criteria are met and signs off.
+
+**Escalation**: If the producer is unavailable, `creative-director` (features) or `technical-director` (bugs) may act as interim coordinator, re-delegating to the producer when available.
