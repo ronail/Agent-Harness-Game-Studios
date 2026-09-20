@@ -117,6 +117,7 @@ Ask yourself: "What department would handle this in a real studio?"
 | `/reverse-document` | Generate design/architecture docs from existing code |
 | `/milestone-review` | Reviews milestone progress |
 | `/retrospective` | Runs sprint/milestone retrospective |
+| `/feature-request` | Tiered: simple → domain agent; complex → producer (3-phase) |
 | `/bug-report` | Structured bug report creation |
 | `/playtest-report` | Creates or analyzes playtest feedback |
 | `/onboard` | Generates onboarding docs for a role |

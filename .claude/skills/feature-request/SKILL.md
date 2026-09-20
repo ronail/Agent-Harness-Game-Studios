@@ -80,7 +80,7 @@ Scan `$ARGUMENTS[0]` for domain keywords to determine routing:
    - Otherwise → estimate 1 story
 3. **Flag for opus-level consultation**: If the description contains technical
    architecture keywords (architect, database, network, security, performance,
-   scaling, migration, refactor, rewrite, migration), treat as **Complex** even
+   scaling, migration, refactor, rewrite), treat as **Complex** even
    if domain count is ≤ 2 — these require `technical-director` (opus) review.
 4. **Route**:
    - If `domains ≤ 2` AND `estimated_stories ≤ 3` → **Simple** → proceed to Phase 1A (Direct Delegation)

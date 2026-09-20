@@ -42,16 +42,6 @@ Every task follows: **Question -> Options -> Decision -> Draft -> Approval**
 
 See `docs/COLLABORATIVE-DESIGN-PRINCIPLE.md` for full protocol and examples.
 
-## Feature Request & Bug Report Handling
-
-Feature requests and bug reports follow a **Producer-led protocol**:
-
-1. **Digest & Breakdown**: The `producer` agent receives every request, clarifies scope, decomposes into tasks with acceptance criteria.
-2. **Coordinate & Delegate**: The producer assigns tasks to responsible domain agents. Agents do NOT begin until assigned with defined scope and acceptance criteria.
-3. **Verify**: The producer (or originating director) validates all acceptance criteria and signs off.
-
-If the producer is unavailable, `creative-director` (features) or `technical-director` (bugs) act as interim coordinator and re-delegate when the producer is available.
-
 > **First session?** If the project has no engine configured and no game concept,
 > run `/start` to begin the guided onboarding flow.
 
