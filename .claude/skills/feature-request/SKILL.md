@@ -57,7 +57,52 @@ Then stop — do not spawn any agents.
 
 ---
 
-## Phase 0.5: Complexity Assessment
+## Phase 1: SDLC Validity Check
+
+Before complexity assessment, validate that the feature request itself is
+**valid, actionable, and ready for routing**. This is a lightweight, read-only
+check (Haiku-tier, consistent with `/scope-check`) that prevents underspecified
+requests from consuming higher-tier agent budget on clarification that should
+have happened upfront.
+
+**Approach**: Evaluate the request against 4 validity dimensions, reading
+relevant project context files (no director gates spawned). Each dimension
+is assessed as PASS / NEEDS CLARIFICATION / BLOCKED.
+
+### The 4-Step Validity Framework
+
+| Step | Dimension | What to verify | Sources to read |
+|------|-----------|---------------|-----------------|
+| **1** | **Strategic Alignment** (The "Why") | Does this feature align with current 3–12 month vision? Will it drive key business metrics? Is the request from core user personas? | `design/gdd/game-concept.md` (pillars/vision), `production/milestones/` |
+| **2** | **Value & Impact** (The "What") | Does it solve a root-cause problem (not just a symptom)? How often will users interact with it? Is projected value > cost to build? | Feature description argument, `design/gdd/`, existing stories |
+| **3** | **Technical Feasibility** (The "How") | Can current architecture support this? Security/compliance risks? Long-term maintenance burden or technical debt? | `production/stage.txt` (current phase), `docs/architecture/architecture.md`, ADRs in `docs/architecture/` |
+| **4** | **Scope & Resources** (The "Who & When") | Do we have design/eng/QA bandwidth now? What existing roadmap items must be delayed? Dependencies identified? In/out of scope clear? | `production/sprints/` (current capacity), `production/milestones/`, feature description argument |
+
+**Assessment algorithm**:
+1. Read project context: `production/stage.txt` for current phase,
+   `design/gdd/game-concept.md` for pillars,
+   `production/sprints/` for current sprint/capacity,
+   `docs/architecture/` for technical constraints.
+2. Evaluate each of the 4 steps as PASS / NEEDS CLARIFICATION / BLOCKED.
+3. Assign an overall verdict:
+   - **VALID** — all 4 steps pass (or at most 2 are NEEDS CLARIFICATION)
+   - **NEEDS CLARIFICATION** — 3–4 steps are NEEDS CLARIFICATION
+   - **BLOCKED** — ≥1 step is BLOCKED (no strategic alignment, infeasible, unbounded scope, or untestable outcomes)
+
+### Verdict outcomes
+
+| Verdict | Behavior |
+|---------|----------|
+| **VALID** | Proceed to Phase 2 (Complexity Assessment) |
+| **NEEDS CLARIFICATION** | Present the checklist with gaps flagged. Ask targeted clarifying questions via the structured UI. Offer: `[A] Clarify now — answer the questions and re-run` / `[B] Proceed anyway — I accept the risk` |
+| **BLOCKED** | Do NOT route. Present specific gaps. Offer: `[A] Provide more detail and re-run` / `[B] Cancel — defer this feature` |
+
+> **Never auto-advance a BLOCKED request.** The verdict is advisory but BLOCKED
+> requests must not consume producer or domain agent budget without user sign-off.
+
+---
+
+## Phase 2: Complexity Assessment
 
 Scan `$ARGUMENTS[0]` for domain keywords to determine routing:
 
@@ -74,7 +119,7 @@ Scan `$ARGUMENTS[0]` for domain keywords to determine routing:
 
 **Assessment algorithm**:
 1. **Count domains**: Scan the description for keywords across all 6 domains. Count how many distinct domains have ≥ 1 match.
-2. **Estimate stories**: 
+2. **Estimate stories**:
    - If the description mentions "epic" or lists 2+ distinct features → estimate ≥ 3 stories
    - If "and" connects 2+ features → estimate 2 stories
    - Otherwise → estimate 1 story
@@ -83,12 +128,12 @@ Scan `$ARGUMENTS[0]` for domain keywords to determine routing:
    scaling, migration, refactor, rewrite), treat as **Complex** even
    if domain count is ≤ 2 — these require `technical-director` (opus) review.
 4. **Route**:
-   - If `domains ≤ 2` AND `estimated_stories ≤ 3` → **Simple** → proceed to Phase 1A (Direct Delegation)
-   - If `domains > 2` OR `estimated_stories > 3` → **Complex** → proceed to Phase 1B (Producer Delegation)
+   - If `domains ≤ 2` AND `estimated_stories ≤ 3` → **Simple** → proceed to Phase 3A (Direct Delegation)
+   - If `domains > 2` OR `estimated_stories > 3` → **Complex** → proceed to Phase 3B (Producer Delegation)
 
 ---
 
-## Phase 1A: Direct Delegation (Simple Route)
+## Phase 3A: Direct Delegation (Simple Route)
 
 Spawn the domain agent for the **dominant** (highest keyword match count) domain
 via `delegate_task` with context:
@@ -117,11 +162,11 @@ via `delegate_task` with context:
 > If you identify cross-domain concerns, surface them for the user to decide
 > whether to re-route to the producer."
 
-**Wait for results**. Then proceed to Phase 2A (Review Direct Delegation).
+**Wait for results**. Then proceed to Phase 4A (Review Direct Delegation).
 
 ---
 
-## Phase 1B: Producer Delegation (Complex Route)
+## Phase 3B: Producer Delegation (Complex Route)
 
 Spawn `producer` via `delegate_task` with full context:
 
@@ -168,11 +213,11 @@ Spawn `producer` via `delegate_task` with full context:
 Wait for the producer's full report. The producer may spawn its own subagents
 (qa-tester, game-designer, etc.) — that is expected.
 
-Then proceed to Phase 2B (Review Producer Delegation).
+Then proceed to Phase 4B (Review Producer Delegation).
 
 ---
 
-## Phase 2A: Review Direct Delegation
+## Phase 4A: Review Direct Delegation
 
 Review the domain agent's response:
 
@@ -189,7 +234,7 @@ Review the domain agent's response:
 
 ---
 
-## Phase 2B: Review Producer Delegation
+## Phase 4B: Review Producer Delegation
 
 Review the producer's response (Complex route only):
 
@@ -209,7 +254,7 @@ Review the producer's response (Complex route only):
 
 ---
 
-## Phase 3: Verify
+## Phase 5: Verify
 
 **For Direct Delegation (Simple)**: The domain agent has provided a task
 breakdown with acceptance criteria. Present the breakdown to the user and
@@ -225,7 +270,7 @@ report. The producer validates that all acceptance criteria are met.
 
 ---
 
-## Phase 4: Output
+## Phase 6: Output
 
 Present a concise summary:
 
@@ -233,6 +278,7 @@ Present a concise summary:
 ## Feature Request Processed
 
 **Request**: [feature description]
+**Validity**: [VALID / NEEDS CLARIFICATION / BLOCKED]
 **Routing**: [Direct Delegation → [agent name] / Producer-led → producer]
 **Verdict**: [APPROVED / CONCERNS / BLOCKED]
 
@@ -261,3 +307,4 @@ coordination. Re-run `/feature-request` to route through the producer.
 - `/create-stories [epic-slug]` — to break epics into implementable story files
 - `/sprint-plan new` — to schedule the work into a sprint
 - `/scope-check` — to verify no scope creep against the original intent
+- Re-run `/feature-request` with clarifications if validity was NEEDS CLARIFICATION
