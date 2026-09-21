@@ -128,12 +128,66 @@ Scan `$ARGUMENTS[0]` for domain keywords to determine routing:
    scaling, migration, refactor, rewrite), treat as **Complex** even
    if domain count is ≤ 2 — these require `technical-director` (opus) review.
 4. **Route**:
-   - If `domains ≤ 2` AND `estimated_stories ≤ 3` → **Simple** → proceed to Phase 3A (Direct Delegation)
-   - If `domains > 2` OR `estimated_stories > 3` → **Complex** → proceed to Phase 3B (Producer Delegation)
+   - If `domains ≤ 2` AND `estimated_stories ≤ 3` → **Simple** → proceed to Phase 3 (Implementation Decision)
+   - If `domains > 2` OR `estimated_stories > 3` → **Complex** → proceed to Phase 3 (Implementation Decision)
 
 ---
 
-## Phase 3A: Direct Delegation (Simple Route)
+## Phase 3: Implementation Decision
+
+After validity and complexity are assessed, perform a **lightweight
+breakdown** (Haiku-tier, single agent) to produce concrete epics/stories
+with acceptance criteria — enough for sprint planning without full
+implementation delegation.
+
+Then present the **timing decision** to the user. They now know:
+- Whether the request is VALID / NEEDS CLARIFICATION / BLOCKED
+- The complexity tier (Simple or Complex) and estimated story count
+- The routing path (Direct Delegation → [agent] or Producer Delegation)
+- **Concrete epics/stories** with acceptance criteria
+
+**Flow**: Phase 4+ (Delegation → Review → Verify → Output) runs **only if
+the user selects `[A] Handle now`**. Options `[B]` and `[C]` are terminal.
+
+**Present the options** (using `AskUserQuestion`/`clarify`):
+
+> The feature request has been assessed and broken down:
+> - **Validity**: [VALID / NEEDS CLARIFICATION / BLOCKED]
+> - **Complexity**: [Simple (→ [dominant agent]) / Complex (→ producer)]
+> - **Epics/Stories**: [list with acceptance criteria]
+>
+> How would you like to proceed?
+> - `[A] Handle now` — proceed immediately to implementation. A PR will be
+>   created at the end of development once all acceptance criteria are met.
+> - `[B] Add to current sprint` — schedule these stories into the current
+>   sprint for the next planning cycle.
+> - `[C] Add to later sprint` — defer these stories to a future sprint backlog.
+
+**If the user selects `[A] Handle now`**:
+- Proceed to **Phase 4A (Direct Delegation)** for Simple requests or **Phase 4B (Producer Delegation)** for Complex requests. Delegate to the responsible domain agent(s) to begin work on the stories.
+- **Ensure a PR is created at the end of development.** This is the final
+  deliverable gate — do not declare the feature complete until the PR is opened
+  against the correct base branch and all acceptance criteria are satisfied.
+  Follow the PR template at `.github/PULL_REQUEST_TEMPLATE.md`.
+- Route through the standard pipeline: implement → review (lean or full per the
+  resolved review mode) → PR → verify CI passes → merge.
+
+**If the user selects `[B] Add to current sprint`**:
+- Delegate to `/sprint-plan` with the epics/stories from this breakdown to
+  schedule them into the current sprint.
+- The feature remains in the sprint backlog until the next development cycle.
+- **STOP** — do not proceed to Phase 4+. The lightweight breakdown is sufficient
+  for sprint planning; full delegation happens when the sprint starts.
+
+**If the user selects `[C] Add to later sprint`**:
+- Record the epics/stories in the project backlog for future sprint planning.
+- No immediate implementation is triggered.
+- **STOP** — do not proceed to Phase 4+. The feature is deferred; full
+  delegation occurs when the sprint is planned.
+
+---
+
+## Phase 4A: Direct Delegation (Simple Route)
 
 Spawn the domain agent for the **dominant** (highest keyword match count) domain
 via `delegate_task` with context:
@@ -162,11 +216,11 @@ via `delegate_task` with context:
 > If you identify cross-domain concerns, surface them for the user to decide
 > whether to re-route to the producer."
 
-**Wait for results**. Then proceed to Phase 4A (Review Direct Delegation).
+**Wait for results**. Then proceed to Phase 5A (Review Direct Delegation).
 
 ---
 
-## Phase 3B: Producer Delegation (Complex Route)
+## Phase 4B: Producer Delegation (Complex Route)
 
 Spawn `producer` via `delegate_task` with full context:
 
@@ -213,11 +267,11 @@ Spawn `producer` via `delegate_task` with full context:
 Wait for the producer's full report. The producer may spawn its own subagents
 (qa-tester, game-designer, etc.) — that is expected.
 
-Then proceed to Phase 4B (Review Producer Delegation).
+Then proceed to Phase 5B (Review Producer Delegation).
 
 ---
 
-## Phase 4A: Review Direct Delegation
+## Phase 5A: Review Direct Delegation
 
 Review the domain agent's response:
 
@@ -234,7 +288,7 @@ Review the domain agent's response:
 
 ---
 
-## Phase 4B: Review Producer Delegation
+## Phase 5B: Review Producer Delegation
 
 Review the producer's response (Complex route only):
 
@@ -254,7 +308,7 @@ Review the producer's response (Complex route only):
 
 ---
 
-## Phase 5: Verify
+## Phase 6: Verify
 
 **For Direct Delegation (Simple)**: The domain agent has provided a task
 breakdown with acceptance criteria. Present the breakdown to the user and
@@ -270,7 +324,7 @@ report. The producer validates that all acceptance criteria are met.
 
 ---
 
-## Phase 6: Output
+## Phase 7: Output
 
 Present a concise summary:
 
@@ -305,6 +359,9 @@ coordination. Re-run `/feature-request` to route through the producer.
 
 - `/create-epics` — if epics were identified that need formal epic files
 - `/create-stories [epic-slug]` — to break epics into implementable story files
-- `/sprint-plan new` — to schedule the work into a sprint
+- `/sprint-plan new` — to schedule stories into a sprint (use when the user
+  chose `[B] current sprint` or `[C] later sprint`)
 - `/scope-check` — to verify no scope creep against the original intent
+- `/create-pr` — to create a PR for features handled now (use when the user
+  chose `[A] handle now` and development is complete)
 - Re-run `/feature-request` with clarifications if validity was NEEDS CLARIFICATION
