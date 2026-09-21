@@ -105,6 +105,23 @@ art-dir = art-director
 
 ## Common Workflow Patterns
 
+### Pattern 0: Incoming Request (Tiered Routing)
+
+```
+1. [human/developer] -- Submits feature request or bug report
+2. /feature-request -- Tiered routing:
+                      • Simple (≤2 domains, ≤3 stories) → direct to domain agent
+                      • Complex (>2 domains, >3 stories) → producer for 3-phase handling
+3. producer           -- Phase 1: Digest & Breakdown (complex route only)
+4. producer           -- Phase 2: Coordinate & Handle (complex route only)
+5. producer           -- Phase 3: Verify (complex route only)
+   OR domain-agent  -- Direct handling (simple route only)
+```
+
+**Escalation**: If producer is unavailable, `creative-director` (features) or
+`technical-director` (bugs) act as interim coordinator, re-delegating to the
+producer when available.
+
 ### Pattern 1: New Feature (Full Pipeline)
 
 ```

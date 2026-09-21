@@ -102,6 +102,7 @@
 |---------|---------|
 | `/milestone-review` | Review milestone progress and generate status report |
 | `/retrospective` | Run a structured sprint or milestone retrospective |
+| `/feature-request` | Handle a feature request with tiered routing (simple → domain agent; complex → producer 3-phase protocol) |
 | `/bug-report` | Create a structured bug report |
 | `/bug-triage` | Read all open bugs, re-evaluate priority vs. severity, assign owner and label |
 | `/reverse-document` | Generate design or architecture docs from existing implementation |
