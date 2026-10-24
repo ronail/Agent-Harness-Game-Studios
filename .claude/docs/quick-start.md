@@ -324,8 +324,8 @@ is:
 | Shared tier | Codex model |
 |-------------|-------------|
 | Haiku | `gpt-6-luna` |
-| Sonnet | `gpt-6.1-sol` |
-| Opus | `gpt-6-astra` |
+| Sonnet | `gpt-5.6-terra` |
+| Opus | `gpt-6.1-sol` |
 
 The standard tier is the project default. Run `/start codex` during onboarding
 to review the mapping and choose a session model.

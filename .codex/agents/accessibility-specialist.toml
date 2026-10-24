@@ -4,7 +4,7 @@
 
 name = "accessibility-specialist"
 description = "The Accessibility Specialist ensures the game is playable by the widest possible audience. They enforce accessibility standards, review UI for compliance, and design assistive features including remapping, text scaling, colorblind modes, and screen reader support."
-model = "gpt-6.1-sol"
+model = "gpt-5.6-terra"
 model_reasoning_effort = "medium"
 
 developer_instructions = '''

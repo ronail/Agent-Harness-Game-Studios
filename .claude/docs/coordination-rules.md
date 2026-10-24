@@ -19,8 +19,8 @@ Skills and agents are assigned to model tiers based on task complexity:
 | Tier | Claude model | Codex model | When to use |
 |------|--------------|-------------|-------------|
 | **Haiku** | `claude-haiku-5-5` | `gpt-6-luna` | Read-only status checks, formatting, simple lookups — no creative judgment needed |
-| **Sonnet** | `claude-sonnet-5-5` | `gpt-6.1-sol` | Implementation, design authoring, analysis of individual systems — default for most work |
-| **Opus** | `claude-opus-5-5` | `gpt-6-astra` | Multi-document synthesis, high-stakes phase gate verdicts, cross-system holistic review |
+| **Sonnet** | `claude-sonnet-5-5` | `gpt-5.6-terra` | Implementation, design authoring, analysis of individual systems — default for most work |
+| **Opus** | `claude-opus-5-5` | `gpt-6.1-sol` | Multi-document synthesis, high-stakes phase gate verdicts, cross-system holistic review |
 
 Skills with `model: haiku`: `/help`, `/sprint-status`, `/story-readiness`, `/scope-check`,
 `/project-stage-detect`, `/changelog`, `/patch-notes`, `/onboard`
@@ -43,7 +43,7 @@ high-stakes output; otherwise leave unset (Sonnet).
 > studio agent, read `.codex/agent-models.toml`, resolve the target definition's
 > `model:` tier, and pass the resulting GPT model explicitly. Run `/start codex`
 > during onboarding to verify this setup. For example, `model: opus` must spawn
-> with `gpt-6-astra`, even when the project default is Sonnet.
+> with `gpt-6.1-sol`, even when the project default is Sonnet.
 
 ## Subagents vs Agent Teams
 

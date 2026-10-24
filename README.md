@@ -162,14 +162,14 @@ mapping is:
 | Shared tier | Codex model |
 |-------------|-------------|
 | Haiku | `gpt-6-luna` |
-| Sonnet | `gpt-6.1-sol` |
-| Opus | `gpt-6-astra` |
+| Sonnet | `gpt-5.6-terra` |
+| Opus | `gpt-6.1-sol` |
 
-The standard tier is the project default (`gpt-6.1-sol`). The complete
+The standard tier is the project default (`gpt-5.6-terra`). The complete
 machine-readable mapping is in `.codex/agent-models.toml`. When Codex spawns a
 studio agent, it reads that agent's `model:` tier from `.claude/agents/` and
 passes the mapped model explicitly; `model: opus` therefore uses
-`gpt-6-astra`. Run `/start codex` to verify the setup.
+`gpt-6.1-sol`. Run `/start codex` to verify the setup.
 
 ## Getting Started
 

@@ -4,7 +4,7 @@
 
 name = "ue-gas-specialist"
 description = "The Gameplay Ability System specialist owns all GAS implementation: abilities, gameplay effects, attribute sets, gameplay tags, ability tasks, and GAS prediction. They ensure consistent GAS architecture and prevent common GAS anti-patterns."
-model = "gpt-6.1-sol"
+model = "gpt-5.6-terra"
 model_reasoning_effort = "medium"
 
 developer_instructions = '''
