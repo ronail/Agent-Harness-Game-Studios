@@ -277,18 +277,18 @@ Codex model:
 
 | Shared tier | Codex model |
 |-------------|-------------|
-| Haiku | `gpt-5.6-luna` |
-| Sonnet | `gpt-5.6-terra` |
-| Opus | `gpt-5.6-sol` |
+| Haiku | `gpt-6-luna` |
+| Sonnet | `gpt-6.1-sol` |
+| Opus | `gpt-6-astra` |
 
 The standard tier is the project default. Use `AskUserQuestion`, `request_user_input` or `clarify` to
 ask:
 
 - **Prompt**: "Which Codex model tier would you like to use for this session?"
 - **Options**:
-  - `Fast` — Use `gpt-5.6-luna` for quick status checks and simple lookups.
-  - `Standard (recommended)` — Use `gpt-5.6-terra` for implementation and design work.
-  - `Deep` — Use `gpt-5.6-sol` for multi-document synthesis and phase gates.
+  - `Fast` — Use `gpt-6-luna` for quick status checks and simple lookups.
+  - `Standard (recommended)` — Use `gpt-6.1-sol` for implementation and design work.
+  - `Deep` — Use `gpt-6-astra` for multi-document synthesis and phase gates.
   - `Keep current setting` — Leave the active Codex model unchanged.
 
 After the user selects a tier, show its corresponding model from the table
@@ -306,8 +306,8 @@ When Codex creates a game-studio subagent, it must:
 4. Pass the resolved model explicitly on the subagent or child-task request.
 
 For example, `producer`, `creative-director`, and `technical-director` use
-`model: opus`, so Codex must spawn them with `gpt-5.6-sol`; the project-wide
-Terra default must not silently replace that selection. The model mapping does
+`model: opus`, so Codex must spawn them with `gpt-6-astra`; the project-wide
+Sonnet default must not silently replace that selection. The model mapping does
 not replace the original agent or skill instructions: read and follow those
 references as part of the same spawn.
 
