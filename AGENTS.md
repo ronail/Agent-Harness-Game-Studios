@@ -14,13 +14,13 @@ work.
 
 | Agent frontmatter | Codex model |
 |-------------------|-------------|
-| `model: haiku` | `gpt-5.6-luna` |
+| `model: haiku` | `gpt-6-luna` |
 | `model: sonnet` or omitted | `gpt-5.6-terra` |
-| `model: opus` | `gpt-5.6-sol` |
+| `model: opus` | `gpt-6.1-sol` |
 
 Example: `producer`, `creative-director`, and `technical-director` declare
 `model: opus`, so a Codex-spawned instance of any of them must receive
-`gpt-5.6-sol` explicitly.
+`gpt-6.1-sol` explicitly.
 
 Before spawning, also read any original skill referenced by the agent or
 orchestration workflow. The Codex model mapping changes execution selection;
