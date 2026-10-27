@@ -9,7 +9,7 @@ sandbox_mode = "workspace-write"
 # haiku, sonnet, and opus. Their Codex model IDs are defined in
 # .codex/agent-models.toml. Codex must pass the resolved ID explicitly when
 # spawning a studio agent; this setting is only the project-wide fallback.
-model = "gpt-5.6-terra"
+model = "gpt-6.1-terra"
 
 [features]
 hooks = true

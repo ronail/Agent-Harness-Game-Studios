@@ -278,7 +278,7 @@ Codex model:
 | Shared tier | Codex model |
 |-------------|-------------|
 | Haiku | `gpt-6-luna` |
-| Sonnet | `gpt-5.6-terra` |
+| Sonnet | `gpt-6.1-terra` |
 | Opus | `gpt-6.1-sol` |
 
 The standard tier is the project default. Use `AskUserQuestion`, `request_user_input` or `clarify` to
@@ -287,7 +287,7 @@ ask:
 - **Prompt**: "Which Codex model tier would you like to use for this session?"
 - **Options**:
   - `Fast` — Use `gpt-6-luna` for quick status checks and simple lookups.
-  - `Standard (recommended)` — Use `gpt-5.6-terra` for implementation and design work.
+  - `Standard (recommended)` — Use `gpt-6.1-terra` for implementation and design work.
   - `Deep` — Use `gpt-6.1-sol` for multi-document synthesis and phase gates.
   - `Keep current setting` — Leave the active Codex model unchanged.
 

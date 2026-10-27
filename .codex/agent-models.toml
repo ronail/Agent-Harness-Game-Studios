@@ -5,5 +5,5 @@
 
 [tiers]
 haiku = "gpt-6-luna"
-sonnet = "gpt-5.6-terra"
+sonnet = "gpt-6.1-terra"
 opus = "gpt-6.1-sol"
