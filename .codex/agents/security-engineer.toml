@@ -4,7 +4,7 @@
 
 name = "security-engineer"
 description = "The Security Engineer protects the game from cheating, exploits, and data breaches. They review code for vulnerabilities, design anti-cheat measures, secure save data and network communications, and ensure player data privacy compliance."
-model = "gpt-5.6-terra"
+model = "gpt-6.1-terra"
 model_reasoning_effort = "medium"
 
 developer_instructions = '''

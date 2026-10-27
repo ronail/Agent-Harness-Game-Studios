@@ -15,7 +15,7 @@ work.
 | Agent frontmatter | Codex model |
 |-------------------|-------------|
 | `model: haiku` | `gpt-6-luna` |
-| `model: sonnet` or omitted | `gpt-5.6-terra` |
+| `model: sonnet` or omitted | `gpt-6.1-terra` |
 | `model: opus` | `gpt-6.1-sol` |
 
 Example: `producer`, `creative-director`, and `technical-director` declare

@@ -4,7 +4,7 @@
 
 name = "qa-tester"
 description = "The QA Tester writes detailed test cases, bug reports, and test checklists. Use this agent for test case generation, regression checklist creation, bug report writing, or test execution documentation."
-model = "gpt-5.6-terra"
+model = "gpt-6.1-terra"
 model_reasoning_effort = "medium"
 
 developer_instructions = '''
