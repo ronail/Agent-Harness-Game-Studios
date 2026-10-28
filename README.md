@@ -133,21 +133,28 @@ Type `/` in Claude Code to access all 74 skills:
 **Team Orchestration** (coordinate multiple agents on a single feature)
 `/team-combat` `/team-narrative` `/team-ui` `/team-release` `/team-polish` `/team-audio` `/team-level` `/team-live-ops` `/team-qa`
 
-## Optional: Hermes Profile Mapping
+## Optional: Hermes Model Routing
 
 When using **Hermes as the harness**, the `model:` fields in skill/agent
-frontmatter are advisory only. Actual model resolution is controlled by Hermes
-profile configuration (`~/.hermes/profiles/<name>/config.yaml`), not by these
-fields.
+frontmatter are advisory only. Subagent models are resolved from the `delegation`
+section of the active Hermes profile (`~/.hermes/profiles/<name>/config.yaml`),
+and `delegation.backend` picks the mode: `default` sends every child to
+`delegation.model`, while the official `advanced-delegation` plugin adds
+`profile_routes` (the agent runs each child as one of your Hermes profiles — the
+recommended mode here, since it keeps this project's role-to-profile mapping
+meaningful) and `model_map` (the agent picks a named model route per task).
 
-To map agent roles to Hermes profiles, run:
+To configure that routing, run:
 
 ```bash
 /start hermes
 ```
 
-This interactively discovers your available Hermes profiles and helps you assign
-one to each agent role, writing the result to `production/hermes-profile-mapping.json`.
+Phase 3d of `/start` detects your profiles and whether the plugin is installed,
+asks how a subagent should be routed, and writes a paste-ready
+`production/hermes-delegation.yaml` plus `production/hermes-profile-mapping.json`
+as the recorded plan. Without a plugin mode, one route applies to every child, so
+a per-role map alone cannot change which model a subagent runs on.
 
 If you are **not** using Hermes, the `model:` field in each agent/skill
 definition is used directly — no changes are needed.
@@ -324,8 +331,11 @@ follows:
 | User settings | `~/.codex/config.toml`, `~/.codex/hooks.json` | Personal Codex overrides |
 | Managed settings | Managed `requirements.toml` | Organization-enforced Codex settings |
 
-Hermes does not have a project-specific configuration layer in this repository;
-it can use the shared repository conventions and documentation.
+Hermes has no shipped configuration layer in this repository. Hermes resolves
+models per profile rather than per project, so `/start hermes` writes a
+project-local plan (`production/hermes-delegation.yaml` plus
+`production/hermes-profile-mapping.json`) that you paste into the profile you
+run the studio from.
 
 ### Path-Scoped Rules
 
