@@ -91,5 +91,7 @@ domain lead) should delegate to specialists.
 ---
 
 When using Hermes as the harness, the Model column above is advisory only.
-Actual model resolution is controlled by Hermes profile configuration, not
-agent frontmatter. Run `/start hermes` to set up profile mappings.
+Subagent models come from the `delegation` section of the active Hermes profile,
+not from agent frontmatter. Run `/start hermes` to map each role to a profile and
+turn that map into `delegation.backend: profile_routes` through the official
+`advanced-delegation` plugin.

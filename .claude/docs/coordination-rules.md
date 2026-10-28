@@ -31,11 +31,15 @@ All other skills default to Sonnet. When creating new skills, assign Haiku if th
 skill only reads and formats; assign Opus if it must synthesize 5+ documents with
 high-stakes output; otherwise leave unset (Sonnet).
 
-> **Hermes Profile Mapping (optional)**: When using Hermes as the harness, model
-> tier assignments in skill/agent frontmatter are advisory only. Actual model
-> resolution is controlled by Hermes profile configuration. Run `/start hermes`
-> during onboarding to set up profile mappings interactively. See
-> `.claude/docs/quick-start.md` → Optional: Hermes Profile Mapping.
+> **Hermes Subagent Routing (optional)**: When using Hermes as the harness, model
+> tier assignments in skill/agent frontmatter are advisory only. Subagent models
+> come from the `delegation` section of the active Hermes profile, and
+> `delegation.backend` picks the mode — `default`, or `profile_routes` /
+> `model_map` from the official `advanced-delegation` plugin. `profile_routes`
+> (a Hermes profile per subagent) is the recommended mode, because it keeps the
+> role → profile mapping enforceable. Run `/start hermes` during onboarding to
+> set up the routing. See `.claude/docs/quick-start.md` → Optional: Hermes
+> Subagent Routing.
 
 > **Codex Model Setup**: When using Codex as the harness, the `model:` fields
 > in skill/agent frontmatter remain the shared tier labels. The project-local

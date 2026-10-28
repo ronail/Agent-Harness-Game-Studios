@@ -293,23 +293,148 @@ CLAUDE.md                          -- Master config (read this first, ~60 lines)
 
 ---
 
-## Optional: Hermes Profile Mapping
+## Optional: Hermes Subagent Routing
 
-When using **Hermes as the harness**, models are resolved through Hermes profile
-configuration (`~/.hermes/profiles/<name>/config.yaml`) rather than the `model:`
-field in skill/agent frontmatter. The frontmatter `model` values (haiku/sonnet/opus)
-remain as documentation of intended tier, but actual provider/model selection is
-governed by the active Hermes profile.
+When using **Hermes as the harness**, subagent models are resolved from the
+`delegation` section of the active profile's
+`~/.hermes/profiles/<name>/config.yaml`, not from the `model:` field in
+skill/agent frontmatter. The frontmatter values (`haiku` / `sonnet` / `opus`)
+stay as the shared tier labels; Codex maps them to GPT models, and Hermes routes
+them through the delegation mode you configure.
 
-To configure profile mappings for agent roles:
+Run the routing setup during onboarding:
 
 ```bash
 /start hermes
 ```
 
-This runs Phase 3d of the `/start` flow, which interactively discovers your
-Hermes profiles and helps you assign them to agent roles. The result is saved to
-`production/hermes-profile-mapping.json`.
+Phase 3d of `/start` detects your profiles, the active `delegation.backend`, and
+whether the advanced-delegation plugin is installed, then asks how a subagent
+should be routed. It writes a paste-ready `production/hermes-delegation.yaml`
+plus `production/hermes-profile-mapping.json` as the recorded plan — the role →
+profile map this project has always kept, now backed by a mode that can act on
+it.
+
+### Delegation modes
+
+One mode is active at a time:
+
+| `delegation.backend` | Per-task parameter | Behaviour |
+|----------------------|--------------------|-----------|
+| `profile_routes` (recommended) | `profile` | The agent runs each child as one of your Hermes profiles — that profile's model, credentials, credential pool, skills and `SOUL.md`. |
+| `model_map` | `option` | The agent picks a named model route per task, from routes you define. |
+| `default` (built in) | none | Every child runs on `delegation.model` / `delegation.provider`, else the parent's model. |
+
+`profile_routes` and `model_map` come from the official **advanced-delegation**
+plugin, which needs Hermes 0.22.5 or newer and is installed per profile —
+install it in the profile that delegates:
+
+```bash
+hermes plugins install advanced-delegation
+```
+
+Configure it interactively, or paste the block yourself:
+
+```bash
+hermes delegation config          # pick the mode, then edit its routes
+hermes delegation config --show   # print the current mode and routes
+```
+
+### Profile routes (recommended)
+
+A profile is the unit that already carries a model, its credentials and its
+persona, so this is the mode that matches the studio's role → profile model:
+
+```yaml
+# ~/.hermes/profiles/<name>/config.yaml
+delegation:
+  backend: profile_routes
+  backends:
+    profile_routes:
+      profiles:
+        - name: <director-profile>
+          description: "Producer, creative-director, technical-director: phase gates, review, scheduling."
+        - name: <lead-profile>
+          description: "Lead programmers and specialists: implementation, refactors, tests."
+      default: <lead-profile>
+```
+
+Target profiles need nothing installed — they only have to exist
+(`hermes profile list`) with a working model. Only the profile names and their
+one-line descriptions reach the model.
+
+### Model routes
+
+When the profiles on the machine do not line up with the studio's roles, list
+titled provider/model routes instead and let the agent pick per task:
+
+```yaml
+delegation:
+  backend: model_map
+  backends:
+    model_map:
+      options:
+        - name: haiku
+          description: "Quick reads and formatting: status checks, lookups, short summaries."
+          provider: <provider>
+          model: <model>
+        - name: sonnet
+          description: "Default studio work: implementation, design documents, code review."
+          provider: <provider>
+          model: <model>
+        - name: opus
+          description: "Hard synthesis: multi-document analysis, architecture review, phase gates."
+          provider: <provider>
+          model: <model>
+          reasoning_effort: high
+      default: sonnet
+```
+
+### Rules that apply to both modes
+
+Backend settings live under `delegation.backends.<backend name>`, never beside
+the core `delegation` keys.
+
+- **Only names and descriptions reach the model.** The provider, model id,
+  endpoint and key are never tool parameters, so the agent cannot invent a route.
+  The flip side: the agent chooses the route per task, so the recorded role →
+  profile (or role → tier) map is the plan the descriptions encode — not a hard
+  per-role binding.
+- **`delegation.model` / `delegation.provider` are inactive** while
+  `profile_routes` or `model_map` is the active mode. Switching back to
+  `default` makes them apply again.
+- **Fail closed.** A backend that is selected but missing or unable to run makes
+  `delegate_task` return an error naming it and the fix. Hermes never falls back
+  to `default` on its own.
+- **Profile routes share credentials.** Listing a profile lets this profile's
+  subagents use that profile's credentials, credential pool, `SOUL.md` and
+  terminal policy — only list profiles you are happy to share that with.
+- **The tool schema is cached.** The per-task `profile` / `option` list is built
+  when a session starts. `/delegation <mode>` saves the mode for the next session
+  (`/new`); `/delegation <mode> --now` also rebuilds the running chat's tools, at
+  the cost of one prompt-cache break.
+
+### Studio hierarchy settings
+
+Three `delegation` settings change how studio agents nest or collide. `/start
+hermes` asks about the first two; check any of them with
+`hermes config get delegation.<key>`.
+
+| Setting | Default | Use it when |
+|---------|---------|-------------|
+| `max_spawn_depth` | `1` (flat) | `2` lets a director's subagent (spawned with `role="orchestrator"`) spawn its own leads and specialists. |
+| `worktree_isolation` | `false` | Parallel implementers edit the same repo and would collide. Each child gets its own git worktree, branched from `HEAD`. |
+| `max_concurrent_children` | configurable, `10` in 0.22.x | A wider parallel batch. No hard ceiling; cost is the limit. |
+
+At the default depth, `role="orchestrator"` is a no-op: children are leaves and
+stop at one level. Raise `max_spawn_depth` deliberately — each extra level
+multiplies spend, and children are where the tokens go.
+
+Backends are ordinary Hermes plugins; see
+[Delegation Provider Plugins](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/developer-guide/delegation-provider-plugin.md)
+for the interface and
+[Subagent Delegation](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/delegation.md)
+for the delegation settings themselves.
 
 If you are **not** using Hermes, the `model:` field in each agent/skill definition
 is used directly — no changes are needed.

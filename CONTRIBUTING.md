@@ -32,11 +32,14 @@ These are the things that will get your PR rejected if you miss them.
 - Model tier: `haiku` for read-only status checks, `opus` for multi-document
   synthesis and phase gates, `sonnet` for everything else
 
-> **Hermes Profile Mapping (optional)**: When using Hermes as the harness, the
-> `model` tier field in agent/skill frontmatter is advisory only. Actual model
-> resolution is controlled by Hermes profile configuration
-> (`~/.hermes/profiles/<name>/config.yaml`). Run `/start hermes` during onboarding
-> to set up profile mappings interactively.
+> **Hermes Subagent Routing (optional)**: When using Hermes as the harness, the
+> `model` tier field in agent/skill frontmatter is advisory only. Subagent models
+> come from the `delegation` section of the active Hermes profile
+> (`~/.hermes/profiles/<name>/config.yaml`), and `delegation.backend` picks the
+> mode — `default`, or `profile_routes` / `model_map` from the official
+> `advanced-delegation` plugin. `profile_routes` (a Hermes profile per subagent)
+> is the recommended mode: it is what makes the role → profile mapping
+> enforceable. Run `/start hermes` during onboarding to set up the routing.
 
 **Hooks**
 - Use `grep -E` — never `grep -P` (Perl regex breaks on Windows Git Bash)

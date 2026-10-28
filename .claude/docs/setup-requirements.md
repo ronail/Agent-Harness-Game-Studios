@@ -14,8 +14,8 @@ you'll lose validation features.
 Claude Code is the primary workflow runtime. Codex users should also install
 the [Codex CLI](https://developers.openai.com/codex/cli) to use the project
 configuration in `.codex/`. Hermes users can follow the shared repository
-conventions and configure profile mapping interactively via `/start hermes`
-(see the Hermes Setup section below for details).
+conventions and configure subagent model routing interactively via `/start
+hermes` (see the Hermes Setup section below for details).
 
 ## Recommended
 
@@ -82,7 +82,8 @@ python3 --version      # Should show python version (optional)
 
 Hermes is supported as an alternative harness to Claude Code. The repository
 provides shared conventions (skills, agents, hooks) that work with Hermes
-profiles for model routing and provider selection.
+profiles, and Hermes resolves subagent models through its own delegation
+configuration rather than through frontmatter.
 
 ### Installing Hermes
 
@@ -93,33 +94,53 @@ for installation instructions. Once installed, verify with:
 hermes --version
 ```
 
-### Profile Configuration
+### Profile and delegation configuration
 
 Hermes profiles reside in `~/.hermes/profiles/<name>/config.yaml` and control
 model resolution, API keys, and provider settings. This repository does not
 ship Hermes-specific configuration — you manage profiles in your Hermes
 installation.
 
-To map agent roles to Hermes profiles:
+To configure how subagents pick their model:
 
 1. Run `/start hermes` during onboarding
-2. Phase 3d discovers your available profiles and interactively assigns each
-   agent role to a profile
-3. The mapping is written to `production/hermes-profile-mapping.json`
+2. Phase 3d detects your profiles, the active `delegation.backend`, and whether
+   the `advanced-delegation` plugin is installed, then asks for a mode:
+   `profile_routes` (the agent runs each child as one of your Hermes profiles —
+   recommended), `model_map` (a per-task named model route), or `default` (one
+   model for every subagent)
+3. The plan is written to `production/hermes-delegation.yaml` (paste-ready
+   config) and `production/hermes-profile-mapping.json` (the record)
+
+`profile_routes` and `model_map` need the official plugin in the profile that
+delegates (Hermes 0.22.5 or newer):
+
+```bash
+hermes plugins install advanced-delegation
+hermes delegation config        # or paste production/hermes-delegation.yaml
+```
+
+A selected backend that is missing or cannot run fails closed — `delegate_task`
+errors instead of falling back to `default`.
 
 When using Hermes, the `model:` fields in skill/agent frontmatter are advisory
-only — the active Hermes profile determines which model actually runs. Without
-Hermes (e.g., using Claude Code directly), those `model:` fields are used directly.
+only — the `delegation` configuration determines which model actually runs.
+Without Hermes (e.g., using Claude Code directly), those `model:` fields are
+used directly.
 
 ### Verifying Hermes Integration
 
-After running `/start hermes`, check that profile mapping was written:
+After running `/start hermes`, check that the routing record and config were
+written:
 
 ```bash
-cat production/hermes-profile-mapping.json
+cat production/hermes-profile-mapping.json production/hermes-delegation.yaml
 ```
 
-Expected format: `{"agent-name": "profile-name", ...}`
+The JSON carries `"schemaVersion": 2` with a `delegation` block (strategy,
+backend, route table) and a `roles` map. A legacy file with no `schemaVersion`
+key is the older flat `{"agent-name": "profile-name"}` mapping and is still
+readable.
 
 ## Recommended IDE
 

@@ -17,8 +17,8 @@ This skill is the entry point for new users. It does NOT assume you have a game 
 
 - Omitting the argument defaults to `claude` mode
 - `/start codex` — reviews the project-local Codex model setup (Phase 3e)
-- `/start hermes` — enables Hermes-specific profile mapping (Phase 3d)
-- `/start claude` (explicit) — standard Claude Code mode without Hermes profile mapping
+- `/start hermes` — configures Hermes model routing for subagents (Phase 3d)
+- `/start claude` (explicit) — standard Claude Code mode without Hermes routing
 
 ---
 
@@ -190,61 +190,259 @@ Say: "I've set `production/stage.txt` to `[stage]` — this anchors your status 
 
 ---
 
-## Phase 3d: Configure Hermes Profile Mapping for Agent Roles
+## Phase 3d: Configure Hermes Subagent Routing for Agent Roles
 
 **Only applicable when the `hermes` argument is provided.** This phase is
 skipped if the argument is omitted or if `claude` is explicitly provided.
 
-Check if `production/hermes-profile-mapping.json` already exists.
+Hermes resolves a subagent's model from the `delegation` section of the active
+profile's `config.yaml`, and `delegation.backend` picks how each task is routed:
 
-**If it exists**: Read it and say: "Hermes profile mappings are configured:
-`[show mapping]`." — then proceed to Phase 3b. Do not ask again.
+| `delegation.backend` | Per-task parameter | Behaviour |
+|----------------------|--------------------|-----------|
+| `profile_routes` | `profile` | The agent runs each child as one of your Hermes profiles — that profile's model, credentials, pool, skills and `SOUL.md`. |
+| `model_map` | `option` | The agent picks a named model route per task, from routes you define. |
+| `default` | none | Every child runs on `delegation.model` / `delegation.provider`, else the parent's model. |
 
-**If it does not exist** and the `hermes` argument was provided: Use `Bash` to check
-if the Hermes CLI is installed (`command -v hermes`).
+`profile_routes` and `model_map` come from the official `advanced-delegation`
+plugin, which must be installed in the profile that delegates (plugins are per
+profile; it needs Hermes 0.22.5 or newer). Backend settings live under
+`delegation.backends.<backend name>`, never beside the core `delegation` keys.
+While either plugin mode is active, `delegation.model` / `delegation.provider`
+are inactive. A selected backend that is missing or cannot run makes
+`delegate_task` fail closed with an error naming the backend and the fix — it
+never silently falls back to `default`.
 
-- **If Hermes is installed**: Discover available profiles via `Bash`
-  (`hermes profiles list` or list `~/.hermes/profiles/`), then use
-  `AskUserQuestion`, `request_user_input` or `clarify` to ask:
-  - **Prompt**: "Would you like to set Hermes profile mappings for each agent
-    role? This determines which model/provider each role uses when spawned as
-    a subagent."
-  - **Options**:
-    - `Assign profiles interactively` — I'll go through each role and assign a profile.
-    - `Auto-assign defaults` — Map roles to matching profiles automatically.
-    - `Skip for now` — I'll configure this later.
+**Profile routes are the default choice for this repository.** The studio already
+models capability as a per-role tier, and a Hermes profile is the unit that
+carries a model, its credentials and its persona — so the role → profile mapping
+stays the thing this project keeps, and `profile_routes` is what makes it
+enforceable per task. Only fall back to `model_map` when the profiles on the
+machine do not line up with the studio's roles.
 
-- **If Hermes is not installed**: Say: "Hermes not detected. Model resolution
-  will use the agent definitions' `model` fields directly." and proceed to
-  Phase 3b.
+Detect this silently before asking anything:
+
+- `command -v hermes` and `hermes --version`. If Hermes is absent, say: "Hermes
+  not detected. Model resolution will use the agent definitions' `model` fields
+  directly." and continue to Phase 3b. If it is older than 0.22.5, say so and
+  treat both plugin modes as unavailable.
+- `hermes profile list` — profiles and the model each one runs.
+- `HERMES_PROFILE=<profile> hermes config get delegation.backend` — the active
+  backend (`default` when unset).
+- `HERMES_PROFILE=<profile> hermes plugins list` — whether
+  `advanced-delegation` is installed in that profile, and whether it is enabled.
+- `HERMES_PROFILE=<profile> hermes delegation config --show` — the current mode
+  and its routes, when the plugin is installed.
+- Roles in use: `grep -h '^model:' .claude/agents/*.md | sort | uniq -c`. The
+  frontmatter `model:` value is the shared tier label (`haiku`, `sonnet`,
+  `opus`). Under profile routes it is no longer the routing key — the profile is
+   — so keep it as the intent recorded in each agent definition.
 
 **If the argument is omitted or `claude` is provided** (Claude mode): Proceed
-directly to Phase 3b. Model resolution uses the agent definitions' `model`
-fields directly. If `codex` is provided, skip this phase and continue to
-Phase 3e.
+directly to Phase 3b without detection. Model resolution uses the agent
+definitions' `model` fields directly. If `codex` is provided, skip this phase
+and continue to Phase 3e.
+
+Check if `production/hermes-profile-mapping.json` already exists.
+
+**If it exists**: Read it and say: "Hermes subagent routing is configured:
+strategy `[strategy]`, backend `[backend]`, routes `[route summary]`." — then
+proceed to Phase 3b. Do not ask again. A file with no `schemaVersion` key is a
+legacy profile mapping (`{"agent-name": "profile-name"}`): report it as the
+profile strategy and leave it unchanged.
+
+**If it does not exist** and the `hermes` argument was provided, use
+`AskUserQuestion`, `request_user_input` or `clarify`:
+
+- **Prompt**: "How should Hermes choose the model for a subagent?"
+- **Options**:
+  - `Profile per subagent (recommended)` — `delegation.backend: profile_routes`:
+    the agent picks a Hermes profile per task, and that profile's model runs the
+    child.
+  - `Named model routes` — `delegation.backend: model_map`: the agent picks a
+    named provider/model route per task.
+  - `One model for all subagents` — `delegation.backend: default` with
+    `delegation.model`; no plugin required.
+  - `Skip for now` — I'll configure this later.
 
 Create the `production/` directory if it does not exist.
 
-### If "Assign profiles interactively":
-- For each agent in `.claude/agents/*.md` (sorted by name):
-  - Prompt: "Which Hermes profile should `<agent-name>` (model: `<model-tier>`) use?"
-  - Present discovered profiles as options
-  - Record the mapping
-- Write `production/hermes-profile-mapping.json` with format:
-  `{"role-name": "profile-name", ...}`
-- Say: "Created `production/hermes-profile-mapping.json` with your profile mappings."
+If `profile_routes` or `model_map` was chosen and `advanced-delegation` is
+missing from `hermes plugins list`, say: "That mode needs the official
+`advanced-delegation` plugin, installed in the profile that delegates:
+`hermes plugins install advanced-delegation`, then `hermes plugins enable
+advanced-delegation` if it lands disabled. Nothing routes on it until the plugin
+is there — `delegate_task` fails closed while it is missing." Continue anyway;
+the config is written and takes effect once the plugin is installed.
 
-### If "Auto-assign defaults":
-- For each agent, assign the `default` profile (or the one whose model tier
-  best matches the agent's `model:` field)
-- Write `production/hermes-profile-mapping.json`
-- Say: "Created `production/hermes-profile-mapping.json` with default profile
-  assignments."
+### If "Profile per subagent":
+
+1. Offer the assignment shape:
+   - `Auto-assign by tier` — reuse any profile whose name matches a tier or a
+     studio role, otherwise map every role to the active profile. Fastest, and
+     fine for a first pass.
+   - `Assign each role` — go through all agents and pick a profile for each.
+   - `One profile for every role` — every role runs as one profile.
+2. For `Assign each role`, walk `.claude/agents/*.md` sorted by name. Prompt:
+   "Which Hermes profile should `<agent-name>` (tier: `<model-tier>`) run as?"
+   Present the discovered profiles as options, with the profile name and the
+   model it runs shown. Record the choice.
+3. Group the assignments by profile. Each distinct profile becomes one entry in
+   `delegation.backends.profile_routes.profiles`, and its description names the
+   studio roles it serves plus what that work is — that description is the only
+   thing the agent sees when it picks.
+4. Ask for the default profile (or `No default`). A task that picks nothing runs
+   on the default; with none set it runs on the main agent's model.
+
+Write `production/hermes-delegation.yaml`:
+
+```yaml
+# Paste into ~/.hermes/profiles/<profile>/config.yaml, or run
+# `hermes delegation config` and edit the profile list there instead.
+delegation:
+  backend: profile_routes
+  backends:
+    profile_routes:
+      profiles:
+        - name: <director-profile>
+          description: "Producer, creative-director, technical-director: phase gates, review, scheduling."
+        - name: <lead-profile>
+          description: "Lead programmers and specialists: implementation, refactors, tests."
+      default: <lead-profile>
+  # max_spawn_depth: 2          # only when nested orchestration was selected
+  # worktree_isolation: true    # only when worktree isolation was selected
+```
+
+Say explicitly: "Listing a profile lets this profile's subagents use that
+profile's credentials, credential pool, `SOUL.md` and terminal policy. Only list
+profiles whose keys and terminal access you are happy to share."
+
+Also state the honest limitation: in `profile_routes` mode the agent picks the
+profile per task from the names and descriptions, so the recorded role → profile
+map is the plan the descriptions encode — it is not a hard binding per role.
+
+### If "Named model routes":
+
+Ask once per tier found in the detection step:
+
+- **Prompt**: "What should the `<tier>` route use? (`<count>` agent roles carry
+  this tier)"
+- **Options**:
+  - `Pin a provider and model` — ask for the provider and the model id. Never
+    invent a model id: reuse one from `hermes profile list` or ask.
+  - `Skip this route` — leave it out of the table.
+  - `Rename it` — the route name is what the agent picks on. It must match
+    `^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$`.
+
+Then ask which tier should be the default route, offering the tier with the most
+agents first.
+
+Write `production/hermes-delegation.yaml`:
+
+```yaml
+delegation:
+  backend: model_map
+  backends:
+    model_map:
+      options:
+        - name: haiku
+          description: "Quick reads and formatting: status checks, lookups, short summaries."
+          provider: <provider>
+          model: <model>
+        - name: sonnet
+          description: "Default studio work: implementation, design documents, code review."
+          provider: <provider>
+          model: <model>
+        - name: opus
+          description: "Hard synthesis: multi-document analysis, architecture review, phase gates."
+          provider: <provider>
+          model: <model>
+          reasoning_effort: high
+      default: sonnet
+  # max_spawn_depth: 2          # only when nested orchestration was selected
+  # worktree_isolation: true    # only when worktree isolation was selected
+```
+
+Only the route names and descriptions reach the model, never the provider, model
+id or key. `reasoning_effort` and `service_tier` are optional per route; a
+`service_tier` the route does not offer refuses that task rather than running it
+anyway. The agent chooses the route per task, so the frontmatter tier is guidance
+carried by the descriptions and `default` — it is not enforced either.
+
+### If "One model for all subagents":
+
+- Ask for the provider and model, or `Inherit the parent's model`.
+- Write `production/hermes-delegation.yaml` with `backend: default` and, unless
+  inheriting, `model:` / `provider:`.
+
+### Studio delegation limits (ask in every branch that writes config)
+
+Ask once, before writing the file — multi-select:
+
+- **Prompt**: "Two delegation limits matter for a studio hierarchy. Which should
+  I set?"
+- **Options**:
+  - `Nested orchestration` — `max_spawn_depth: 2`, so a director's subagent
+    (spawned with `role="orchestrator"`) can spawn its own leads and
+    specialists. At the default of 1, `role="orchestrator"` is a no-op.
+  - `Worktree isolation` — `worktree_isolation: true`: each child gets its own
+    git worktree, so parallel implementers cannot collide on the same files.
+  - `Neither` — Keep flat delegation in a shared workspace (the default).
+
+Warn before enabling nested orchestration: each level multiplies spend, and a
+depth-2 tree at `max_concurrent_children` 10 can reach 100 concurrent children.
+Never raise `max_concurrent_children` from this workflow without being asked.
+
+### Write the routing record
+
+In every branch that writes config, write
+`production/hermes-profile-mapping.json`:
+
+```json
+{
+  "schemaVersion": 2,
+  "harness": "hermes",
+  "profile": "<active profile>",
+  "delegation": {
+    "strategy": "profile_routes",
+    "backend": "profile_routes",
+    "parameter": "profile",
+    "profiles": [
+      {
+        "name": "<profile>",
+        "description": "Producer, creative-director, technical-director: phase gates, review, scheduling.",
+        "roles": ["producer", "creative-director", "technical-director"]
+      }
+    ],
+    "default": "<profile>"
+  },
+  "roles": {
+    "<agent-name>": {"profile": "<profile>", "tier": "<tier>"}
+  }
+}
+```
+
+In the `model_map` branch use `"strategy": "model_map"`, `"parameter": "option"`
+and a `routes` object (`{"haiku": {"provider": ..., "model": ...}, ...}`) instead
+of `profiles`; every role then records `{"tier": "<tier>"}`. In the single-model
+branch use `"strategy": "default"` with the chosen route and no `profiles` or
+`routes`. Record every agent from `.claude/agents/*.md` in `roles` rather than
+leaving the mapping implicit, so a later frontmatter edit surfaces as a diff
+instead of silently changing intent.
+
+Say: "Wrote `production/hermes-delegation.yaml` and
+`production/hermes-profile-mapping.json`. Either paste the YAML into
+`~/.hermes/profiles/<profile>/config.yaml`, or run `hermes delegation config` and
+edit the routes there. Route changes apply to new sessions; in a running chat
+`/delegation profile_routes --now` saves the mode and rebuilds that chat's tools
+(one prompt-cache break), while `/delegation profile_routes` alone saves it for
+the next session."
 
 ### If "Skip for now":
-- Say: "You can configure Hermes profile mappings anytime by running
-  `/start hermes` again or manually creating
-  `production/hermes-profile-mapping.json`."
+
+- Say: "You can configure Hermes subagent routing anytime by running
+  `/start hermes` again, by running `hermes delegation config`, or by editing
+  the `delegation` section of `~/.hermes/profiles/<name>/config.yaml`."
 - Proceed to Phase 3b.
 
 ---
