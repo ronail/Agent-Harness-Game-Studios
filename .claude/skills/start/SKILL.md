@@ -20,6 +20,11 @@ This skill is the entry point for new users. It does NOT assume you have a game 
 - `/start hermes` — configures Hermes model routing for subagents (Phase 3d)
 - `/start claude` (explicit) — standard Claude Code mode without Hermes routing
 
+Ask with the question tool — `AskUserQuestion`, `request_user_input` or `clarify`, whichever the
+harness provides. Without one, list the options numbered and end your turn to wait. The question is
+the last thing in the reply: no path, note or advice after it. A skipped or dismissed question is
+not an answer: ask again in plain text.
+
 ---
 
 ## Phase 1: Detect Project State
