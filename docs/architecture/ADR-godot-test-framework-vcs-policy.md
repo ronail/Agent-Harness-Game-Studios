@@ -222,6 +222,6 @@ Foundational — no GDD requirement. Enables: Godot test framework scaffolding
 
 - [ADR-0001: Godot `.uid` File Version Control Policy](ADR-godot-uid-vcs-policy.md) — establishes the same clone-and-run VCS philosophy
 - [coding-standards.md](../../.claude/docs/coding-standards.md) — references the headless gdUnit4 CI command
-- [test-setup skill spec](../AHGS Skill Testing Framework/skills/utility/test-setup.md) — scaffolds the GdUnit4 runner config
+- [test-setup skill spec](../studio-tests/skills/utility/test-setup.md) — scaffolds the GdUnit4 runner config
 - [gdUnit4 Discussion #651: Using GdUnit4 as a Git submodule](https://github.com/godot-gdunit-labs/gdUnit4/discussions/651) — maintainer's recommended submodule approach (not adopted)
 - [Godot VCS best practices](https://docs.godotengine.org/en/stable/tutorials/best_practices/version_control_systems.html) — official docs on files to exclude from VCS

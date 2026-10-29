@@ -1,5 +1,5 @@
 {
-  "description": "Codex lifecycle hooks for Claude Code Game Studios.",
+  "description": "Codex lifecycle hooks for Agent Harness Game Studios.",
   "hooks": {
     "SessionStart": [
       {
