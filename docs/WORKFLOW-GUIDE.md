@@ -3,7 +3,7 @@
 > **How to go from zero to a shipped game using the Agent Architecture.**
 >
 > This guide walks you through every phase of game development using the
-> 49-agent system, 74 slash commands, and 15 automated hooks. It assumes you
+> 49-agent system, 76 slash commands, and 15 automated hooks. It assumes you
 > have Claude Code installed and are working from the project root.
 >
 > The pipeline has 7 phases. At `rigor: standard` and `full`, each phase has
@@ -1590,7 +1590,7 @@ conflicts go to `producer`.
 
 ## Appendix B: Slash Command Quick-Reference
 
-### All 74 Commands by Category
+### All 76 Commands by Category
 
 #### Onboarding and Navigation (7)
 
@@ -1662,7 +1662,7 @@ conflicts go to `producer`.
 | `/reverse-document` | Generate design docs from existing code | Any |
 | `/security-audit` | Security vulnerability audit (save, network, input) | 6 |
 
-#### QA and Testing (9)
+#### QA and Testing (10)
 
 | Command | Purpose | Phase |
 |---------|---------|-------|
@@ -1675,8 +1675,9 @@ conflicts go to `producer`.
 | `/test-evidence-review` | Quality review of test files and manual evidence | 5 |
 | `/test-flakiness` | Detect non-deterministic tests from CI logs | 5-6 |
 | `/skill-test` | Validate skill files for structural and behavioral correctness | Any |
+| `/godot-screenshot` | Capture an in-game Godot screenshot from the running viewport | Any |
 
-#### Production Management (6)
+#### Production Management (7)
 
 | Command | Purpose | Phase |
 |---------|---------|-------|
@@ -1686,6 +1687,7 @@ conflicts go to `producer`.
 | `/bug-triage` | Re-evaluate open bugs for priority, severity, and owner | 5+ |
 | `/playtest-report` | Structured playtest session report | 4-6 |
 | `/onboard` | Onboard a new team member | Any |
+| `/feature-request` | Route a feature request through the Producer-led protocol with tiered dispatch | Any |
 
 #### Release (6)
 
