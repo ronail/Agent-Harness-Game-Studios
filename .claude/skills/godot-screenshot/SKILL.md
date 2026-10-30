@@ -30,9 +30,19 @@ game's actual render output and avoids capturing unrelated desktop content.
 4. Save the image under a project-local evidence directory such as
    `production/qa/evidence/`, unless the user supplies an explicit output path.
    Create parent directories as needed.
-5. Capture only after the target scene is loaded and rendered. If timing is
-   uncertain, wait for one or more rendered frames before saving.
-6. Verify that the PNG exists, is non-empty, and can be opened. Report the
+5. Use a real display renderer, never `--headless`: its dummy renderer has no
+   viewport texture to read back. Give each launch an explicit writable
+   `--log-file` under the workspace or temporary directory so the engine does
+   not fall back to a restricted `user://logs` location.
+6. Capture only after the target scene is loaded and the renderer signals
+   `RenderingServer.frame_post_draw`; a `process_frame` alone does not prove
+   that the viewport texture has finished rendering. Retain the image in a
+   local variable, reject a null image, and check the return value from
+   `save_png()`.
+7. After a successful readback, yield one more frame and use
+   `call_deferred("quit")` rather than immediately quitting the scene tree.
+   This avoids tearing down the renderer while its texture readback completes.
+8. Verify that the PNG exists, is non-empty, and can be opened. Report the
    absolute path and dimensions. If capture fails, report the exact Godot
    error and do not substitute a system screenshot.
 

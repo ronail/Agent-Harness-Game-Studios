@@ -6,6 +6,8 @@
 - [ ] Is user-invocable and includes file, shell, and inspection tools
 - [ ] Explicitly forbids system-level screenshots
 - [ ] Requires verification of the saved PNG and reporting its path
+- [ ] Requires a real display renderer rather than `--headless` for viewport readback
+- [ ] Waits for `RenderingServer.frame_post_draw`, validates the image/write result, and defers shutdown after capture
 
 ## Test Cases
 
@@ -14,8 +16,9 @@
 **Input:** "Take a screenshot of the current Godot game."
 
 **Expected behavior:** Uses an existing Godot-native capture hook or a
-project-local viewport capture script, waits for the scene to render, saves a
-PNG, verifies it, and reports the absolute path and dimensions.
+project-local viewport capture script, waits for
+`RenderingServer.frame_post_draw`, saves and validates a PNG, yields another
+frame before deferred shutdown, and reports the absolute path and dimensions.
 
 ### Case 2: No running game
 
