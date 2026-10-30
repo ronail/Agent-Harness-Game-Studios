@@ -72,10 +72,13 @@ scene path is positional; any `.tscn` can be launched directly, which is how ste
 window size.
 
 Capture-on-trigger alternative, for a state a scene launch cannot reach: an
-autoload that on the wanted condition does
-`await RenderingServer.frame_post_draw`, then
-`get_viewport().get_texture().get_image().save_png(path)`, then
-`get_tree().quit()`.
+autoload that on the wanted condition awaits
+`RenderingServer.frame_post_draw`, retains the viewport image in a local,
+rejects a null image, checks `save_png(path)`, yields one more process frame,
+then calls `get_tree().call_deferred("quit")`. Do not synchronously quit while
+the texture readback is still completing. Launch with an explicit writable
+`--log-file` as well: a restricted default `user://logs` path can abort the
+engine before the result is reported.
 
 ### Unity 6 — one MonoBehaviour
 
