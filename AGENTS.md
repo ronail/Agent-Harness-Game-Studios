@@ -26,3 +26,26 @@ Before spawning, also read any original skill referenced by the agent or
 orchestration workflow. The Codex model mapping changes execution selection;
 it does not replace the original skill or agent instructions.
 
+## Antigravity studio-agent spawning
+
+When Antigravity spawns a game-studio agent, use the agent definition in
+`.agents/agents/<agent-name>.md` as the source of truth (generated from
+`.claude/agents/<agent-name>.md` by `.agents/generate_compat.py`). Read its
+YAML frontmatter `model` field (`inherit`, `flash`, or `pro`) and resolve
+the shared tier through `.agents/agent-models.toml` before creating the
+subagent.
+
+| Agent frontmatter | Antigravity tier | Gemini model |
+|-------------------|------------------|--------------|
+| `model: flash` (haiku source tier) | `flash` | `gemini-3.5-flash-lite` |
+| `model: flash` (sonnet source tier) | `flash` | `gemini-3.8-flash` |
+| `model: pro` (opus source tier) | `pro` | `gemini-4-argon` |
+| `model: inherit` | `inherit` | (session model) |
+
+Pass the resolved Gemini model explicitly on the subagent or child-task
+request when the harness allows it. Do not rely on the session model for
+`pro`/`flash` agents. Before spawning, also read any original skill
+referenced by the agent or orchestration workflow. The model mapping changes
+execution selection; it does not replace the original skill or agent
+instructions.
+
