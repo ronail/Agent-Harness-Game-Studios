@@ -3,7 +3,7 @@
     "SessionStart": [
       {
         "type": "command",
-        "command": "bash .agents/hooks/session-start.sh",
+        "command": "bash \"$(git rev-parse --show-toplevel)/.agents/hooks/session-start.sh\"",
         "timeout": 15
       }
     ]
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .agents/hooks/pre-tool-use.sh",
+            "command": "bash \"$(git rev-parse --show-toplevel)/.agents/hooks/pre-tool-use.sh\"",
             "timeout": 15
           }
         ]
@@ -25,7 +25,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .agents/hooks/pre-tool-use.sh",
+            "command": "bash \"$(git rev-parse --show-toplevel)/.agents/hooks/pre-tool-use.sh\"",
             "timeout": 15
           }
         ]
@@ -35,7 +35,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .agents/hooks/pre-tool-use.sh",
+            "command": "bash \"$(git rev-parse --show-toplevel)/.agents/hooks/pre-tool-use.sh\"",
             "timeout": 10
           }
         ]
@@ -49,7 +49,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .agents/hooks/post-tool-use.sh",
+            "command": "bash \"$(git rev-parse --show-toplevel)/.agents/hooks/post-tool-use.sh\"",
             "timeout": 15
           }
         ]
@@ -60,7 +60,7 @@
     "Stop": [
       {
         "type": "command",
-        "command": "bash .agents/hooks/stop.sh",
+        "command": "bash \"$(git rev-parse --show-toplevel)/.agents/hooks/stop.sh\"",
         "timeout": 10
       }
     ]
