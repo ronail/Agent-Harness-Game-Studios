@@ -35,15 +35,25 @@ the alias `model:` takes, never as a model ID: Claude Code resolves each alias
 to the current model in that family, so this table does not change when a new
 model ships.
 
-| Tier | `model:` | Codex model | When to use |
-|------|----------|-------------|-------------|
-| **Haiku** | `haiku` | `gpt-6-luna` | Read-only status checks, formatting, simple lookups — no creative judgment needed |
-| **Sonnet** | `sonnet` | `gpt-6.1-terra` | Implementation, design authoring, analysis of individual systems — default for most work |
-| **Opus** | `opus` | `gpt-6.1-sol` | Multi-document synthesis, high-stakes phase gate verdicts, cross-system holistic review |
-| **Session** | `inherit` | (session model) | Agents only — runs on whatever model the session runs |
+| Tier | `model:` | Codex model | Antigravity model | When to use |
+|------|----------|-------------|-------------------|-------------|
+| **Haiku** | `haiku` | `gpt-6-luna` | `gemini-3.5-flash-lite` (`flash`) | Read-only status checks, formatting, simple lookups — no creative judgment needed |
+| **Sonnet** | `sonnet` | `gpt-6.1-terra` | `gemini-3.8-flash` (`flash`) | Implementation, design authoring, analysis of individual systems — default for most work |
+| **Opus** | `opus` | `gpt-6.1-sol` | `gemini-4-argon` (`pro`) | Multi-document synthesis, high-stakes phase gate verdicts, cross-system holistic review |
+| **Session** | `inherit` | (session model) | (session model) | Agents only — runs on whatever model the session runs |
 
 The Codex column is the mapping Codex resolves through `.codex/agent-models.toml`
 when it spawns an agent; `/start codex` verifies that setup.
+
+The Antigravity column is the mapping Antigravity resolves through
+`.agents/agent-models.toml` when it spawns an agent; `/start antigravity`
+verifies that setup. Antigravity subagent frontmatter only accepts
+`inherit`, `flash`, or `pro`, so the generated agent files in
+`.agents/agents/` carry the tier name (`flash` for Haiku/Sonnet, `pro` for
+Opus) and the Gemini model ID is passed explicitly on the spawn request.
+Gemini IDs were last verified against
+`https://aistudio.google.com/docs/models` on 2026-11-08 — re-verify before
+bumping `agent-models.toml`.
 
 Skills with `model: haiku` (5): `/help`, `/onboard`, `/project-stage-detect`,
 `/scope-check`, `/sprint-status`
