@@ -197,6 +197,61 @@ backend, route table) and a `roles` map. A legacy file with no `schemaVersion`
 key is the older flat `{"agent-name": "profile-name"}` mapping and is still
 readable.
 
+## Antigravity Setup (Alternative Harness)
+
+Google Antigravity (App or CLI / `agy`) is supported as an alternative
+harness. Antigravity loads workspace customizations from the `.agents/`
+folder plus root `AGENTS.md` / `GEMINI.md` — the same layout for both the
+App and the CLI. This repository ships that layout: skills via the
+`.agents/skills` symlink, generated custom subagents in `.agents/agents/`,
+and a model-decision rule in `.agents/rules/studio.md`.
+
+### Installing Antigravity
+
+See the [Antigravity documentation](https://antigravity.google/docs) for
+installation. Once installed, verify the CLI with:
+
+```bash
+agy --version
+```
+
+### Discovering the studio customizations
+
+1. Open this repository root as the workspace in Antigravity.
+2. Run `/start antigravity` during onboarding — Phase 3f checks `agy`
+   availability, verifies `.agents/agent-models.toml` and the generated
+   agents, and explains the tier mapping.
+3. Check the **Customizations** panel (App) or `/customizations` (CLI):
+   49 custom subagents and 76 skills should be listed from `.agents/`.
+
+### Model mapping
+
+Antigravity subagent frontmatter only accepts `inherit`, `flash`, or
+`pro`. The shared tiers resolve through `.agents/agent-models.toml`
+(last verified 2026-11-08):
+
+| Shared tier | Antigravity tier | Gemini model |
+|-------------|------------------|--------------|
+| Haiku | `flash` | `gemini-3.5-flash-lite` |
+| Sonnet | `flash` | `gemini-3.8-flash` |
+| Opus | `pro` | `gemini-4-argon` |
+| Inherit | `inherit` | (session model) |
+
+After editing `.claude/agents/*.md`, regenerate:
+
+```bash
+python3 .agents/generate_compat.py
+python3 .agents/generate_compat.py --check   # CI: fail if stale
+```
+
+### Verifying Antigravity Integration
+
+```bash
+ls .agents/agents/*.md | wc -l    # 49
+ls -d .agents/skills/*/ | wc -l   # 76
+python3 .agents/generate_compat.py --check
+```
+
 ## Recommended IDE
 
 Claude Code works with any editor, but the template is optimized for:
