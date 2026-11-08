@@ -10,7 +10,7 @@ Antigravity compat layer, mirroring `.codex/`.
 | Path | Source |
 |---|---|
 | `skills/` | Symlink to `../.claude/skills/` (76 skills) — Antigravity's workspace skill discovery path. No generation needed. |
-| `agents/<name>.md` | **Generated** from `.claude/agents/<name>.md` by `generate_compat.py` (49 custom subagents). Do not edit by hand. |
+| `agents/<name>.md` | **Generated thin wrappers** from `.claude/agents/<name>.md` by `generate_compat.py` (49 custom subagents). Frontmatter is transformed; the body is linked via `@[name instructions](../.claude/agents/<name>.md)`, never copied — edit the canonical file only. |
 | `rules/studio.md` | Hand-authored `model_decision` rule pointing at the canonical coordination docs. |
 | `agent-models.toml` | Shared tier → Gemini model mapping. |
 | `generate_compat.py` | The generator. |
