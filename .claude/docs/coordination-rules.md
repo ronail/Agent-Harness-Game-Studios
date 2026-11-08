@@ -43,6 +43,17 @@ per-skill assignments and the authoring rule.
 > during onboarding to verify this setup. For example, `model: opus` must spawn
 > with `gpt-6.1-sol`, even when the project default is Sonnet.
 
+> **Antigravity Model Setup**: When using Antigravity as the harness, the
+> `model:` fields in skill/agent frontmatter remain the shared tier labels.
+> Custom subagents live in `.agents/agents/` (generated from
+> `.claude/agents/` by `.agents/generate_compat.py`) and carry Antigravity's
+> `inherit`/`flash`/`pro` tier. Before spawning a studio agent, read
+> `.agents/agent-models.toml`, resolve the target definition's tier, and
+> pass the resulting Gemini model explicitly. Run `/start antigravity`
+> during onboarding to verify this setup. For example, `model: pro` must
+> spawn with `gemini-4-argon`, even when the project default is Sonnet.
+> See `AGENTS.md` → Antigravity studio-agent spawning.
+
 **Key point:** whether a skill's `model:` is used
 depends on how the skill starts. Typed as `/skill-name`: yes, except a `haiku`
 pin in auto mode. Started by Claude through the Skill tool: no. Never tell a
