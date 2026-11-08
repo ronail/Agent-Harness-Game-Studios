@@ -55,6 +55,10 @@ class TestGeneratedFile(unittest.TestCase):
             self.assertEqual(metadata["commandExecutionPolicy"], "sandbox")
             self.assertIn("Antigravity adapter", body)
             self.assertIn("gemini-4-argon", text)
+            # Body must be linked, not copied.
+            self.assertIn("@[producer instructions](../.claude/agents/producer.md)", body)
+            self.assertNotIn("You are the Producer for an indie game", text)
+            self.assertLess(len(text), 2000)
             # Claude tool names must not leak into the Antigravity tools list.
             self.assertIn("tools: []", text)
             self.assertNotIn("\ntools: Read", text)
