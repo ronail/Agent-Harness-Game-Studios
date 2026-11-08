@@ -1,7 +1,7 @@
 ---
 name: start
 description: "First-time onboarding — asks where you are, then guides you to the right workflow. No assumptions."
-argument-hint: "[claude|codex|hermes]"
+argument-hint: "[claude|codex|hermes|antigravity]"
 user-invocable: true
 allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, request_user_input, Bash, clarify
 model: sonnet
@@ -13,11 +13,12 @@ This skill writes one file: `production/review-mode.txt` (review mode config set
 
 This skill is the entry point for new users. It does NOT assume you have a game idea, an engine preference, or any prior experience. It asks first, then routes you to the right workflow.
 
-**Optional argument**: `/start [claude|codex|hermes]`
+**Optional argument**: `/start [claude|codex|hermes|antigravity]`
 
 - Omitting the argument defaults to `claude` mode
 - `/start codex` — reviews the project-local Codex model setup (Phase 3e)
 - `/start hermes` — configures Hermes model routing for subagents (Phase 3d)
+- `/start antigravity` — verifies Antigravity setup and Gemini model mapping (Phase 3f)
 - `/start claude` (explicit) — standard Claude Code mode without Hermes routing
 
 Ask with the question tool — `AskUserQuestion`, `request_user_input` or `clarify`, whichever the
@@ -513,6 +514,63 @@ For example, `producer`, `creative-director`, and `technical-director` use
 Sonnet default must not silently replace that selection. The model mapping does
 not replace the original agent or skill instructions: read and follow those
 references as part of the same spawn.
+
+---
+
+## Phase 3f: Configure Antigravity Model Setup
+
+**Only applicable when the `antigravity` argument is provided.** This phase is
+skipped if the argument is omitted or if `claude`, `codex`, or `hermes` is
+explicitly provided.
+
+Use `Bash` to check whether the Antigravity CLI is installed
+(`command -v agy`). If it is not installed, say: "Antigravity CLI not
+detected. Install the Antigravity App or CLI from
+https://antigravity.google/docs, then run `/start antigravity` again to
+verify the setup." Continue to the configuration check so the user can
+still review the project files.
+
+Read `.agents/agent-models.toml` and confirm that the Antigravity model
+map exists. If it is missing, say: "No Antigravity agent model map was
+found. Add `.agents/agent-models.toml` before spawning studio agents so
+their model tiers resolve explicitly."
+
+Verify the generated custom agents: count `.agents/agents/*.md` and compare
+with `.claude/agents/*.md`. If the counts differ, or
+`python3 .agents/generate_compat.py --check` reports stale files, ask for
+approval to run `python3 .agents/generate_compat.py` to regenerate them.
+Verify `.agents/skills` resolves to `.claude/skills` (Antigravity's
+workspace skill discovery path).
+
+If the files exist, explain the shared model-tier mapping and the
+corresponding Antigravity tier and Gemini model:
+
+| Shared tier | Antigravity tier | Gemini model |
+|-------------|------------------|--------------|
+| Haiku | `flash` | `gemini-3.5-flash-lite` |
+| Sonnet | `flash` | `gemini-3.8-flash` |
+| Opus | `pro` | `gemini-4-argon` |
+| Inherit | `inherit` | (session model) |
+
+Antigravity subagent frontmatter only accepts `inherit`, `flash`, or
+`pro` — never write a Gemini model ID into an agent's `model:` field.
+The resolved Gemini model from `.agents/agent-models.toml` is passed
+explicitly on the subagent or child-task request when the harness allows
+it. Do not change the user's global Antigravity configuration from this
+skill.
+
+### Antigravity agent spawn rule
+
+When Antigravity creates a game-studio subagent, it must:
+
+1. Read the target definition in `.agents/agents/<agent-name>.md`.
+2. Read its YAML frontmatter `model` field (`inherit`, `flash`, or `pro`).
+3. Resolve that tier through `.agents/agent-models.toml`.
+4. Pass the resolved Gemini model explicitly on the subagent or
+   child-task request when the harness allows it.
+
+The model mapping does not replace the original agent or skill
+instructions: read and follow those references as part of the same spawn.
 
 ---
 
