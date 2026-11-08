@@ -15,6 +15,7 @@
   <a href=".claude/rules"><img src="https://img.shields.io/badge/rules-14-red" alt="14 Rules"></a>
   <a href="https://code.claude.com/docs"><img src="https://img.shields.io/badge/Claude%20Code-supported-f5f5f5?logo=anthropic" alt="Claude Code supported"></a>
   <a href="https://developers.openai.com/codex/cli"><img src="https://img.shields.io/badge/Codex-supported-412991?logo=openai&logoColor=white" alt="Codex supported"></a>
+  <a href="https://antigravity.google/docs"><img src="https://img.shields.io/badge/Google%20Antigravity-supported-4285F4?logo=google&logoColor=white" alt="Google Antigravity supported"></a>
   <a href="https://www.buymeacoffee.com/donchitos3"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Support%20this%20project-FFDD00?logo=buymeacoffee&logoColor=black" alt="Buy Me a Coffee"></a>
   <a href="https://github.com/sponsors/Donchitos"><img src="https://img.shields.io/badge/GitHub%20Sponsors-Support%20this%20project-ea4aaa?logo=githubsponsors&logoColor=white" alt="GitHub Sponsors"></a>
 </p>
@@ -214,6 +215,28 @@ studio agent, it reads that agent's `model:` tier from `.claude/agents/` and
 passes the mapped model explicitly; `model: opus` therefore uses
 `gpt-6.1-sol`. Run `/start codex` to verify the setup.
 
+### Antigravity Model Setup
+
+When using **Google Antigravity as the harness** (App or CLI / `agy`), the
+`model:` fields in skill and agent frontmatter remain the shared
+`haiku` / `sonnet` / `opus` tier labels. Antigravity discovers workspace
+customizations from `.agents/` — skills via the existing `.agents/skills`
+symlink, custom subagents in `.agents/agents/` (generated from
+`.claude/agents/` by `python3 .agents/generate_compat.py`), and rules in
+`.agents/rules/`. The tier mapping is:
+
+| Shared tier | Antigravity tier | Gemini model |
+|-------------|------------------|--------------|
+| Haiku | `flash` | `gemini-3.5-flash-lite` |
+| Sonnet | `flash` | `gemini-3.8-flash` |
+| Opus | `pro` | `gemini-4-argon` |
+| Inherit | `inherit` | (session model) |
+
+The complete machine-readable mapping is in `.agents/agent-models.toml`
+(last verified 2026-11-08). Antigravity subagent frontmatter only accepts
+`inherit`, `flash`, or `pro`, so the Gemini model ID is passed explicitly
+on the spawn request. Run `/start antigravity` to verify the setup.
+
 ## Getting Started
 
 ### Prerequisites
@@ -222,18 +245,23 @@ passes the mapped model explicitly; `model: opus` therefore uses
 - [Claude Code](https://code.claude.com/docs/en/setup) — the native installer is recommended (`npm install -g @anthropic-ai/claude-code` also works, on Node.js 22+)
 - [Python 3](https://www.python.org/) — reads `project.yaml` for every skill and hook; without it every setting silently falls back to its default
 - [Codex CLI](https://developers.openai.com/codex/cli) — optional alternative harness
+- [Google Antigravity](https://antigravity.google/docs) — optional alternative harness (App or CLI / `agy`)
 - [Hermes Agent](https://hermes-agent.nousresearch.com/docs) — optional alternative harness
 - Bash — runs every hook; built into macOS and Linux, and on Windows it comes with [Git for Windows](https://git-scm.com/downloads/win)
 - **Recommended**: [jq](https://jqlang.github.io/jq/) (for hook validation)
 
 Claude Code is the primary workflow runtime. Codex can use the project-local
-`.codex/` configuration, and Hermes can follow the repository's shared agent,
-skill, hook, and rule conventions.
+`.codex/` configuration, Hermes can follow the repository's shared agent,
+skill, hook, and rule conventions, and Antigravity discovers the `.agents/`
+customizations described above.
 
 Codex discovers the project skills through the `.agents/skills` symlink, which
 keeps `.claude/skills` as the canonical source while exposing each skill's
 `agents/openai.yaml` metadata. After changing a skill or role definition,
 regenerate the Codex compatibility files with `python3 .codex/generate_compat.py`.
+Antigravity uses the same symlink for skills and its own generated agents —
+after changing a role definition, regenerate with
+`python3 .agents/generate_compat.py`.
 
 Hooks fail gracefully if optional tools are missing — you just lose validation — with one deliberate exception: a commit that stages data JSON is blocked when there is no Python to validate it.
 
@@ -254,7 +282,8 @@ Hooks fail gracefully if optional tools are missing — you just lose validation
    rules and ask-first permission mode.
 
 3. **Run `/start`** — in Claude Code, or `/start codex` when using Codex, or
-   `/start hermes` when using Hermes. The system asks where you are (no idea,
+   `/start hermes` when using Hermes, or `/start antigravity` when using
+   Antigravity. The system asks where you are (no idea,
    vague concept, clear design, existing work) and guides you to the right
    workflow. No assumptions.
 
@@ -336,6 +365,12 @@ CLAUDE.md                           # Master configuration
   hooks.json                        # Codex lifecycle and validation hook wiring
   hooks/                            # Codex command guard and adapter hooks
   rules/                            # Codex command-specific safety rules
+.agents/
+  agent-models.toml                 # Antigravity/Gemini tier mapping (opus→pro/gemini-4-argon, …)
+  generate_compat.py                # Regenerates agents/ from .claude/agents/
+  agents/                           # 49 Antigravity custom subagents (generated)
+  rules/                            # Antigravity rules (studio.md, model_decision)
+  skills -> ../.claude/skills       # Antigravity skill discovery (symlink)
     templates/                      # 62 document templates (+ per-section guidance)
 src/                                # Game source code (Godot). The code root is
                                     #   ENGINE-SPECIFIC: Unity compiles only
