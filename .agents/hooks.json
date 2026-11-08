@@ -1,0 +1,68 @@
+{
+  "studio-session": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "bash .agents/hooks/session-start.sh",
+        "timeout": 15
+      }
+    ]
+  },
+  "studio-safety-gate": {
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .agents/hooks/pre-tool-use.sh",
+            "timeout": 15
+          }
+        ]
+      },
+      {
+        "matcher": "write_to_file|replace_file_content|multi_replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .agents/hooks/pre-tool-use.sh",
+            "timeout": 15
+          }
+        ]
+      },
+      {
+        "matcher": "view_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .agents/hooks/pre-tool-use.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "studio-post-write": {
+    "PostToolUse": [
+      {
+        "matcher": "write_to_file|replace_file_content|multi_replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .agents/hooks/post-tool-use.sh",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  },
+  "studio-stop": {
+    "Stop": [
+      {
+        "type": "command",
+        "command": "bash .agents/hooks/stop.sh",
+        "timeout": 10
+      }
+    ]
+  }
+}
