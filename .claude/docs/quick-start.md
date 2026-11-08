@@ -481,3 +481,41 @@ is:
 
 The standard tier is the project default. Run `/start codex` during onboarding
 to review the mapping and choose a session model.
+
+## Optional: Antigravity Harness
+
+When using **Google Antigravity as the harness** (App or CLI / `agy`), the
+`model:` fields in skill and agent frontmatter remain the shared
+`haiku` / `sonnet` / `opus` tier labels. Antigravity discovers workspace
+customizations from `.agents/`:
+
+| Customization | Path |
+|---|---|
+| Skills (76) | `.agents/skills/<name>/SKILL.md` (symlink to `.claude/skills/`) |
+| Custom subagents (49) | `.agents/agents/<name>.md` (generated) |
+| Rules | `.agents/rules/studio.md`, root `AGENTS.md` / `GEMINI.md` |
+
+The tier mapping is:
+
+| Shared tier | Antigravity tier | Gemini model |
+|-------------|------------------|--------------|
+| Haiku | `flash` | `gemini-3.5-flash-lite` |
+| Sonnet | `flash` | `gemini-3.8-flash` |
+| Opus | `pro` | `gemini-4-argon` |
+| Inherit | `inherit` | (session model) |
+
+Antigravity subagent frontmatter only accepts `inherit`, `flash`, or `pro`,
+so the generated agent files carry the tier name and the Gemini model ID is
+resolved through `.agents/agent-models.toml` and passed explicitly on the
+spawn request. Run `/start antigravity` during onboarding to verify the
+setup.
+
+After editing `.claude/agents/*.md`, regenerate the Antigravity agents:
+
+```bash
+python3 .agents/generate_compat.py          # regenerate
+python3 .agents/generate_compat.py --check  # CI: fail if stale
+```
+
+See [`.agents/README.md`](../../.agents/README.md) and the
+[Antigravity customization discovery docs](https://antigravity.google/docs/customization-discovery/).
