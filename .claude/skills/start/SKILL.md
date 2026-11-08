@@ -535,12 +535,18 @@ map exists. If it is missing, say: "No Antigravity agent model map was
 found. Add `.agents/agent-models.toml` before spawning studio agents so
 their model tiers resolve explicitly."
 
-Verify the generated custom agents: count `.agents/agents/*.md` and compare
-with `.claude/agents/*.md`. If the counts differ, or
+Verify the generated custom agents: `.agents/agents/*.md` is gitignored
+and generated on demand — run `python3 .agents/generate_compat.py` to
+create it (ask for approval first if it does not exist), then count
+`.agents/agents/*.md` and compare with `.claude/agents/*.md`. If
 `python3 .agents/generate_compat.py --check` reports stale files, ask for
-approval to run `python3 .agents/generate_compat.py` to regenerate them.
+approval to regenerate them.
 Verify `.agents/skills` resolves to `.claude/skills` (Antigravity's
 workspace skill discovery path).
+Verify hooks: `.agents/hooks.json` exists and its scripts are executable
+(`.agents/hooks/session-start.sh`, `.agents/hooks/pre-tool-use.sh`).
+Antigravity runs hooks from `.agents/hooks.json`, not from
+`.claude/settings.json`.
 
 If the files exist, explain the shared model-tier mapping and the
 corresponding Antigravity tier and Gemini model:
