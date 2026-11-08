@@ -66,7 +66,7 @@ The shared Claude tiers resolve through `agent-models.toml`:
 | Shared tier | Antigravity tier | Gemini model |
 |-------------|------------------|--------------|
 | Haiku | `flash` | `gemini-3.5-flash-lite` |
-| Sonnet | `flash` | `gemini-3.8-flash` |
+| Sonnet | `pro` | `gemini-3.1-pro-preview` |
 | Opus | `pro` | `gemini-4-argon` |
 | Inherit | `inherit` | (session model) |
 

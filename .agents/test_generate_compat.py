@@ -33,7 +33,7 @@ class TestFrontmatterParsing(unittest.TestCase):
 class TestModelTierMapping(unittest.TestCase):
     def test_tier_to_antigravity_model(self):
         self.assertEqual(gc.antigravity_model("opus"), "pro")
-        self.assertEqual(gc.antigravity_model("sonnet"), "flash")
+        self.assertEqual(gc.antigravity_model("sonnet"), "pro")
         self.assertEqual(gc.antigravity_model("haiku"), "flash")
         self.assertEqual(gc.antigravity_model("inherit"), "inherit")
         self.assertEqual(gc.antigravity_model(""), "inherit")

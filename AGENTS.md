@@ -38,7 +38,7 @@ subagent.
 | Agent frontmatter | Antigravity tier | Gemini model |
 |-------------------|------------------|--------------|
 | `model: flash` (haiku source tier) | `flash` | `gemini-3.5-flash-lite` |
-| `model: flash` (sonnet source tier) | `flash` | `gemini-3.8-flash` |
+| `model: pro` (sonnet source tier) | `pro` | `gemini-3.1-pro-preview` |
 | `model: pro` (opus source tier) | `pro` | `gemini-4-argon` |
 | `model: inherit` | `inherit` | (session model) |
 

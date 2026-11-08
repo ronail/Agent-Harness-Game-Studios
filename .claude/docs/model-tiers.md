@@ -38,7 +38,7 @@ model ships.
 | Tier | `model:` | Codex model | Antigravity model | When to use |
 |------|----------|-------------|-------------------|-------------|
 | **Haiku** | `haiku` | `gpt-6-luna` | `gemini-3.5-flash-lite` (`flash`) | Read-only status checks, formatting, simple lookups — no creative judgment needed |
-| **Sonnet** | `sonnet` | `gpt-6.1-terra` | `gemini-3.8-flash` (`flash`) | Implementation, design authoring, analysis of individual systems — default for most work |
+| **Sonnet** | `sonnet` | `gpt-6.1-terra` | `gemini-3.1-pro-preview` (`pro`) | Implementation, design authoring, analysis of individual systems — default for most work |
 | **Opus** | `opus` | `gpt-6.1-sol` | `gemini-4-argon` (`pro`) | Multi-document synthesis, high-stakes phase gate verdicts, cross-system holistic review |
 | **Session** | `inherit` | (session model) | (session model) | Agents only — runs on whatever model the session runs |
 
@@ -49,11 +49,13 @@ The Antigravity column is the mapping Antigravity resolves through
 `.agents/agent-models.toml` when it spawns an agent; `/start antigravity`
 verifies that setup. Antigravity subagent frontmatter only accepts
 `inherit`, `flash`, or `pro`, so the generated agent files in
-`.agents/agents/` carry the tier name (`flash` for Haiku/Sonnet, `pro` for
-Opus) and the Gemini model ID is passed explicitly on the spawn request.
+`.agents/agents/` carry the tier name (`flash` for Haiku, `pro` for
+Sonnet/Opus) and the Gemini model ID is passed explicitly on the spawn request.
 Gemini IDs were last verified against
 `https://aistudio.google.com/docs/models` on 2026-11-08 — re-verify before
-bumping `agent-models.toml`.
+bumping `agent-models.toml`. Sonnet maps to Gemini 3.1 Pro Preview (the only
+Sonnet-class Gemini: $2/$12 vs Sonnet's $2/$10, GPQA 94.3%); Gemini 3.8 Flash
+is a Haiku-class price point ($0.75/$3.75) and is the GA fallback.
 
 Skills with `model: haiku` (5): `/help`, `/onboard`, `/project-stage-detect`,
 `/scope-check`, `/sprint-status`

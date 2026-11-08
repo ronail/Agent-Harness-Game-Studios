@@ -17,7 +17,7 @@ Antigravity loads workspace customizations from .agents/:
 Custom-agent frontmatter only accepts model: inherit|flash|pro, so the
 shared Claude tiers resolve through .agents/agent-models.toml:
   opus   -> pro    -> gemini-4-argon
-  sonnet -> flash  -> gemini-3.8-flash
+  sonnet -> pro    -> gemini-3.1-pro-preview
   haiku  -> flash  -> gemini-3.5-flash-lite
   inherit/missing -> inherit (session model)
 """
@@ -37,13 +37,13 @@ MODELS_FILE = ROOT / ".agents" / "agent-models.toml"
 
 TIER_TO_ANTIGRAVITY_MODEL = {
     "opus": "pro",
-    "sonnet": "flash",
+    "sonnet": "pro",
     "haiku": "flash",
 }
 
 TIER_TO_GEMINI = {
     "opus": "gemini-4-argon",
-    "sonnet": "gemini-3.8-flash",
+    "sonnet": "gemini-3.1-pro-preview",
     "haiku": "gemini-3.5-flash-lite",
 }
 

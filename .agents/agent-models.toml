@@ -3,11 +3,19 @@
 # .claude/skills/*/SKILL.md. Antigravity subagent frontmatter only accepts
 # inherit|flash|pro, so the resolved model is passed explicitly when spawning
 # a studio agent; this file is the mapping that resolution uses.
+#
+# Tier rationale (capability + price matched, verified 2026-11-08):
+# - haiku ($0.10/$0.50) <-> Flash-Lite ($0.25/$1.50): fast/cheap class.
+# - sonnet ($2/$10) <-> 3.1 Pro Preview ($2/$12): same price tier;
+#   Flash ($0.75/$3.75) is a Haiku-class price point and trails Sonnet on
+#   SWE-Bench Pro Hard / APEX / Code Migration. 3.1 Pro is preview;
+#   GA fallback is gemini-3.8-flash-high.
+# - opus ($4/$20) <-> 4 Argon ($4/$20 from 2026-12-01): flagship class.
 # Last verified against https://aistudio.google.com/docs/models on 2026-11-08.
 # Re-verify before bumping: Gemini 3.6 Flash retires 2026-11-19 and
 # gemini-2.5-pro routes to gemini-3.8-flash from 2026-12-01.
 
 [tiers]
 haiku = "gemini-3.5-flash-lite"
-sonnet = "gemini-3.8-flash"
+sonnet = "gemini-3.1-pro-preview"
 opus = "gemini-4-argon"
