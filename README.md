@@ -221,9 +221,10 @@ When using **Google Antigravity as the harness** (App or CLI / `agy`), the
 `model:` fields in skill and agent frontmatter remain the shared
 `haiku` / `sonnet` / `opus` tier labels. Antigravity discovers workspace
 customizations from `.agents/` — skills via the existing `.agents/skills`
-symlink, custom subagents in `.agents/agents/` (generated from
-`.claude/agents/` by `python3 .agents/generate_compat.py`), and rules in
-`.agents/rules/`. The tier mapping is:
+symlink, custom subagents in `.agents/agents/` (thin wrappers generated
+on demand by `/start antigravity` from `.claude/agents/`), hooks in
+`.agents/hooks.json` (adapters reusing the canonical `.claude/hooks/`
+scripts), and rules in `.agents/rules/`. The tier mapping is:
 
 | Shared tier | Antigravity tier | Gemini model |
 |-------------|------------------|--------------|
@@ -261,7 +262,8 @@ keeps `.claude/skills` as the canonical source while exposing each skill's
 regenerate the Codex compatibility files with `python3 .codex/generate_compat.py`.
 Antigravity uses the same symlink for skills and its own generated agents —
 after changing a role definition, regenerate with
-`python3 .agents/generate_compat.py`.
+`python3 .agents/generate_compat.py`. Agent wrappers are gitignored and
+created by `/start antigravity`; hooks live in `.agents/hooks.json`.
 
 Hooks fail gracefully if optional tools are missing — you just lose validation — with one deliberate exception: a commit that stages data JSON is blocked when there is no Python to validate it.
 
@@ -367,8 +369,10 @@ CLAUDE.md                           # Master configuration
   rules/                            # Codex command-specific safety rules
 .agents/
   agent-models.toml                 # Antigravity/Gemini tier mapping (opus→pro/gemini-4-argon, …)
-  generate_compat.py                # Regenerates agents/ from .claude/agents/
-  agents/                           # 49 Antigravity custom subagents (generated)
+  generate_compat.py                # Generates agents/ wrappers from .claude/agents/
+  agents/                           # 49 Antigravity custom subagents (generated, gitignored)
+  hooks.json                        # Antigravity hook wiring
+  hooks/                            # Antigravity hook adapters (reuse .claude/hooks/)
   rules/                            # Antigravity rules (studio.md, model_decision)
   skills -> ../.claude/skills       # Antigravity skill discovery (symlink)
     templates/                      # 62 document templates (+ per-section guidance)

@@ -10,21 +10,53 @@ Antigravity compat layer, mirroring `.codex/`.
 | Path | Source |
 |---|---|
 | `skills/` | Symlink to `../.claude/skills/` (76 skills) — Antigravity's workspace skill discovery path. No generation needed. |
-| `agents/<name>.md` | **Generated thin wrappers** from `.claude/agents/<name>.md` by `generate_compat.py` (49 custom subagents). Frontmatter is transformed; the body is linked via `@[name instructions](../.claude/agents/<name>.md)`, never copied — edit the canonical file only. |
+| `agents/<name>.md` | **Generated on demand** (gitignored) from `.claude/agents/<name>.md` by `generate_compat.py`, run by `/start antigravity`. Frontmatter is transformed; the body is linked via `@[name instructions](../.claude/agents/<name>.md)`, never copied — edit the canonical file only. |
+| `hooks.json` + `hooks/*.sh` | Antigravity hook wiring + adapters (see Hooks below). Committed. |
 | `rules/studio.md` | Hand-authored `model_decision` rule pointing at the canonical coordination docs. |
 | `agent-models.toml` | Shared tier → Gemini model mapping. |
 | `generate_compat.py` | The generator. |
-| `test_generate_compat.py` | Generator tests. |
+| `test_generate_compat.py` / `test_hooks.sh` | Generator + hook adapter tests. |
 
 ## Regenerating
 
-After editing `.claude/agents/*.md`, regenerate:
+`agents/` is gitignored, so wrappers are created by `/start antigravity`
+(or manually):
 
 ```bash
-python3 .agents/generate_compat.py          # regenerate
-python3 .agents/generate_compat.py --check  # CI: exit 1 if stale
+python3 .agents/generate_compat.py          # generate into .agents/agents/
+python3 .agents/generate_compat.py --check  # verify local wrappers match generator
 python3 .agents/test_generate_compat.py -v  # unit tests
+bash .agents/test_hooks.sh                  # hook adapter tests
 ```
+
+Editing `.claude/agents/*.md` bodies needs no regeneration (bodies are
+linked); only frontmatter changes (name/description/tier) require it.
+
+## Hooks
+
+Antigravity loads hooks from `.agents/hooks.json` (not
+`.claude/settings.json`). Its hook contract differs from Claude Code's —
+stdin is `{toolCall:{name,args}, workspacePaths}`, stdout must be JSON
+(`{"decision":"allow"|"deny"}` for PreToolUse, `{"injectSteps":[...]}` for
+SessionStart), and empty/malformed PreToolUse output fails closed — so
+Claude hook scripts can't be wired directly. The adapters in
+`hooks/*.sh` translate both ways and reuse the canonical scripts in
+`.claude/hooks/` + `.codex/hooks/guard-command.sh`:
+
+| Antigravity event | Adapter | Claude scripts reused |
+|---|---|---|
+| SessionStart | `hooks/session-start.sh` | `session-start.sh`, `detect-gaps.sh` → `injectSteps` |
+| PreToolUse (`run_command`) | `hooks/pre-tool-use.sh` | `guard-command.sh`, `validate-commit.sh`, `validate-push.sh` (exit 2 → `deny`) |
+| PreToolUse (write tools) | `hooks/pre-tool-use.sh` | `validate-registry.sh`, `validate-write.sh` |
+| PreToolUse (`view_file`) | `hooks/pre-tool-use.sh` | `validate-read.sh` |
+| PostToolUse (write tools) | `hooks/post-tool-use.sh` | `validate-assets.sh`, `validate-skill-change.sh` (always `{}` — PostToolUse can't gate) |
+| Stop | `hooks/stop.sh` | `session-stop.sh` (always allows stop) |
+
+Not covered — Antigravity has no equivalent events: `SubagentStart`,
+`SubagentStop`, `PreCompact`, `Notification`. Agent lifecycle logging
+(`log-agent.sh`) and compaction checkpointing (`pre-compact.sh`) therefore
+don't run under Antigravity; the collaboration protocol in `CLAUDE.md`
+still governs agent behavior.
 
 ## Model mapping
 
@@ -55,4 +87,5 @@ subagent, because Antigravity tool names differ (`view_file`,
 - [Custom subagents](https://antigravity.google/docs/subagents)
 - [Agent skills](https://antigravity.google/docs/skills/)
 - [Rules](https://antigravity.google/docs/rules)
+- [Hooks](https://antigravity.google/docs/hooks)
 - Onboarding: `/start antigravity`

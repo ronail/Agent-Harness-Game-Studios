@@ -203,8 +203,9 @@ Google Antigravity (App or CLI / `agy`) is supported as an alternative
 harness. Antigravity loads workspace customizations from the `.agents/`
 folder plus root `AGENTS.md` / `GEMINI.md` — the same layout for both the
 App and the CLI. This repository ships that layout: skills via the
-`.agents/skills` symlink, generated custom subagents in `.agents/agents/`,
-and a model-decision rule in `.agents/rules/studio.md`.
+`.agents/skills` symlink, thin custom subagents in `.agents/agents/`
+(generated on demand by `/start antigravity`, gitignored), hooks in
+`.agents/hooks.json`, and a model-decision rule in `.agents/rules/studio.md`.
 
 ### Installing Antigravity
 
@@ -219,8 +220,8 @@ agy --version
 
 1. Open this repository root as the workspace in Antigravity.
 2. Run `/start antigravity` during onboarding — Phase 3f checks `agy`
-   availability, verifies `.agents/agent-models.toml` and the generated
-   agents, and explains the tier mapping.
+   availability, generates `.agents/agents/` (gitignored), verifies
+   `.agents/agent-models.toml` and hooks, and explains the tier mapping.
 3. Check the **Customizations** panel (App) or `/customizations` (CLI):
    49 custom subagents and 76 skills should be listed from `.agents/`.
 
@@ -237,12 +238,25 @@ Antigravity subagent frontmatter only accepts `inherit`, `flash`, or
 | Opus | `pro` | `gemini-4-argon` |
 | Inherit | `inherit` | (session model) |
 
-After editing `.claude/agents/*.md`, regenerate:
+After editing `.claude/agents/*.md` frontmatter, regenerate (bodies are
+linked, so body edits need no regeneration):
 
 ```bash
 python3 .agents/generate_compat.py
-python3 .agents/generate_compat.py --check   # CI: fail if stale
+python3 .agents/generate_compat.py --check   # verify local wrappers match
+bash .agents/test_hooks.sh                   # hook adapter tests
 ```
+
+### Hooks
+
+Antigravity loads hooks from `.agents/hooks.json`. Adapter scripts in
+`.agents/hooks/` translate Antigravity's JSON hook contract to the
+canonical `.claude/hooks/` scripts: SessionStart injects session context,
+PreToolUse gates `run_command` (commit/push policy + command guard) and
+file writes, PostToolUse runs asset/skill validators, Stop runs session
+logging. Antigravity has no SubagentStart/PreCompact/Notification events,
+so those Claude-only hooks don't run there. Verify with
+`bash .agents/test_hooks.sh`.
 
 ### Verifying Antigravity Integration
 
@@ -250,6 +264,7 @@ python3 .agents/generate_compat.py --check   # CI: fail if stale
 ls .agents/agents/*.md | wc -l    # 49
 ls -d .agents/skills/*/ | wc -l   # 76
 python3 .agents/generate_compat.py --check
+bash .agents/test_hooks.sh
 ```
 
 ## Recommended IDE
