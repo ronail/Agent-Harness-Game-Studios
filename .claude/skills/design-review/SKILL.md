@@ -3,7 +3,7 @@ name: design-review
 description: "Reviews one design document for completeness, internal consistency, implementability, and design standards. Before handing to programmers."
 argument-hint: "[path-to-design-doc] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/design-review/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/review-receipts.sh check *), Bash(bash .claude/scripts/review-receipts.sh hash *), Bash(bash .claude/scripts/gdd-structure-check.sh *), Bash(grep -E '^  - name:' design/registry/entities.yaml), Bash(grep -n -i -E *), request_user_input, clarify
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/design-review/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/review-receipts.sh check *), Bash(bash .claude/scripts/review-receipts.sh hash *), Bash(bash .claude/scripts/gdd-structure-check.sh *), Bash(grep -E '^  - name:' design/registry/entities.yaml), Bash(grep -n -i -E *)
 model: sonnet
 ---
 
@@ -24,7 +24,7 @@ wins and `--depth` is ignored — say so. No block → defaults in
 See `.claude/docs/director-gates.md` for the full check pattern. Individual gate definitions live in `.claude/docs/director-gates/[gate-id].md` — the spawned agent reads its own gate file; do not read it in the parent session.
 
 
-Every `AskUserQuestion`, `request_user_input` or `clarify` call follows `.claude/docs/automation-modes.md`
+Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt).
 
@@ -74,7 +74,7 @@ existed and covers nothing.
 - **All `UNCHANGED`** and the log's latest entry carries a verdict — surface it:
   *"This document is byte-identical to its last review on [date] ([mode]
   review, verdict: [verdict])."* If that verdict was APPROVED and that review
-  covers this run, offer via `AskUserQuestion`, `request_user_input` or `clarify`:
+  covers this run, offer via `AskUserQuestion`:
   `[A] Use the prior verdict (Recommended)` / `[B] Re-review anyway` —
   `guided` proceeds with [A] and notes it; `autonomous` logs via
   `log_decision` and uses the prior verdict. If it was APPROVED but the
@@ -235,7 +235,7 @@ Using the GDD **already loaded in Phase 1** — do not re-read it — identify e
 | Multiplayer, sync, replication | `network-programmer` |
 | Audio cues, music triggers | `audio-director` |
 | Performance, draw calls, memory | `performance-analyst` |
-| Engine-specific patterns or APIs | Primary engine specialist (`<engine>-specialist` from `engine.name` — Godot→`godot-specialist`, Unity→`unity-specialist`, Unreal→`unreal-specialist`; fall back to the Primary line of `## Engine Specialists` in `technical-preferences.md`) |
+| Engine-specific patterns or APIs | Primary engine specialist (`<engine>-specialist` from `engine.name` — Godot→`godot-specialist`, Unity→`unity-specialist`, Unreal→`unreal-specialist`, Web→`lead-programmer`; fall back to the Primary line of `## Engine Specialists` in `technical-preferences.md`) |
 | Acceptance criteria, test coverage | `qa-lead` |
 | Data schema, resource structure | `systems-designer` |
 | Any gameplay system | `game-designer` (always) |
@@ -246,12 +246,13 @@ These are the most common baselines — but not required for pure UI specs, audi
 
 ### Step 2 — Spawn all relevant specialists in parallel
 
-**CRITICAL: `Agent` in this skill spawns a SUBAGENT — a separate independent Claude session
-with its own context window. It is NOT task tracking. Do NOT simulate specialist
-perspectives internally. Do NOT reason through domain views yourself. You MUST issue
-actual `Agent` calls. A simulated review is not a specialist review.**
+`Agent` in this skill spawns a subagent: a separate Claude session with its own
+context window, not task tracking. Issue real `Agent` calls rather than writing the
+specialists' views yourself. A specialist starting from a fresh context catches what
+this session has already taken for granted, so a simulated review is not a
+specialist review.
 
-Issue all `Agent` calls simultaneously. Do NOT spawn one at a time.
+Issue all `Agent` calls simultaneously. Do not spawn one at a time.
 
 **Prompt each specialist adversarially:**
 > "Here is the GDD for [system] and the main review's structural findings so far.
@@ -279,7 +280,7 @@ After all specialists respond, spawn `creative-director` as the **senior reviewe
 
 ### Step 4 — Surface disagreements
 
-If specialists disagree with each other or with the creative-director, do NOT silently pick one view. Present the disagreement explicitly in Phase 4 so the user can adjudicate.
+If specialists disagree with each other or with the creative-director, do not silently pick one view. Present the disagreement explicitly in Phase 4 so the user can adjudicate.
 
 Mark every finding with its source: `[game-designer]`, `[economy-designer]`, `[creative-director]` etc.
 
@@ -407,7 +408,7 @@ If the review-log option is selected, append the same format as below. Execute b
 
 When the verdict is NEEDS REVISION or MAJOR REVISION NEEDED, use separate widgets as before:
 
-Use a second `AskUserQuestion`, `request_user_input` or `clarify`:
+Use a second `AskUserQuestion`:
 - Prompt: "May I update `design/gdd/systems-index.md` to mark [system] as [Needs Revision / In Review]?" — `Needs Revision` (that exact string) while the revisions are outstanding, `In Review` once they are applied and await re-review. This prompt never offers `Approved`: a revision verdict is not an approval.
 - Options: `[A] Yes — update it` / `[B] No — leave it as-is`
 

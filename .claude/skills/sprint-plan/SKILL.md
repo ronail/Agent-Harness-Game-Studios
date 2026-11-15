@@ -3,7 +3,7 @@ name: sprint-plan
 description: "New or updated sprint plan from the current milestone, completed work, and available capacity."
 argument-hint: "[new|update|status] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/sprint-plan/../../hooks/yaml-helper.sh" resolve_config *), Bash(ls production/sprints/*), request_user_input, clarify
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/sprint-plan/../../hooks/yaml-helper.sh" resolve_config *), Bash(ls production/sprints/*)
 model: sonnet
 ---
 
@@ -31,7 +31,7 @@ Extract the mode argument (`new`, `update`, or `status`).
 See `.claude/docs/director-gates.md` for the full check pattern. Individual gate definitions live in `.claude/docs/director-gates/[gate-id].md` — the spawned agent reads its own gate file; do not read it in the parent session.
 
 
-Every `AskUserQuestion`, `request_user_input` or `clarify` call follows `.claude/docs/automation-modes.md`
+Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt).
 
@@ -50,8 +50,8 @@ smaller than the range is planned whole — never padded with invented stories.
   expansion, and the legacy file sits *above* that expansion, so either write
   would freeze director-review depth for good. `--review` covers a one-off. If
   the user wants a different depth to persist, point them to changing
-  `modes.rigor` (`/settings modes.rigor=<minimal|standard|full>`), or to pinning
-  it on purpose with `/settings --local modes.review_mode=<full|lean|solo>` (a
+  `modes.rigor` (`/project-settings modes.rigor=<minimal|standard|full>`), or to pinning
+  it on purpose with `/project-settings --local modes.review_mode=<full|lean|solo>` (a
   personal override in `project.local.yaml`).
 
 ---
@@ -111,7 +111,7 @@ smaller than the range is planned whole — never padded with invented stories.
 
 For `new`:
 
-**Generate a sprint plan** following this format and present it to the user. Do NOT ask to write yet — the gate phases run first and may require revisions before the file is written: the producer feasibility gate (Phase 4, spawned only in `full` review mode — skipped in `lean`/`solo`) and the QA plan check (Phase 5, all modes).
+**Generate a sprint plan** following this format and present it to the user. Do not ask to write yet — the gate phases run first and may require revisions before the file is written: the producer feasibility gate (Phase 4, spawned only in `full` review mode — skipped in `lean`/`solo`) and the QA plan check (Phase 5, all modes).
 
 ```markdown
 # Sprint [N] — [Start Date] to [End Date]
@@ -210,7 +210,7 @@ For `update`:
 
 1. Read the most recent sprint plan from `production/sprints/`.
 2. Present the current story list with their current statuses from `production/sprint-status.yaml`.
-3. Ask the user what to change: stories to add, remove, reprioritize, or re-estimate. Use `AskUserQuestion`, `request_user_input` or `clarify` to gather changes.
+3. Ask the user what to change: stories to add, remove, reprioritize, or re-estimate. Use `AskUserQuestion` to gather changes.
 4. Apply the changes and re-present the full revised plan for review. If the
    goal or the Must Have stories changed, check the goal's prerequisites again first.
 5. Re-run the producer feasibility gate (Phase 4) on the revised plan.
@@ -257,7 +257,7 @@ For `status`:
 
 After generating a new sprint plan, also prepare the `production/sprint-status.yaml` content.
 This is the machine-readable source of truth for story status — read by
-`/sprint-status`, `/story-done`, and `/help` without markdown parsing.
+`/sprint-status`, `/story-done`, and `/next-step` without markdown parsing.
 
 **Do not write the yaml yet** — hold it in context. The producer feasibility gate (Phase 4, `full` review mode only) may revise the story list; the QA plan check (Phase 5) runs in every mode. Both files are written together after Phase 5 in a single write approval.
 
@@ -319,6 +319,8 @@ Pass: proposed story list (titles, estimates, dependencies), total team capacity
 Present the producer's assessment.
 
 If UNREALISTIC: revise the story selection (defer stories to Should Have or Nice to Have) and re-present the updated plan, then continue to Phase 5.
+
+If NOT ASSESSED: name the missing input — it is not REALISTIC. Supply it and re-run PR-SPRINT, or record `NOT ASSESSED — [missing input]` for PR-SPRINT in the plan's header (`.claude/docs/director-gates.md`) and continue to Phase 5, repeating it at the write ask.
 
 If NOT ASSESSED: name the missing input — it is not REALISTIC. Supply it and re-run PR-SPRINT, or record `NOT ASSESSED — [missing input]` for PR-SPRINT in the plan's header (`.claude/docs/director-gates.md`) and continue to Phase 5, repeating it at the write ask.
 

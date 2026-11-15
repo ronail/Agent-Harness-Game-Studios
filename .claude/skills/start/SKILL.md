@@ -1,642 +1,318 @@
 ---
 name: start
-description: "First-time onboarding — asks where you are, then guides you to the right workflow. No assumptions."
-argument-hint: "[claude|codex|hermes|antigravity]"
+description: "Guides a first-time user through onboarding and picks the right workflow. Use when the user is new, just cloned or installed the studio, has no idea or engine yet, asks where to begin, or wants to bring in an existing game. A request for a game itself ('make me a game where...') is /prototype's."
+argument-hint: "[no arguments]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, request_user_input, Bash, clarify
+allowed-tools: Read, Glob, Grep, AskUserQuestion, Skill, Bash(bash .claude/scripts/project-state.sh*), Bash(bash .claude/scripts/set-stage.sh *), Bash(bash .claude/scripts/config-set.sh *)
 model: sonnet
 ---
 
 # Guided Onboarding
 
-This skill writes one file: `production/review-mode.txt` (review mode config set in Phase 3b).
+The entry point for a new user. It assumes no game idea, no engine and no experience: it reads
+the project, asks where the user is starting from, shows what it assumes about the project, and
+names the one next step. It never runs that step itself, except for a game the person described
+in their own words, which goes straight to `/prototype` (One-shot 1).
 
-This skill is the entry point for new users. It does NOT assume you have a game idea, an engine preference, or any prior experience. It asks first, then routes you to the right workflow.
+The main path leads: make a game (`/prototype`), change it after play, grow it into a project.
+The design documents, the agents and the `team-*` pipelines are studio mode, the path at rigor
+`standard` and `full` (Phase 6).
 
-**Optional argument**: `/start [claude|codex|hermes|antigravity]`
+It writes these settings to `project.yaml`, all through helpers, and only after an explicit yes:
+`project.stage` (with its legacy mirror `production/stage.txt`), `project.goal`, `modes.rigor`
+and `modes.automation`. It never writes `modes.review_mode` or `production/review-mode.txt`, and none
+of the other knobs rigor fronts (`modes.workflow`, `docs.density`, `qa.level`,
+`modes.story_granularity`, `team.size`): a written value pins that knob over the rigor expansion,
+and a mirror file outranks it. The make-me-a-game route writes nothing: `/prototype`'s card is
+that route's assumptions card.
 
-- Omitting the argument defaults to `claude` mode
-- `/start codex` — reviews the project-local Codex model setup (Phase 3e)
-- `/start hermes` — configures Hermes model routing for subagents (Phase 3d)
-- `/start antigravity` — verifies Antigravity setup and Gemini model mapping (Phase 3f)
-- `/start claude` (explicit) — standard Claude Code mode without Hermes routing
+Ask with the question tool. Without one, list the options numbered and end your turn to wait. The
+question is the last thing in the reply: no path, note or advice after it. A skipped or dismissed
+question is not an answer: ask again in plain text.
 
-Ask with the question tool — `AskUserQuestion`, `request_user_input` or `clarify`, whichever the
-harness provides. Without one, list the options numbered and end your turn to wait. The question is
-the last thing in the reply: no path, note or advice after it. A skipped or dismissed question is
-not an answer: ask again in plain text.
+The questions in Phases 2, 4 and 5 shape the project, so they are asked in every automation mode.
+The engine is not one of them: `/setup-engine` chooses it. Phase 6's last question follows a
+`modes.automation` already in `project.yaml`, per `.claude/docs/automation-modes.md`; with none
+set, ask it.
 
----
+## Phase 1: Read the project
 
-## Phase 1: Detect Project State
+**A game already asked for.** When the message that started this skill asks for a game itself
+("make me a game", or a description of one: "a game where you herd sheep with a dog") and the
+person did not type `/start`, ask nothing and read nothing. Say in one line that you are taking
+them straight to the build, then start `/prototype` with the Skill tool and no arguments: it
+reads their message as their words and asks only what is missing. This is the one step this
+skill runs itself, and only because it was started for them: a typed `/start` runs its turn on
+this skill's own model, and the build must run on the session's (Phase 7).
 
-Before asking anything, silently gather context so you can tailor your guidance. Do NOT show these results unprompted — they inform your recommendations, not the conversation opener.
+**A game brought.** When that message brings a game the person already has (a path to an
+`.html` file or a folder, or "bring in my game"), do the same with `/prototype --from <path>`.
 
-Check:
-- **Engine configured?** Read `.claude/docs/technical-preferences.md`. If the Engine field contains `[TO BE CONFIGURED]`, the engine is not set.
-- **Game concept exists?** Check for `design/gdd/game-concept.md`.
-- **Source code exists?** Glob for source files in `src/` (`*.gd`, `*.cs`, `*.cpp`, `*.h`, `*.rs`, `*.py`, `*.js`, `*.ts`).
-- **Prototypes exist?** Check for subdirectories in `prototypes/`.
-- **Design docs exist?** Count markdown files in `design/gdd/`.
-- **Production artifacts?** Check for files in `production/sprints/` or `production/milestones/`.
+Run `bash .claude/scripts/project-state.sh` and keep its rows. Do not show them yet; they check
+the user's answer in Phase 2.
 
-Store these findings internally to validate the user's self-assessment and tailor recommendations.
+| Row | Use |
+|---|---|
+| `engine`, `code_root`, `source_files` | Is an engine set, and how much code is there. `source_files` of `unknown` means the code root could not be found: say that, never "no code" |
+| `concept` | `design/gdd/game-concept.md` or `design/game-brief.md` exists |
+| `gdd_files`, `adr` | Design documents and architecture decisions on disk (they set the stage in Phase 4) |
+| `prototype`, `sprint`, `milestone`, `story` | Other existing work |
+| `origin_url` | Contains `donchitos/claude-code-game-studios`, matched case-insensitively: the clone still points at the template repo, so a push or pull request would go there. A fork under another owner is the user's own |
+| `stage` | The stage already recorded, if any |
 
----
+Ignore `phase_inferred`: it guesses from file counts, and a project with code but no design
+documents is not in Production. If the helper fails, say so and read the same facts by hand
+(engine in `project.yaml`, the two concept files, the code root's files, `design/gdd/`).
 
-## Phase 2: Ask Where the User Is
+The helper does not report rigor, automation or the goal. Read `project.yaml`, if it exists, and
+note whether `modes.rigor`, `modes.automation` and `project.goal` are set: a set value is kept,
+and it is neither guessed nor asked again (Phases 4 and 5).
 
-This is the first thing the user sees. Use `AskUserQuestion`, `request_user_input` or `clarify` with these exact options so the user can click rather than type:
+**Returning user** (an engine is set and `concept` is present): ask nothing. Say the engine, the
+concept or brief found, and the review mode: `modes.review_mode` if set, otherwise the one
+`modes.rigor` implies (`minimal` → `solo`, `standard` → `lean`, `full` → `full`). Suggest `/next-step` for the next step, add the
+template-remote note if it applies, and stop.
 
-- **Prompt**: "Welcome to Agent Harness Game Studios! Before I suggest anything, I'd like to understand where you're starting from. Where are you at with your game idea right now?"
-- **Options**:
-  - `A) No idea yet` — I don't have a game concept at all. I want to explore and figure out what to make.
-  - `B) Vague idea` — I have a rough theme, feeling, or genre in mind (e.g., "something with space" or "a cozy farming game") but nothing concrete.
-  - `C) Clear concept` — I know the core idea — genre, basic mechanics, maybe a pitch sentence — but haven't formalized it into documents yet.
-  - `D) Existing work` — I already have design docs, prototypes, code, or significant planning done. I want to organize or continue the work.
+## Phase 2: Ask where the user is
 
-Wait for the user's selection. Do not proceed until they respond.
+Ask with the question tool: "Welcome! Where are you starting from with your game?" Options:
+- `A) Make me a game (playable in your browser)`: a browser game built from a few quick answers, any
+  of which can be "you pick".
+- `B) An idea, or none yet`: nothing yet, or a theme, feeling or genre ("something with space",
+  "a cozy farming game").
+- `C) Clear concept`: the core idea and genre are known, nothing is written down yet.
+- `D) Existing work`: design documents, prototypes, code or plans already exist.
 
----
+With `engine.name` set to an engine other than `web`, A reads `A) Make me a game`: a throwaway
+prototype of one mechanic in that engine, with a browser sketch as one option.
 
-## Phase 3: Route Based on Answer
+Wait for the answer. If it contradicts Phase 1, say what you found once and ask again: D on an
+empty project ("this looks like a fresh template; would A or B fit better?"), or B with code on
+disk ("I found code in `[code_root]`; did you mean D?"). D on an empty project with no game
+found (Phase 3) asks first, in plain text, where their game is: a path, or drop it in this
+folder; an answer with no game in it gets the A-or-B question. If no option fits, let the user
+describe their situation and route from that.
 
-#### If A: No idea yet
+## Phase 3: Route
 
-The user needs creative exploration before anything else.
+Name the immediate next step only. The full path waits for Phase 6, after the rigor is known.
 
-1. Acknowledge that starting from zero is completely fine
-2. Briefly explain what `/brainstorm` does (guided ideation using professional frameworks — MDA, player psychology, verb-first design). Mention that it has two modes: `/brainstorm open` for fully open exploration, or `/brainstorm [hint]` if they have even a vague theme (e.g., "space", "cozy", "horror").
-3. Recommend running `/brainstorm open` as the next step, but invite them to use a hint if something comes to mind
-4. Show the recommended path:
-   **Concept phase:**
-   - `/brainstorm open` — discover your game concept
-   - `/setup-engine` — configure the engine (brainstorm will recommend one)
-   - `/prototype` — throwaway concept build: validate the core idea is fun before designing (1–3 days)
-   - `/art-bible` — define visual identity (uses the Visual Identity Anchor brainstorm produces)
-   - `/map-systems` — decompose the concept into systems
-   - `/design-system` — author a GDD for each MVP system
-   - `/review-all-gdds` — cross-system consistency check
-   - `/gate-check` — validate readiness before architecture work
-   **Architecture phase:**
-   - `/create-architecture` — produce the master architecture blueprint and Required ADR list
-   - `/architecture-decision (×N)` — record key technical decisions, following the Required ADR list
-   - `/create-control-manifest` — compile decisions into an actionable rules sheet
-   - `/architecture-review` — validate architecture coverage
-   **Pre-Production phase:**
-   - `/ux-design` — author UX specs for key screens (main menu, HUD, core interactions)
-   - `/vertical-slice` — production-quality end-to-end build to validate the full game loop
-   - `/playtest-report (×1+)` — document each vertical slice playtest session
-   - `/create-epics` — map systems to epics
-   - `/create-stories` — break epics into implementable stories
-   - `/sprint-plan` — plan the first sprint
-   **Production phase:** → pick up stories with `/dev-story`
+- **A, make me a game:** ask nothing more. `/prototype` asks the quick questions and shows a card
+  of what it will build before it builds anything. Skip Phases 4 to 6: that card is this route's
+  assumptions card, and this route writes no setting (a rigor left unset reads as `minimal`). Go
+  to Phase 7 with `/prototype`.
+- **B, an idea or none yet:** ask in plain text: "What's the idea, in a few words? A theme,
+  feeling or genre is enough, or say none." None: `/brainstorm open`, which explores freely. A
+  hint: `/brainstorm [their words]`, taken as it is. A hint, with no engine set: ask "How would
+  you like to go on?" with `Build it now (Recommended)` (`/prototype [their words]`: pitches
+  from the idea, then a playable browser game) / `Shape the idea first`
+  (`/brainstorm [their words]`). `Build it now` goes on as route A. Describe it as "turns an idea, or none, into
+  a written design the next step builds from"; how long that design is depends on the rigor, so
+  leave that for Phase 6.
+- **C, clear concept:** ask for the concept in one sentence (genre and core mechanic), as plain
+  text. Then ask: "How would you like to proceed?" With no engine set and none named in the
+  sentence, the options are `Build it now (Recommended)` (`/prototype` makes it a playable
+  browser game) / `Formalize it first` (`/brainstorm [concept]` writes it down) /
+  `Jump straight in` (`/setup-engine` now, write the design after). With an engine set or named:
+  `Formalize it first` / `Jump straight in` / `Browser sketch first` (`/prototype --path html`, a
+  throwaway in the browser; not recommended, since the game is rebuilt in the engine). The next
+  step is their pick. `Build it now` goes on as route A, and so does `Browser sketch first`, with
+  `/prototype --path html` as the skill to type.
+- **D, existing work, a game first:** look for a game they made elsewhere: an `.html` file up to
+  two folders deep, outside `prototypes/`, `.claude/`, `docs/`, `design/`, `production/`,
+  `references/`, `node_modules/`, `dist/` and `build/`, whose page has a `<script>` and a
+  `<canvas>`, `requestAnimationFrame` or an engine loader; or a folder holding such an
+  `index.html` (Glob, then Grep). One to three found: offer each by name, plus "Something else".
+  A pick ends on "Type `/prototype --from <path>` to begin: it brings a copy in exactly as it
+  is." Skip Phases 4 to 6, as on route A. A folder with a `package.json` at its top is not one of
+  these: it is a web project with its own build (`/setup-engine web`). A page with no script is
+  not offered.
+- **D, existing work:** say what Phase 1 found ("N source files under `[code_root]`, N design
+  documents, engine [X / not set]"). When `gdd_files` is 1 or more and Glob finds no
+  `prototypes/*/index.html`, the design is written but there is nothing to play yet:
+  - No engine set, or `web`: the next step is a playable first, `/prototype` built from their
+    concept doc (`/prototype design/gdd/game-concept.md`; with no concept doc, the GDD that
+    describes the whole game). Say in one line: "Your design documents stay the source of truth;
+    the brief `/prototype` writes is only a summary for the build."
+  - An engine other than `web`: the next step stays `/project-stage-detect`. Say in one line that
+    `/prototype --path html` is the fast option: a browser sketch of the core game,
+    thrown away when the engine build starts.
 
-#### If B: Vague idea
+  Otherwise: `/setup-engine` when no engine is set and there is no more than a concept; else
+  `/project-stage-detect`.
 
-1. Ask them to share their vague idea — even a few words is enough
-2. Validate the idea as a starting point (don't judge or redirect)
-3. Recommend running `/brainstorm [their hint]` to develop it
-4. Show the recommended path:
-   **Concept phase:**
-   - `/brainstorm [hint]` — develop the idea into a full concept
-   - `/setup-engine` — configure the engine
-   - `/prototype` — throwaway concept build: validate the core idea is fun before designing (1–3 days)
-   - `/art-bible` — define visual identity (uses the Visual Identity Anchor brainstorm produces)
-   - `/map-systems` — decompose the concept into systems
-   - `/design-system` — author a GDD for each MVP system
-   - `/review-all-gdds` — cross-system consistency check
-   - `/gate-check` — validate readiness before architecture work
-   **Architecture phase:**
-   - `/create-architecture` — produce the master architecture blueprint and Required ADR list
-   - `/architecture-decision (×N)` — record key technical decisions, following the Required ADR list
-   - `/create-control-manifest` — compile decisions into an actionable rules sheet
-   - `/architecture-review` — validate architecture coverage
-   **Pre-Production phase:**
-   - `/ux-design` — author UX specs for key screens (main menu, HUD, core interactions)
-   - `/vertical-slice` — production-quality end-to-end build to validate the full game loop
-   - `/playtest-report (×1+)` — document each vertical slice playtest session
-   - `/create-epics` — map systems to epics
-   - `/create-stories` — break epics into implementable stories
-   - `/sprint-plan` — plan the first sprint
-   **Production phase:** → pick up stories with `/dev-story`
+Then, except on route A, say: "I'll lay out the full path in a moment."
 
-#### If C: Clear concept
+## Phase 4: Show what you assume, then save it
 
-1. Ask them to describe their concept in one sentence — genre and core mechanic. Use plain text, not AskUserQuestion (it's an open response).
-2. Acknowledge the concept, then use `AskUserQuestion`, `request_user_input` or `clarify` to offer two paths:
-   - **Prompt**: "How would you like to proceed?"
-   - **Options**:
-     - `Formalize it first` — Run `/brainstorm [concept]` to structure it into a proper game concept document
-     - `Jump straight in` — Go to `/setup-engine` now and write the GDD manually afterward
-3. Show the recommended path:
-   **Concept phase:**
-   - `/brainstorm` or `/setup-engine` — (their pick from step 2)
-   - `/prototype` — throwaway concept build: validate the core idea is fun before designing (1–3 days)
-   - `/art-bible` — define visual identity (after brainstorm if run, or after concept doc exists)
-   - `/design-review` — validate the concept doc
-   - `/map-systems` — decompose the concept into individual systems
-   - `/design-system` — author a GDD for each MVP system
-   - `/review-all-gdds` — cross-system consistency check
-   - `/gate-check` — validate readiness before architecture work
-   **Architecture phase:**
-   - `/create-architecture` — produce the master architecture blueprint and Required ADR list
-   - `/architecture-decision (×N)` — record key technical decisions, following the Required ADR list
-   - `/create-control-manifest` — compile decisions into an actionable rules sheet
-   - `/architecture-review` — validate architecture coverage
-   **Pre-Production phase:**
-   - `/ux-design` — author UX specs for key screens (main menu, HUD, core interactions)
-   - `/vertical-slice` — production-quality end-to-end build to validate the full game loop
-   - `/playtest-report (×1+)` — document each vertical slice playtest session
-   - `/create-epics` — map systems to epics
-   - `/create-stories` — break epics into implementable stories
-   - `/sprint-plan` — plan the first sprint
-   **Production phase:** → pick up stories with `/dev-story`
+Work out three values.
 
-#### If D: Existing work
+**Stage.** Paths B and C: `Concept`. Path D, from the Phase 1 rows:
 
-1. Share what you found in Phase 1:
-   - "I can see you have [X source files / Y design docs / Z prototypes]..."
-   - "Your engine is [configured as X / not yet configured]..."
+| On disk | Stage |
+|---|---|
+| no engine, or nothing beyond a concept (`gdd_files` 0) | `Concept` |
+| `gdd_files` 1 or more, `adr` 0 | `Systems Design` |
+| `adr` 1 or more | `Technical Setup` |
 
-2. **Sub-case D1 — Early stage** (engine not configured or only a game concept exists):
-   - Recommend `/setup-engine` first if engine not configured
-   - Then `/project-stage-detect` for a gap inventory
+**Rigor.** If `modes.rigor` is already set in `project.yaml`, keep it and say so. Otherwise infer
+it from what the user said in Phases 2 and 3, using the signals in
+`.claude/docs/settings-guidance.md` §3:
 
-   **Sub-case D2 — GDDs, ADRs, or stories already exist:**
-   - Explain: "Having files isn't the same as the template's skills being able to use them. GDDs might be missing required sections. `/adopt` checks this specifically."
-   - Recommend:
-     1. `/project-stage-detect` — understand what phase and what's missing entirely
-     2. `/adopt` — audit whether existing artifacts are in the right internal format
+| The user's words mention | Rigor |
+|---|---|
+| open world, RPG, sim, sandbox, factions, crafting, economy, MMO, multiplayer, many systems | `full` |
+| release, commercial, Steam, one clear core loop | `standard` |
+| jam, weekend, prototype, first game, small, just trying | `minimal` |
+| nothing above, or no idea yet | `minimal` (the default) |
 
-3. Show the recommended path for D2:
-   - `/project-stage-detect` — phase detection + existence gaps
-   - `/adopt` — format compliance audit + migration plan
-   - `/setup-engine` — if engine not configured
-   - `/design-system retrofit [path]` — fill missing GDD sections
-   - `/architecture-decision retrofit [path]` — add missing ADR sections
-   - `/architecture-review` — bootstrap the TR requirement registry
-   - `/gate-check` — validate readiness for next phase
+A path B hint is still a description: "some kind of open-world survival sim" is `full`.
 
----
+On path D, count the system GDDs: `gdd_files` less `game-concept.md` and `systems-index.md`
+when they exist. About 9 or more (`.claude/docs/settings-guidance.md` §4) proposes `standard`,
+with the reason "[N] system design documents; most projects this size run `standard`", unless
+the words above point to `full`. A `modes.rigor` already set is still kept.
 
-## Phase 3c: Write Initial Stage File
+**Goal.** If `project.goal` is already set, keep it and say so. Otherwise guess it from what the
+user said in Phases 2 and 3; it is never a question of its own:
 
-After confirming the starting path (and before asking about review mode), write the initial stage to `production/stage.txt`. Create the `production/` directory if it does not exist.
+| The user's words mention | Goal |
+|---|---|
+| a game jam, or a theme with a deadline | `jam` |
+| learning, a first game, practice, a course or class | `learn` |
+| a portfolio, a job, showing their work | `portfolio` |
+| selling it, Steam, a price, commercial, wishlists | `sell` |
+| early access | `early_access` |
+| a publisher, a pitch, funding | `publisher` |
+| mobile, a phone, iOS, Android, an app store | `mobile` |
+| a purpose none of the rows above fits | `other` |
+| fun, themselves or friends, or nothing above | `hobby` (the default) |
 
-Stage mapping:
-- **Path A, B, or C (starting from scratch)**: write `Concept`
-- **Path D, existing project, engine not configured or only a game concept exists**: write `Concept`
-- **Path D, existing project with GDDs but no architecture documents**: write `Systems Design`
-- **Path D, existing project with full architecture (ADRs, architecture doc)**: write `Technical Setup`
+When two fit, a selling goal wins over the others, and `early_access` or `publisher` over `sell`.
 
-Do this silently — no "May I write?" needed for this single-line file.
+Show the card:
 
-Say: "I've set `production/stage.txt` to `[stage]` — this anchors your status line and stage detection."
-
----
-
-## Phase 3d: Configure Hermes Subagent Routing for Agent Roles
-
-**Only applicable when the `hermes` argument is provided.** This phase is
-skipped if the argument is omitted or if `claude` is explicitly provided.
-
-Hermes resolves a subagent's model from the `delegation` section of the active
-profile's `config.yaml`, and `delegation.backend` picks how each task is routed:
-
-| `delegation.backend` | Per-task parameter | Behaviour |
-|----------------------|--------------------|-----------|
-| `profile_routes` | `profile` | The agent runs each child as one of your Hermes profiles — that profile's model, credentials, pool, skills and `SOUL.md`. |
-| `model_map` | `option` | The agent picks a named model route per task, from routes you define. |
-| `default` | none | Every child runs on `delegation.model` / `delegation.provider`, else the parent's model. |
-
-`profile_routes` and `model_map` come from the official `advanced-delegation`
-plugin, which must be installed in the profile that delegates (plugins are per
-profile; it needs Hermes 0.22.5 or newer). Backend settings live under
-`delegation.backends.<backend name>`, never beside the core `delegation` keys.
-While either plugin mode is active, `delegation.model` / `delegation.provider`
-are inactive. A selected backend that is missing or cannot run makes
-`delegate_task` fail closed with an error naming the backend and the fix — it
-never silently falls back to `default`.
-
-**Profile routes are the default choice for this repository.** The studio already
-models capability as a per-role tier, and a Hermes profile is the unit that
-carries a model, its credentials and its persona — so the role → profile mapping
-stays the thing this project keeps, and `profile_routes` is what makes it
-enforceable per task. Only fall back to `model_map` when the profiles on the
-machine do not line up with the studio's roles.
-
-Detect this silently before asking anything:
-
-- `command -v hermes` and `hermes --version`. If Hermes is absent, say: "Hermes
-  not detected. Model resolution will use the agent definitions' `model` fields
-  directly." and continue to Phase 3b. If it is older than 0.22.5, say so and
-  treat both plugin modes as unavailable.
-- `hermes profile list` — profiles and the model each one runs.
-- `HERMES_PROFILE=<profile> hermes config get delegation.backend` — the active
-  backend (`default` when unset).
-- `HERMES_PROFILE=<profile> hermes plugins list` — whether
-  `advanced-delegation` is installed in that profile, and whether it is enabled.
-- `HERMES_PROFILE=<profile> hermes delegation config --show` — the current mode
-  and its routes, when the plugin is installed.
-- Roles in use: `grep -h '^model:' .claude/agents/*.md | sort | uniq -c`. The
-  frontmatter `model:` value is the shared tier label (`haiku`, `sonnet`,
-  `opus`). Under profile routes it is no longer the routing key — the profile is
-   — so keep it as the intent recorded in each agent definition.
-
-**If the argument is omitted or `claude` is provided** (Claude mode): Proceed
-directly to Phase 3b without detection. Model resolution uses the agent
-definitions' `model` fields directly. If `codex` is provided, skip this phase
-and continue to Phase 3e.
-
-Check if `production/hermes-profile-mapping.json` already exists.
-
-**If it exists**: Read it and say: "Hermes subagent routing is configured:
-strategy `[strategy]`, backend `[backend]`, routes `[route summary]`." — then
-proceed to Phase 3b. Do not ask again. A file with no `schemaVersion` key is a
-legacy profile mapping (`{"agent-name": "profile-name"}`): report it as the
-profile strategy and leave it unchanged.
-
-**If it does not exist** and the `hermes` argument was provided, use
-`AskUserQuestion`, `request_user_input` or `clarify`:
-
-- **Prompt**: "How should Hermes choose the model for a subagent?"
-- **Options**:
-  - `Profile per subagent (recommended)` — `delegation.backend: profile_routes`:
-    the agent picks a Hermes profile per task, and that profile's model runs the
-    child.
-  - `Named model routes` — `delegation.backend: model_map`: the agent picks a
-    named provider/model route per task.
-  - `One model for all subagents` — `delegation.backend: default` with
-    `delegation.model`; no plugin required.
-  - `Skip for now` — I'll configure this later.
-
-Create the `production/` directory if it does not exist.
-
-If `profile_routes` or `model_map` was chosen and `advanced-delegation` is
-missing from `hermes plugins list`, say: "That mode needs the official
-`advanced-delegation` plugin, installed in the profile that delegates:
-`hermes plugins install advanced-delegation`, then `hermes plugins enable
-advanced-delegation` if it lands disabled. Nothing routes on it until the plugin
-is there — `delegate_task` fails closed while it is missing." Continue anyway;
-the config is written and takes effect once the plugin is installed.
-
-### If "Profile per subagent":
-
-1. Offer the assignment shape:
-   - `Auto-assign by tier` — reuse any profile whose name matches a tier or a
-     studio role, otherwise map every role to the active profile. Fastest, and
-     fine for a first pass.
-   - `Assign each role` — go through all agents and pick a profile for each.
-   - `One profile for every role` — every role runs as one profile.
-2. For `Assign each role`, walk `.claude/agents/*.md` sorted by name. Prompt:
-   "Which Hermes profile should `<agent-name>` (tier: `<model-tier>`) run as?"
-   Present the discovered profiles as options, with the profile name and the
-   model it runs shown. Record the choice.
-3. Group the assignments by profile. Each distinct profile becomes one entry in
-   `delegation.backends.profile_routes.profiles`, and its description names the
-   studio roles it serves plus what that work is — that description is the only
-   thing the agent sees when it picks.
-4. Ask for the default profile (or `No default`). A task that picks nothing runs
-   on the default; with none set it runs on the main agent's model.
-
-Write `production/hermes-delegation.yaml`:
-
-```yaml
-# Paste into ~/.hermes/profiles/<profile>/config.yaml, or run
-# `hermes delegation config` and edit the profile list there instead.
-delegation:
-  backend: profile_routes
-  backends:
-    profile_routes:
-      profiles:
-        - name: <director-profile>
-          description: "Producer, creative-director, technical-director: phase gates, review, scheduling."
-        - name: <lead-profile>
-          description: "Lead programmers and specialists: implementation, refactors, tests."
-      default: <lead-profile>
-  # max_spawn_depth: 2          # only when nested orchestration was selected
-  # worktree_isolation: true    # only when worktree isolation was selected
+```
+What I'll set up
+  Stage:  [stage]  ([why, from what was found or picked])
+  Rigor:  [value]  ([why, in the user's words] | [N] system design documents | already set)
+          minimal: short brief, coarse stories, tests optional; about 4 steps to code
+          standard: studio mode; about 8 design documents before code; standard QA evidence
+          full: studio mode; standard plus validation builds; evidence everywhere
+  Goal:   [value]  ([why, in the user's words] | guessed | already set)
+          jam, learn, hobby, portfolio, sell, early_access, publisher, mobile or other
+  /project-settings changes any of these any time.
 ```
 
-Say explicitly: "Listing a profile lets this profile's subagents use that
-profile's credentials, credential pool, `SOUL.md` and terminal policy. Only list
-profiles whose keys and terminal access you are happy to share."
-
-Also state the honest limitation: in `profile_routes` mode the agent picks the
-profile per task from the names and descriptions, so the recorded role → profile
-map is the plan the descriptions encode — it is not a hard binding per role.
-
-### If "Named model routes":
-
-Ask once per tier found in the detection step:
-
-- **Prompt**: "What should the `<tier>` route use? (`<count>` agent roles carry
-  this tier)"
-- **Options**:
-  - `Pin a provider and model` — ask for the provider and the model id. Never
-    invent a model id: reuse one from `hermes profile list` or ask.
-  - `Skip this route` — leave it out of the table.
-  - `Rename it` — the route name is what the agent picks on. It must match
-    `^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$`.
-
-Then ask which tier should be the default route, offering the tier with the most
-agents first.
-
-Write `production/hermes-delegation.yaml`:
-
-```yaml
-delegation:
-  backend: model_map
-  backends:
-    model_map:
-      options:
-        - name: haiku
-          description: "Quick reads and formatting: status checks, lookups, short summaries."
-          provider: <provider>
-          model: <model>
-        - name: sonnet
-          description: "Default studio work: implementation, design documents, code review."
-          provider: <provider>
-          model: <model>
-        - name: opus
-          description: "Hard synthesis: multi-document analysis, architecture review, phase gates."
-          provider: <provider>
-          model: <model>
-          reasoning_effort: high
-      default: sonnet
-  # max_spawn_depth: 2          # only when nested orchestration was selected
-  # worktree_isolation: true    # only when worktree isolation was selected
-```
-
-Only the route names and descriptions reach the model, never the provider, model
-id or key. `reasoning_effort` and `service_tier` are optional per route; a
-`service_tier` the route does not offer refuses that task rather than running it
-anyway. The agent chooses the route per task, so the frontmatter tier is guidance
-carried by the descriptions and `default` — it is not enforced either.
-
-### If "One model for all subagents":
-
-- Ask for the provider and model, or `Inherit the parent's model`.
-- Write `production/hermes-delegation.yaml` with `backend: default` and, unless
-  inheriting, `model:` / `provider:`.
-
-### Studio delegation limits (ask in every branch that writes config)
-
-Ask once, before writing the file — multi-select:
-
-- **Prompt**: "Two delegation limits matter for a studio hierarchy. Which should
-  I set?"
-- **Options**:
-  - `Nested orchestration` — `max_spawn_depth: 2`, so a director's subagent
-    (spawned with `role="orchestrator"`) can spawn its own leads and
-    specialists. At the default of 1, `role="orchestrator"` is a no-op.
-  - `Worktree isolation` — `worktree_isolation: true`: each child gets its own
-    git worktree, so parallel implementers cannot collide on the same files.
-  - `Neither` — Keep flat delegation in a shared workspace (the default).
-
-Warn before enabling nested orchestration: each level multiplies spend, and a
-depth-2 tree at `max_concurrent_children` 10 can reach 100 concurrent children.
-Never raise `max_concurrent_children` from this workflow without being asked.
-
-### Write the routing record
-
-In every branch that writes config, write
-`production/hermes-profile-mapping.json`:
-
-```json
-{
-  "schemaVersion": 2,
-  "harness": "hermes",
-  "profile": "<active profile>",
-  "delegation": {
-    "strategy": "profile_routes",
-    "backend": "profile_routes",
-    "parameter": "profile",
-    "profiles": [
-      {
-        "name": "<profile>",
-        "description": "Producer, creative-director, technical-director: phase gates, review, scheduling.",
-        "roles": ["producer", "creative-director", "technical-director"]
-      }
-    ],
-    "default": "<profile>"
-  },
-  "roles": {
-    "<agent-name>": {"profile": "<profile>", "tier": "<tier>"}
-  }
-}
-```
-
-In the `model_map` branch use `"strategy": "model_map"`, `"parameter": "option"`
-and a `routes` object (`{"haiku": {"provider": ..., "model": ...}, ...}`) instead
-of `profiles`; every role then records `{"tier": "<tier>"}`. In the single-model
-branch use `"strategy": "default"` with the chosen route and no `profiles` or
-`routes`. Record every agent from `.claude/agents/*.md` in `roles` rather than
-leaving the mapping implicit, so a later frontmatter edit surfaces as a diff
-instead of silently changing intent.
-
-Say: "Wrote `production/hermes-delegation.yaml` and
-`production/hermes-profile-mapping.json`. Either paste the YAML into
-`~/.hermes/profiles/<profile>/config.yaml`, or run `hermes delegation config` and
-edit the routes there. Route changes apply to new sessions; in a running chat
-`/delegation profile_routes --now` saves the mode and rebuilds that chat's tools
-(one prompt-cache break), while `/delegation profile_routes` alone saves it for
-the next session."
-
-### If "Skip for now":
-
-- Say: "You can configure Hermes subagent routing anytime by running
-  `/start hermes` again, by running `hermes delegation config`, or by editing
-  the `delegation` section of `~/.hermes/profiles/<name>/config.yaml`."
-- Proceed to Phase 3b.
-
----
-
-## Phase 3e: Configure Codex Model Setup
-
-**Only applicable when the `codex` argument is provided.** This phase is
-skipped if the argument is omitted or if `claude` or `hermes` is explicitly
-provided.
-
-Use `Bash` to check whether the Codex CLI is installed (`command -v codex`). If
-it is not installed, say: "Codex CLI not detected. Install it from
-https://developers.openai.com/codex/cli, then run `/start codex` again to
-configure model selection." Continue to the configuration check so the user
-can still review the project files.
-
-Read `.codex/config.toml` and confirm that the project-local Codex
-configuration exists. If it is missing, say:
-"No project-local Codex configuration was found. Add `.codex/config.toml` or
-continue with your existing Codex user configuration."
-
-Read `.codex/agent-models.toml` as well. This file is required for spawning
-studio agents because `.codex/config.toml` contains only the project-wide
-fallback model. If it is missing, say:
-"No Codex agent model map was found. Add `.codex/agent-models.toml` before
-spawning studio agents so their model tiers resolve explicitly."
-
-If the file exists, explain the shared model-tier mapping and the corresponding
-Codex model:
-
-| Shared tier | Codex model |
-|-------------|-------------|
-| Haiku | `gpt-6-luna` |
-| Sonnet | `gpt-6.1-terra` |
-| Opus | `gpt-6.1-sol` |
-
-The standard tier is the project default. Use `AskUserQuestion`, `request_user_input` or `clarify` to
-ask:
-
-- **Prompt**: "Which Codex model tier would you like to use for this session?"
-- **Options**:
-  - `Fast` — Use `gpt-6-luna` for quick status checks and simple lookups.
-  - `Standard (recommended)` — Use `gpt-6.1-terra` for implementation and design work.
-  - `Deep` — Use `gpt-6.1-sol` for multi-document synthesis and phase gates.
-  - `Keep current setting` — Leave the active Codex model unchanged.
-
-After the user selects a tier, show its corresponding model from the table
-above. If they choose `Keep current setting`, say: "Your current Codex model
-setting will remain active." Do not change the user's global Codex
-configuration from this skill.
-
-### Codex agent spawn rule
-
-When Codex creates a game-studio subagent, it must:
-
-1. Read the target definition in `.claude/agents/<agent-name>.md`.
-2. Read its YAML frontmatter `model` field. Treat an omitted field as `sonnet`.
-3. Resolve that tier through `.codex/agent-models.toml`.
-4. Pass the resolved model explicitly on the subagent or child-task request.
-
-For example, `producer`, `creative-director`, and `technical-director` use
-`model: opus`, so Codex must spawn them with `gpt-6.1-sol`; the project-wide
-Sonnet default must not silently replace that selection. The model mapping does
-not replace the original agent or skill instructions: read and follow those
-references as part of the same spawn.
-
----
-
-## Phase 3f: Configure Antigravity Model Setup
-
-**Only applicable when the `antigravity` argument is provided.** This phase is
-skipped if the argument is omitted or if `claude`, `codex`, or `hermes` is
-explicitly provided.
-
-Use `Bash` to check whether the Antigravity CLI is installed
-(`command -v agy`). If it is not installed, say: "Antigravity CLI not
-detected. Install the Antigravity App or CLI from
-https://antigravity.google/docs, then run `/start antigravity` again to
-verify the setup." Continue to the configuration check so the user can
-still review the project files.
-
-Read `.agents/agent-models.toml` and confirm that the Antigravity model
-map exists. If it is missing, say: "No Antigravity agent model map was
-found. Add `.agents/agent-models.toml` before spawning studio agents so
-their model tiers resolve explicitly."
-
-Verify the generated custom agents: `.agents/agents/*.md` is gitignored
-and generated on demand — run `python3 .agents/generate_compat.py` to
-create it (ask for approval first if it does not exist), then count
-`.agents/agents/*.md` and compare with `.claude/agents/*.md`. If
-`python3 .agents/generate_compat.py --check` reports stale files, ask for
-approval to regenerate them.
-Verify `.agents/skills` resolves to `.claude/skills` (Antigravity's
-workspace skill discovery path).
-Verify hooks: `.agents/hooks.json` exists and its scripts are executable
-(`.agents/hooks/session-start.sh`, `.agents/hooks/pre-tool-use.sh`).
-Antigravity runs hooks from `.agents/hooks.json`, not from
-`.claude/settings.json`.
-
-If the files exist, explain the shared model-tier mapping and the
-corresponding Antigravity tier and Gemini model:
-
-| Shared tier | Antigravity tier | Gemini model |
-|-------------|------------------|--------------|
-| Haiku | `flash` | `gemini-3.5-flash-lite` |
-| Sonnet | `pro` | `gemini-3.1-pro-preview` |
-| Opus | `pro` | `gemini-4-argon` |
-| Inherit | `inherit` | (session model) |
-
-Antigravity subagent frontmatter only accepts `inherit`, `flash`, or
-`pro` — never write a Gemini model ID into an agent's `model:` field.
-The resolved Gemini model from `.agents/agent-models.toml` is passed
-explicitly on the subagent or child-task request when the harness allows
-it. Do not change the user's global Antigravity configuration from this
-skill.
-
-### Antigravity agent spawn rule
-
-When Antigravity creates a game-studio subagent, it must:
-
-1. Read the target definition in `.agents/agents/<agent-name>.md`.
-2. Read its YAML frontmatter `model` field (`inherit`, `flash`, or `pro`).
-3. Resolve that tier through `.agents/agent-models.toml`.
-4. Pass the resolved Gemini model explicitly on the subagent or
-   child-task request when the harness allows it.
-
-The model mapping does not replace the original agent or skill
-instructions: read and follow those references as part of the same spawn.
-
----
-
-## Phase 3b: Set Review Mode
-
-Check if `production/review-mode.txt` already exists.
-
-**If it exists**: Read it and show the current mode — "Review mode is set to `[current]`." — then proceed to Phase 4. Do not ask again.
-
-**If it does not exist**: Use `AskUserQuestion`, `request_user_input` or `clarify`:
-
-- **Prompt**: "One setup choice: how much design review would you want as you work through the workflow?"
-- **Options**:
-  - `Full` — Director specialists review at each key workflow step. Best for teams, learning the workflow, or when you want thorough feedback on every decision.
-  - `Lean (recommended)` — Directors only at phase gate transitions (/gate-check). Skips per-skill reviews. Balanced approach for solo devs and small teams.
-  - `Solo` — No director reviews at all. Maximum speed. Best for game jams, prototypes, or if the reviews feel like overhead.
-
-Write the choice to `production/review-mode.txt` immediately after the user
-selects — no separate "May I write?" needed, as the write is a direct
-consequence of the selection:
-- `Full` → write `full`
-- `Lean (recommended)` → write `lean`
-- `Solo` → write `solo`
-
-Create the `production/` directory if it does not exist.
-
----
-
-## Phase 4: Confirm Before Proceeding
-
-After presenting the recommended path, use `AskUserQuestion`, `request_user_input` or `clarify` to ask the user which step they'd like to take first. Never auto-run the next skill.
-
-- **Prompt**: "Would you like to start with [recommended first step]?"
-- **Options**:
-  - `Yes, let's start with [recommended first step]`
-  - `I'd like to do something else first`
-
----
-
-## Phase 5: Hand Off
-
-When the user confirms their next step, respond with a single short line: "Type `[skill command]` to begin." Nothing else. Do not re-explain the skill or add encouragement. The `/start` skill's job is done.
-
-Verdict: **COMPLETE** — user oriented and handed off to next step.
-
----
-
-## Edge Cases
-
-- **User picks D but project is empty**: Gently redirect — "It looks like the project is a fresh template with no artifacts yet. Would Path A or B be a better fit?"
-- **User picks A but project has code**: Mention what you found — "I noticed there's already code in `src/`. Did you mean to pick D (existing work)?"
-- **User is returning (engine configured, concept exists)**: Skip onboarding entirely — "It looks like you're already set up! Your engine is [X] and you have a game concept at `design/gdd/game-concept.md`. Review mode: `[read from production/review-mode.txt, or 'lean (default)' if missing]`. Want to pick up where you left off? Try `/sprint-plan` or just tell me what you'd like to work on."
-- **User doesn't fit any option**: Let them describe their situation in their own words and adapt.
-
----
-
-## Collaborative Protocol
-
-1. **Ask first** — never assume the user's state or intent
-2. **Present options** — give clear paths, not mandates
-3. **User decides** — they pick the direction
-4. **No auto-execution** — recommend the next skill, don't run it without asking
-5. **Adapt** — if the user's situation doesn't fit a template, listen and adjust
+Then ask with the question tool: "Save these to `project.yaml` (and the stage to
+`production/stage.txt`)?" Options: `Save them` / `Change something` / `Don't save`. Ask no
+question about the rigor or the goal itself: the card shows them, and the user changes them there
+or later with `/project-settings`.
+
+- **Change something:** ask what to change, starting with a *guessed* goal, then show the card
+  again with the new value and "you said" as its reason, and ask the save question again. A value
+  changed here is saved even when it was already set.
+- **Save them:** run `bash .claude/scripts/set-stage.sh "[stage]"`, then
+  `bash .claude/scripts/config-set.sh modes.rigor [value]` and
+  `bash .claude/scripts/config-set.sh project.goal [value]`, each only when that key was not
+  already set or was changed on the card. Check the read-back rows match. Say: "Saved. Rigor
+  `[value]` sets six other settings; `/project-settings` shows them and changes any of them."
+- **Don't save**, or anything other than an explicit yes: write nothing, keep the values for this
+  run, and say they were not saved.
+
+If a helper exits non-zero, show its output, say which setting was not written, and go on with the
+value for this run.
+
+## Phase 5: Ask how much to confirm
+
+If `modes.automation` is already set, say "Automation is `[value]`" and go on. Otherwise ask:
+"Last one: how much should I confirm with you as we work?" Options:
+- `Guided (Recommended)`: I decide small things and still stop for big ones (scope changes,
+  deletions, schema changes).
+- `Collaborative`: I ask before each significant step and show drafts before writing.
+- `Autonomous`: I proceed and log decisions, stopping only for the always-ask categories. Fastest,
+  most tokens.
+
+Mapping: `Guided` → `guided`, `Collaborative` → `collaborative`, `Autonomous` → `autonomous`. The
+pick is the consent to write it: run `bash .claude/scripts/config-set.sh modes.automation [value]`,
+unless the Phase 4 save was declined (then say it was not saved).
+
+## Phase 6: Show the path
+
+Say: "Here's your path at rigor `[value]`. Every skill still runs at any rigor; rigor changes
+what's required, not what's allowed."
+
+Except on path D, lead with the main path, in one line: "The main path: make a game
+(`/prototype`), change it after you play it (ask in plain words), then grow it into a project
+with the steps below." At `standard` or `full`, add one line after the path: "This is studio
+mode: the design documents, agents and `team-*` pipelines. It fits a team, a long project, or
+someone who wants the paperwork."
+
+The path starts with the step Phase 3 named. When that was `/brainstorm` (path B and C's
+`Formalize it first`), list `/brainstorm` first and `/setup-engine` after it: each runs without
+the other. With no engine set, `/prototype` goes between them.
+
+**`minimal`: 4 steps to running code**
+1. `/setup-engine`: choose and configure the engine (web, unless you name another)
+2. `/brainstorm`: write the one-page `design/game-brief.md`
+3. `/create-stories`: turn the brief's Features list into stories (no epics or sprint plan needed)
+4. `/dev-story`: the first line of game code
+
+With no engine set, `/prototype` builds the brief as a playable browser game: list it
+straight after `/brainstorm`, as the recommended next step, and `/setup-engine` after it.
+
+**`standard`** (studio mode)
+- Concept: `/setup-engine` → `/brainstorm` → `/prototype` → `/art-bible` → `/map-systems` →
+  `/gate-check`. With no engine set, `/setup-engine` moves after `/prototype`: the playable
+  first, the engine last
+- Systems Design: `/design-system` (once per system) → `/review-all-gdds` → `/gate-check`
+- Architecture: `/create-architecture` → `/architecture-decision` (once per decision) →
+  `/architecture-review` → `/create-control-manifest` → `/ux-design` (accessibility and
+  interaction patterns) → `/test-setup` → `/gate-check`
+- Pre-Production: `/ux-design` (HUD and key screens) → `/create-epics` → `/create-stories` →
+  `/sprint-plan` → `/gate-check`
+- Production: `/dev-story`
+
+Each `/gate-check` moves the project one stage, and only when it passes.
+
+**`full`** (studio mode): everything in `standard`, plus `/vertical-slice` and `/playtest-report`
+in Pre-Production and `/design-review` after each GDD.
+
+**Path D with existing work** (stage `Systems Design` or later, or code on disk) gets this instead.
+Print only the steps that apply, and for the brief only the one source that applies. When Phase 3
+named `/prototype` from their design documents, list it first, before the numbered steps; with an
+engine other than `web`, add `/prototype --path html` after step 1 as the fast option. At
+`minimal`:
+1. `/project-stage-detect`: what stage the project is at and what is missing
+2. `/adopt`: whether the existing files are in the format the skills read
+3. `/setup-engine`: only when no engine is set; leave it out when `engine` names one
+4. The brief, only if `concept` is absent: `/reverse-document design [code_root]` when the code
+   root holds 10 or more source files (it writes the brief from the game), and then do not mention
+   `/brainstorm` at all; `/brainstorm` only when it holds fewer
+
+At `standard` and `full`, steps 1 to 3, then `/design-system retrofit [path]`,
+`/architecture-decision retrofit [path]`, `/architecture-review` and `/gate-check`.
+
+Present `minimal` as the documented floor, not a lesser mode, and name its trade once: no GDDs, so
+design problems show up in code.
+
+If `origin_url` pointed at the template repo, add: "Your clone's `origin` still points at the
+Agent Harness Game Studios template repo, so a push or pull request would go there. When you're ready, run
+`git remote rename origin template`, then `git remote add origin <your repo URL>`. `UPGRADING.md`
+pulls updates from `template`; skip its own `git remote add template` step, since that remote now
+exists." Suggest it; do not run it.
+
+Ask: "Would you like to start with [first step]?" Options: `Yes, start with [first step]` /
+`Something else first`. Either answer leads to Phase 7, never to running the step.
+
+## Phase 7: Hand off
+
+Respond with exactly one line: "Type `[skill]` to begin." Do not start that skill yourself,
+even after a yes: the user types it, so it runs on the session's model and not this skill's. If
+they picked something else, name the skill for that instead, the same way. On route A the line
+is "Type `/prototype` to begin." and `/prototype` reads the person's answers from this
+conversation; after `Browser sketch first` it is "Type `/prototype --path html` to begin."
+
+Verdict: **COMPLETE**, the user is oriented and handed off. A game already asked for (Phase 1)
+gives no verdict: `/prototype` takes over. If the user stopped before Phase 7, say which settings
+were saved and which were not.

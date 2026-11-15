@@ -3,13 +3,13 @@ name: team-narrative
 description: "Orchestrate the narrative team — narrative-director, writer, world-builder, level-designer — for story, world lore, narrative-driven levels."
 argument-hint: "[narrative content description] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, TaskCreate, TaskGet, TaskList, TaskUpdate, Bash(bash "*/.claude/skills/team-narrative/../../hooks/yaml-helper.sh" resolve_config *), request_user_input, clarify
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, TaskCreate, TaskGet, TaskList, TaskUpdate, Bash(bash "*/.claude/skills/team-narrative/../../hooks/yaml-helper.sh" resolve_config *)
 model: sonnet
 ---
 # Team Narrative
 
 If no argument is provided, output usage guidance and exit without spawning any agents:
-> Usage: `/team-narrative [narrative content description] [--review full|lean|solo]` — describe the story content, scene, or narrative area to work on (e.g., `boss encounter cutscene`, `faction intro dialogue`, `tutorial narrative`). Do not use `AskUserQuestion`, `request_user_input` or `clarify` here; output the guidance directly.
+> Usage: `/team-narrative [narrative content description] [--review full|lean|solo]` — describe the story content, scene, or narrative area to work on (e.g., `boss encounter cutscene`, `faction intro dialogue`, `tutorial narrative`). Do not use `AskUserQuestion` here; output the guidance directly.
 
 When this skill is invoked with an argument, orchestrate the narrative team through a structured pipeline.
 
@@ -46,7 +46,7 @@ still decides who runs it — see Phase 4).
 - **`individual`** (default): `writer` only; `narrative-director` invoked only on an explicit pillar conflict. Other agents consulted via the writer, not spawned separately.
 - **`small`**: `narrative-director` + `writer`, plus `localization-lead` and `world-builder` when `review_mode` is `full` (at `lean` and `solo` they are consulted through the writer).
 - **`studio`**: all six Team Composition agents, whatever the `review_mode` (the full pipeline as documented).
-A non-core agent needed at `individual` routes through the nearest active core agent with an informational note. **"Phase gate" means any phase that ends in an `AskUserQuestion`, `request_user_input` or `clarify` decision point this pipeline itself lists** — a transition under Decision Points above, or a **Gate** step written into the pipeline below — **whatever the `automation` mode.** `guided` and `autonomous` change how a gate is passed (it auto-advances, or is recorded with `log_decision`), not whether it is one, so bounded-exception condition (3) below holds at it in every mode. An agent restricted to "phase gates only" is spawned at those points and no others. This active-set scoping applies throughout the pipeline below: any phase that names an agent outside the active set routes through the nearest core agent rather than spawning it.
+A non-core agent needed at `individual` routes through the nearest active core agent with an informational note. **"Phase gate" means any phase that ends in an `AskUserQuestion` decision point this pipeline itself lists** — a transition under Decision Points above, or a **Gate** step written into the pipeline below — **whatever the `automation` mode.** `guided` and `autonomous` change how a gate is passed (it auto-advances, or is recorded with `log_decision`), not whether it is one, so bounded-exception condition (3) below holds at it in every mode. An agent restricted to "phase gates only" is spawned at those points and no others. This active-set scoping applies throughout the pipeline below: any phase that names an agent outside the active set routes through the nearest core agent rather than spawning it.
 
 **Announce the active set before Phase 1 — never let the collapse be silent.**
 Before spawning anything, state in one line which agents this run will actually
@@ -121,7 +121,7 @@ cover, so **you** write those after one approval (see "Write the finals"):
 > run to invent one, which defeats it. `/team-qa` Phase 4 carries the same
 > requirement for the same reason.
 
-> **Why this does not violate the Collaboration Protocol.** `CLAUDE.md` requires an agent to ask "May I write this to [filepath]?" before Write/Edit. A subagent spawned here writes **without** asking, and that is a deliberate, bounded exception rather than an oversight — the same call already made for `consistency-check` appending to `active.md`. The exception holds only when all three are true: (1) the path is one **you** named in the prompt, so the user approved the destination when they approved the phase; (2) it is a new artifact under `production/`, `docs/` or `tests/`, never an edit to existing source or config; (3) the phase that produced it is itself gated by an `AskUserQuestion`, `request_user_input` or `clarify` before the pipeline advances. Outside those three, the agent must ask. **Do not "fix" this by asking per subagent** — a prompt per agent per phase makes an orchestrator unusable, which is why the exception exists.
+> **Why this does not violate the Collaboration Protocol.** `CLAUDE.md` requires an agent to ask "May I write this to [filepath]?" before Write/Edit. A subagent spawned here writes **without** asking, and that is a deliberate, bounded exception rather than an oversight — the same call already made for `consistency-check` appending to `active.md`. The exception holds only when all three are true: (1) the path is one **you** named in the prompt, so the user approved the destination when they approved the phase; (2) it is a new artifact under `production/`, `docs/` or `tests/`, never an edit to existing source or config; (3) the phase that produced it is itself gated by an `AskUserQuestion` before the pipeline advances. Outside those three, the agent must ask. **Do not "fix" this by asking per subagent** — a prompt per agent per phase makes an orchestrator unusable, which is why the exception exists.
 
 Launch independent agents in parallel where the pipeline allows it (e.g., Phase 2 agents can run simultaneously).
 
@@ -143,7 +143,7 @@ Delegate in parallel — issue all three `Agent` calls simultaneously before wai
 
 **Phase gate:** collect all three Phase 2 outputs, then apply the Decision Points
 rule before starting Phase 3 — present the lore, dialogue, and visual direction
-summaries and capture approval via `AskUserQuestion`, `request_user_input` or `clarify` in `collaborative` mode
+summaries and capture approval via `AskUserQuestion` in `collaborative` mode
 (auto-advance in `guided` unless a result is BLOCKED; `log_decision` in
 `autonomous`).
 
@@ -165,7 +165,7 @@ here, so do not read the gate file in this session — and add:
 - Check that all mysteries have documented "true answers"
 
 Act on the verdict: **APPROVE** → Phase 5. **CONCERNS** → show the listed
-inconsistencies and ask via `AskUserQuestion`, `request_user_input` or `clarify` whether to revise them (re-spawn the
+inconsistencies and ask via `AskUserQuestion` whether to revise them (re-spawn the
 agent that owns each) or accept them. **REJECT** → do not start Phase 5; the
 contradictions are fixed first. **NOT ASSESSED [missing input]** → name the
 missing input, then supply it and re-run the gate, or carry
@@ -186,7 +186,7 @@ Delegate in parallel — issue every `Agent` call before waiting for any result:
 
 ### Write the finals
 You hold every draft. List the final documents from the table above, then ask once
-via `AskUserQuestion`, `request_user_input` or `clarify` — "May I write these [N] narrative documents to
+via `AskUserQuestion` — "May I write these [N] narrative documents to
 `design/narrative/`?" — and write them on approval. The drafts under
 `production/narrative/[content-slug]/` stay as the working record.
 
@@ -216,7 +216,7 @@ Sub-agents write their drafts to the `production/narrative/[content-slug]/` path
 you name, under the **bounded exception** documented above under "Why this does
 not violate the Collaboration Protocol" — the path is one you named, the artifact
 is new under `production/`, `docs/` or `tests/`, and the phase is gated by an
-`AskUserQuestion`, `request_user_input` or `clarify`. A sub-agent does **not** prompt per write inside those bounds;
+`AskUserQuestion`. A sub-agent does **not** prompt per write inside those bounds;
 outside them it must ask. The **one exception is the final documents under
 `design/narrative/`**: you hold every draft, so you write those yourself after
 the single "May I write …?" in "Write the finals".

@@ -4,7 +4,7 @@ description: "Emergency fix bypassing normal sprint process — hotfix branch, a
 argument-hint: "[bug-id or description]"
 user-invocable: true
 disable-model-invocation: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(git rev-parse *), Bash(git tag --list*), Bash(git branch --list *), request_user_input, clarify
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(git rev-parse *), Bash(git tag --list*), Bash(git branch --list *)
 model: sonnet
 ---
 
@@ -83,7 +83,7 @@ the live build) — or its `release/*` branch, if one was cut to stabilise that
 release (`git branch --list 'release/*'`). Never the head of `main`: it may carry
 work that has not shipped.
 
-If the check passes, use `AskUserQuestion`, `request_user_input` or `clarify` before creating the branch:
+If the check passes, use `AskUserQuestion` before creating the branch:
 - Prompt: "Ready to create hotfix branch 'hotfix/[short-name]' from [base-ref]?"
 - Options:
   - `[A] Yes — create branch`
@@ -161,7 +161,7 @@ Do not skip this gate. A hotfix that breaks something else is worse than the ori
 > **STOP — deployment requires explicit approval, unconditionally.** Merging a
 > hotfix and tagging the patch release is the one irreversible act in this skill,
 > so it is gated even though branch creation (reversible) already is. Before any
-> merge, tag, or deploy, use `AskUserQuestion`, `request_user_input` or `clarify`:
+> merge, tag, or deploy, use `AskUserQuestion`:
 >
 > - Prompt: "Hotfix validated and approved. Merge to [targets], tag [patch tag]
 >   and deploy?" — `[targets]` is `main`, plus the release's `release/*` branch

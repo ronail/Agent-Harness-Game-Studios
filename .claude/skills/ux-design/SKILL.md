@@ -3,7 +3,7 @@ name: ux-design
 description: "Section-by-section UX spec authoring for a screen, flow or HUD. Reads the player journey to provide context; also project-wide accessibility."
 argument-hint: "[screen/flow name] or 'hud' or 'patterns' or 'accessibility'"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Agent, Bash(bash "*/.claude/skills/ux-design/../../hooks/yaml-helper.sh" resolve_config *), request_user_input, clarify
+allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Agent, Bash(bash "*/.claude/skills/ux-design/../../hooks/yaml-helper.sh" resolve_config *)
 model: sonnet
 ---
 
@@ -16,7 +16,7 @@ Resolved above — use as-is. No block → defaults in
 
 When this skill is invoked:
 
-Every `AskUserQuestion`, `request_user_input` or `clarify` call follows `.claude/docs/automation-modes.md`
+Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt).
 
@@ -66,7 +66,7 @@ Four authoring modes exist based on the argument:
 > under `design/ux/`: every one of those checks would stop matching, and the
 > Technical Setup → Pre-Production gate would become unpassable.
 
-**If no argument is provided**, do not fail — ask instead. Use `AskUserQuestion`, `request_user_input` or `clarify`:
+**If no argument is provided**, do not fail — ask instead. Use `AskUserQuestion`:
 - "What are we designing today?"
   - Options: "A specific screen or flow (I'll name it)", "The game HUD", "The interaction pattern library", "The project-wide accessibility requirements", "I'm not sure — help me figure it out"
 

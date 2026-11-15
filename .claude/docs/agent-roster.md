@@ -91,11 +91,3 @@ session's model.
 | `godot-csharp-specialist` | C# / .NET | .NET patterns, [Signal] delegates, async, nullable types, type-safe node access |
 | `godot-shader-specialist` | Shaders/Rendering | Godot shading language, visual shaders, particles, post-processing |
 | `godot-gdextension-specialist` | GDExtension | C++/Rust bindings, native performance, custom nodes, build systems |
-
----
-
-When using Hermes as the harness, the Model column above is advisory only.
-Subagent models come from the `delegation` section of the active Hermes profile,
-not from agent frontmatter. Run `/start hermes` to map each role to a profile and
-turn that map into `delegation.backend: profile_routes` through the official
-`advanced-delegation` plugin.

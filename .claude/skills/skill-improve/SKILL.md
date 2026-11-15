@@ -3,14 +3,14 @@ name: skill-improve
 description: "Improve a skill via a test-fix-retest loop — static checks, targeted fixes, keep or revert on score change."
 argument-hint: "[skill-name]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Bash(bash "*/.claude/skills/skill-improve/../../hooks/yaml-helper.sh" resolve_config *), request_user_input, clarify
+allowed-tools: Read, Glob, Grep, Write, Bash(bash "*/.claude/skills/skill-improve/../../hooks/yaml-helper.sh" resolve_config *)
 model: sonnet
 ---
 
 !`bash "${CLAUDE_SKILL_DIR}/../../hooks/yaml-helper.sh" resolve_config --keys automation`
 
 **Automation mode**: Resolve `modes.automation` (`project.local.yaml` →
-`project.yaml` → default `collaborative`). Every `AskUserQuestion`, `request_user_input` or `clarify` call and
+`project.yaml` → default `collaborative`). Every `AskUserQuestion` call and
 every file write follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt).

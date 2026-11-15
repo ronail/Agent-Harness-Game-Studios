@@ -3,7 +3,7 @@ name: qa-plan
 description: "QA test plan for a sprint — classifies stories by Logic/Integration/Visual/UI, covers automated tests, manual cases, smoke scope."
 argument-hint: "[sprint | feature: system-name | story: path]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Bash(bash "*/.claude/skills/qa-plan/../../hooks/yaml-helper.sh" resolve_config *), request_user_input, clarify
+allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Bash(bash "*/.claude/skills/qa-plan/../../hooks/yaml-helper.sh" resolve_config *)
 model: sonnet
 ---
 
@@ -29,7 +29,7 @@ plan.
 
 ---
 
-Every `AskUserQuestion`, `request_user_input` or `clarify` call follows `.claude/docs/automation-modes.md`
+Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt).
 

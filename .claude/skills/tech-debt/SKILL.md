@@ -3,7 +3,7 @@ name: tech-debt
 description: "Track, categorize and prioritize technical debt across the codebase — scans for debt indicators, maintains a register."
 argument-hint: "[scan|add|prioritize|report]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Bash(bash "*/.claude/skills/tech-debt/../../hooks/yaml-helper.sh" resolve_config *), request_user_input, clarify
+allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Bash(bash "*/.claude/skills/tech-debt/../../hooks/yaml-helper.sh" resolve_config *)
 model: sonnet
 ---
 
@@ -13,7 +13,7 @@ model: sonnet
 
 
 
-Every `AskUserQuestion`, `request_user_input` or `clarify` call follows `.claude/docs/automation-modes.md`
+Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt).
 
@@ -88,6 +88,12 @@ If no, stop here. Verdict: **BLOCKED** — user declined write.
 Ask the user for the description and affected files (plain text prompts).
 
 **Run as a subagent?** `lead-programmer` preloads this skill, and a subagent has
+no `AskUserQuestion`. Return the three questions below (category, effort,
+impact) in one reply, each as a short list of its options, and stop: whoever
+called you asks the user. Nothing goes into the register until the answers
+come back.
+
+**Run as a subagent?** `lead-programmer` preloads this skill, and a subagent has
 no `AskUserQuestion`, `request_user_input` or `clarify`. Return the three questions below (category, effort,
 impact) in one reply, each as a short list of its options, and stop: whoever
 called you asks the user. Nothing goes into the register until the answers
@@ -111,7 +117,7 @@ Then use `AskUserQuestion`, `request_user_input` or `clarify` to collect the **e
   - `[C] L — Large (3–7 days)`
   - `[D] XL — Extra Large (over 1 week)`
 
-Then use `AskUserQuestion`, `request_user_input` or `clarify` to collect the **impact if left unfixed** — the
+Then use `AskUserQuestion` to collect the **impact if left unfixed** — the
 register's Impact column, which `/tech-debt prioritize` scores:
 - Prompt: "What does this cost if it is never fixed?"
 - Options: `[A] Low` / `[B] Med` / `[C] High` / `[D] Critical`

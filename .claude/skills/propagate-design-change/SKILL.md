@@ -3,7 +3,7 @@ name: propagate-design-change
 description: "Finds architecture decisions (ADRs) made stale by a changed GDD and walks through resolving each. Use when the user changed a number or rule in a GDD and asks which ADRs or architecture decisions are now out of date."
 argument-hint: "[path/to/changed-gdd.md] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/propagate-design-change/../../hooks/yaml-helper.sh" resolve_config *), Bash(git diff *), Bash(git log *), Bash(bash .claude/scripts/adr-status.sh*), Bash(bash .claude/scripts/md-section.sh *), request_user_input, clarify
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/propagate-design-change/../../hooks/yaml-helper.sh" resolve_config *), Bash(git diff *), Bash(git log *), Bash(bash .claude/scripts/adr-status.sh*), Bash(bash .claude/scripts/md-section.sh *)
 model: sonnet
 ---
 

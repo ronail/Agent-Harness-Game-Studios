@@ -3,7 +3,7 @@ name: quick-design
 description: "Lightweight spec for small changes — tuning adjustments, minor mechanics. Embeds directly into stories; skips full GDD."
 argument-hint: "[brief description of the change]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Bash(bash "*/.claude/skills/quick-design/../../hooks/yaml-helper.sh" resolve_config *), request_user_input, clarify
+allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Bash(bash "*/.claude/skills/quick-design/../../hooks/yaml-helper.sh" resolve_config *)
 model: sonnet
 ---
 
@@ -27,7 +27,7 @@ meaningful to implement without a written rationale.
 
 ---
 
-Every `AskUserQuestion`, `request_user_input` or `clarify` call follows `.claude/docs/automation-modes.md`
+Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt).
 
@@ -89,8 +89,9 @@ content mode) and Read those ranges with offset and limit.
   dependency tier check." and continue.
 - Check `design/quick-specs/` for any prior quick specs that touched this
   system — avoid contradicting them.
-- If this is a Tuning change, also check `assets/data/` for the data file that
-  holds the relevant values.
+- If this is a Tuning change, also check `assets/data/` (`data/config.json` in
+  a web game) for the data file that holds the relevant values, and write that
+  file's path in the spec in place of `assets/data/[file]`.
 
 Report what was found: "Found GDD at [path]. Relevant section: [section name].
 Prior quick specs for this system: [each path, and whether it agrees or

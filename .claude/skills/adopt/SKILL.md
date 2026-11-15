@@ -3,7 +3,7 @@ name: adopt
 description: "Brownfield audit — do existing artifacts actually work? Numbered migration plan. Unlike /project-stage-detect, checks compliance not existence."
 argument-hint: "[focus: full | gdds | adrs | stories | infra]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, Bash(bash "*/.claude/skills/adopt/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/gdd-structure-check.sh *), Bash(bash .claude/scripts/migrate-v1-config.sh --dry-run*), request_user_input, clarify
+allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, Bash(bash "*/.claude/skills/adopt/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/gdd-structure-check.sh *), Bash(bash .claude/scripts/migrate-v1-config.sh --dry-run*)
 model: sonnet
 ---
 
@@ -41,7 +41,7 @@ wrong internal format.
 ---
 
 **Automation mode**: Resolve `modes.automation` (`project.local.yaml` →
-`project.yaml` → default `collaborative`). Every `AskUserQuestion`, `request_user_input` or `clarify` call follows `.claude/docs/automation-modes.md`
+`project.yaml` → default `collaborative`). Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt).
 

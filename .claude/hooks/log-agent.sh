@@ -54,10 +54,7 @@ INPUT=$(cat)
 # report agent_type as an empty string -- not a CCGS spawn. log-agent-stop.sh
 # skips them; so does this hook, or one would be logged as "unknown" and
 # counted in session-stop.sh's spawn tally. A MISSING agent_type still logs.
-# A Hermes/Codex spawn sends `subagent_type` and may leave `agent_type` empty,
-# so only skip when both name no agent.
-if printf '%s' "$INPUT" | grep -qE '"agent_type"[[:space:]]*:[[:space:]]*""' \
-   && ! printf '%s' "$INPUT" | grep -qE '"subagent_type"[[:space:]]*:[[:space:]]*"[^"]+"'; then
+if printf '%s' "$INPUT" | grep -qE '"agent_type"[[:space:]]*:[[:space:]]*""'; then
     exit 0
 fi
 
@@ -65,10 +62,7 @@ fi
 if command -v jq >/dev/null 2>&1; then
     AGENT_NAME=$(echo "$INPUT" | jq -r 'if (.agent_type // "") != "" then .agent_type else (.subagent_type // "") end' 2>/dev/null)
 else
-    AGENT_NAME=$(echo "$INPUT" | grep -oE '"agent_type"[[:space:]]*:[[:space:]]*"[^"]+"' | head -1 | sed -E 's/^"agent_type"[[:space:]]*:[[:space:]]*"//;s/"$//')
-    if [ -z "$AGENT_NAME" ]; then
-        AGENT_NAME=$(echo "$INPUT" | grep -oE '"subagent_type"[[:space:]]*:[[:space:]]*"[^"]+"' | head -1 | sed -E 's/^"subagent_type"[[:space:]]*:[[:space:]]*"//;s/"$//')
-    fi
+    AGENT_NAME=$(echo "$INPUT" | grep -oE '"agent_type"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/"agent_type"[[:space:]]*:[[:space:]]*"//;s/"$//')
 fi
 # OUTSIDE the branch, like SESSION_ID below. jq's `// "unknown"` substitutes for
 # null and false but NOT for an empty string, so the jq path could emit a record

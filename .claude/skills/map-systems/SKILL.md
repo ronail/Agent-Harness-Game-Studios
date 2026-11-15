@@ -3,7 +3,7 @@ name: map-systems
 description: "Decompose a concept into individual systems, map dependencies, prioritize design order, create the systems index."
 argument-hint: "[next | system-name] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, TaskCreate, TaskGet, TaskList, TaskUpdate, Agent, Bash(bash "*/.claude/skills/map-systems/../../hooks/yaml-helper.sh" resolve_config *), request_user_input, clarify
+allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, TaskCreate, TaskGet, TaskList, TaskUpdate, Agent, Bash(bash "*/.claude/skills/map-systems/../../hooks/yaml-helper.sh" resolve_config *)
 model: sonnet
 ---
 
@@ -30,7 +30,7 @@ Two modes:
 See `.claude/docs/director-gates.md` for the full check pattern. Individual gate definitions live in `.claude/docs/director-gates/[gate-id].md` — the spawned agent reads its own gate file; do not read it in the parent session.
 
 
-Every `AskUserQuestion`, `request_user_input` or `clarify` call follows `.claude/docs/automation-modes.md`
+Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt). In collaborative mode the
 system list, dependency, priority and write approvals are separate questions:
@@ -324,7 +324,7 @@ waiting for an explicit "yes". Say what you wrote afterwards.
 
 Pass: systems index path; game pillars and core fantasy — from `design/gdd/game-concept.md`, or at `minimal` the pitch and "what they feel" line of `design/game-brief.md`, which has no pillars; the priority tier assignments for every tier (MVP / Vertical Slice / Alpha / Full Vision); and the high-risk and bottleneck systems from the dependency map.
 
-Present the assessment. If REJECT, revise the system set with the user before GDD authoring begins. If CONCERNS, show them and use `AskUserQuestion`, `request_user_input` or `clarify`: `Revise the system set` / `Accept — record them in the index` / `Discuss further`. On *Revise*, rework the affected systems with the user and ask again before re-writing the index. On *Accept* — the option names the edit, so choosing it is the ask — record them in the systems index as a `> **Creative Director Note**`
+Present the assessment. If REJECT, revise the system set with the user before GDD authoring begins. If CONCERNS, show them and use `AskUserQuestion`: `Revise the system set` / `Accept — record them in the index` / `Discuss further`. On *Revise*, rework the affected systems with the user and ask again before re-writing the index. On *Accept* — the option names the edit, so choosing it is the ask — record them in the systems index as a `> **Creative Director Note**`
 placed **directly beneath the `## Priority Tiers` table**, naming the tier each
 concern applies to — e.g. `> **Creative Director Note** (MVP): …`.
 `templates/systems-index.md` has a Priority Tiers *definition table*, not a

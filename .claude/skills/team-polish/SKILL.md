@@ -3,13 +3,13 @@ name: team-polish
 description: "Orchestrate the polish team — performance-analyst, technical-artist, sound-designer, qa-tester — to optimize and harden a feature or area."
 argument-hint: "[feature or area to polish] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, TaskCreate, TaskGet, TaskList, TaskUpdate, Bash(bash "*/.claude/skills/team-polish/../../hooks/yaml-helper.sh" resolve_config *), request_user_input, clarify
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, TaskCreate, TaskGet, TaskList, TaskUpdate, Bash(bash "*/.claude/skills/team-polish/../../hooks/yaml-helper.sh" resolve_config *)
 model: sonnet
 ---
 # Team Polish
 
 If no argument is provided, output usage guidance and exit without spawning any agents:
-> Usage: `/team-polish [feature or area to polish] [--review full|lean|solo]` — specify the feature or area to polish (e.g., `combat`, `main menu`, `inventory system`, `level-1`). Do not use `AskUserQuestion`, `request_user_input` or `clarify` here; output the guidance directly.
+> Usage: `/team-polish [feature or area to polish] [--review full|lean|solo]` — specify the feature or area to polish (e.g., `combat`, `main menu`, `inventory system`, `level-1`). Do not use `AskUserQuestion` here; output the guidance directly.
 
 When this skill is invoked with an argument, orchestrate the polish team through a structured pipeline.
 
@@ -42,7 +42,7 @@ below), and the agents that work at them are team members, not director gates.
 - **`individual`** (default): `performance-analyst` + `technical-artist`. Other agents consulted via these two, not spawned separately. No programmer is active, so the optimisation list's programmer items are not implemented in this run — the report names the list as handed to `/dev-story` (Phase 2).
 - **`small`**: + `sound-designer` + `qa-tester` + `engine-programmer`, and `tools-programmer` when Phase 1 traces a cause to a content authoring tool (the full pipeline as documented).
 - **`studio`**: the `small` set, `engine-programmer` included, + an adversarial review pass: Phase 5's qa-tester is told "your job is not to confirm this holds — find how it breaks", and the report says the pass ran. This pipeline has no engine specialist to widen; engine-level work stays with `engine-programmer`.
-A non-core agent needed at `individual` routes through the nearest active core agent with an informational note. **"Phase gate" means any phase that ends in an `AskUserQuestion`, `request_user_input` or `clarify` decision point this pipeline itself lists** — a transition under Decision Points above, or a **Gate** step written into the pipeline below — **whatever the `automation` mode.** `guided` and `autonomous` change how a gate is passed (it auto-advances, or is recorded with `log_decision`), not whether it is one, so bounded-exception condition (3) below holds at it in every mode. An agent restricted to "phase gates only" is spawned at those points and no others. This active-set scoping applies throughout the pipeline below: any phase that names an agent outside the active set routes through the nearest core agent rather than spawning it.
+A non-core agent needed at `individual` routes through the nearest active core agent with an informational note. **"Phase gate" means any phase that ends in an `AskUserQuestion` decision point this pipeline itself lists** — a transition under Decision Points above, or a **Gate** step written into the pipeline below — **whatever the `automation` mode.** `guided` and `autonomous` change how a gate is passed (it auto-advances, or is recorded with `log_decision`), not whether it is one, so bounded-exception condition (3) below holds at it in every mode. An agent restricted to "phase gates only" is spawned at those points and no others. This active-set scoping applies throughout the pipeline below: any phase that names an agent outside the active set routes through the nearest core agent rather than spawning it.
 
 **Announce the active set before Phase 1 — never let the collapse be silent.**
 Before spawning anything, state in one line which agents this run will actually
@@ -115,7 +115,7 @@ Use the `Agent` tool to spawn each team member as a subagent:
 > **Nothing reads `production/polish/` yet** — say so when reporting, so the user
 > knows the report is a record rather than an input to a later gate.
 
-> **Why this does not violate the Collaboration Protocol.** `CLAUDE.md` requires an agent to ask "May I write this to [filepath]?" before Write/Edit. A subagent spawned here writes **without** asking, and that is a deliberate, bounded exception rather than an oversight — the same call already made for `consistency-check` appending to `active.md`. The exception holds only when all three are true: (1) the path is one **you** named in the prompt, so the user approved the destination when they approved the phase; (2) it is a new artifact under `production/`, `docs/` or `tests/`, never an edit to existing source or config; (3) the phase that produced it is itself gated by an `AskUserQuestion`, `request_user_input` or `clarify` before the pipeline advances. Outside those three, the agent must ask. **Do not "fix" this by asking per subagent** — a prompt per agent per phase makes an orchestrator unusable, which is why the exception exists.
+> **Why this does not violate the Collaboration Protocol.** `CLAUDE.md` requires an agent to ask "May I write this to [filepath]?" before Write/Edit. A subagent spawned here writes **without** asking, and that is a deliberate, bounded exception rather than an oversight — the same call already made for `consistency-check` appending to `active.md`. The exception holds only when all three are true: (1) the path is one **you** named in the prompt, so the user approved the destination when they approved the phase; (2) it is a new artifact under `production/`, `docs/` or `tests/`, never an edit to existing source or config; (3) the phase that produced it is itself gated by an `AskUserQuestion` before the pipeline advances. Outside those three, the agent must ask. **Do not "fix" this by asking per subagent** — a prompt per agent per phase makes an orchestrator unusable, which is why the exception exists.
 
 Launch independent agents in parallel where the pipeline allows it (e.g., Phases 3 and 4 can run simultaneously).
 
@@ -219,7 +219,7 @@ All file writes (performance reports, test results, evidence docs) are delegated
 sub-agents spawned via `Agent`. Those writes follow the **bounded exception**
 documented above under "Why this does not violate the Collaboration Protocol" —
 the path is one you named, the artifact is new under `production/`, `docs/` or
-`tests/`, and the phase is gated by an `AskUserQuestion`, `request_user_input` or `clarify`. A sub-agent does **not**
+`tests/`, and the phase is gated by an `AskUserQuestion`. A sub-agent does **not**
 prompt per write inside those bounds; outside them it must ask. The optimization
 and polish changes of Phases 2–4 edit existing code, shaders, audio or assets, so
 they are outside those bounds: each implementing agent returns the files it will
@@ -235,6 +235,6 @@ A summary report covering: performance before/after metrics, visual polish chang
 
 - If READY FOR RELEASE: run `/release-checklist` for the final pre-release validation.
 - If NEEDS MORE WORK: schedule remaining issues in `/sprint-plan update` (at `workflow: minimal`, which has no sprints, add them to the brief's build order) and re-run `/team-polish` after fixes.
-- If NOT ASSESSED: supply what was missing — commit the unset `performance.*` budgets in `project.yaml` (`/settings`), or run the phases that did not run (raise `team.size`) — then re-run `/team-polish`. Do not treat the area as release-ready.
+- If NOT ASSESSED: supply what was missing — commit the unset `performance.*` budgets in `project.yaml` (`/project-settings`), or run the phases that did not run (raise `team.size`) — then re-run `/team-polish`. Do not treat the area as release-ready.
 - If the report handed an optimisation list to `/dev-story`: implement those items there, then re-run `/team-polish` to measure the gain.
 - Run `/gate-check` for a formal phase gate verdict before handing off to release.

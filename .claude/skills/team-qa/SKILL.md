@@ -3,7 +3,7 @@ name: team-qa
 description: "Orchestrate the QA team through a full testing cycle — qa-lead strategy and test plan, qa-tester case writing, execution, sign-off."
 argument-hint: "[sprint | feature: system-name] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/team-qa/../../hooks/yaml-helper.sh" resolve_config *), request_user_input, clarify
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/team-qa/../../hooks/yaml-helper.sh" resolve_config *)
 model: sonnet
 ---
 
@@ -46,7 +46,7 @@ below), and the agents that work at them are team members, not director gates.
 - **`individual`** (default): `qa-tester` only; `qa-lead` invoked at phase gates only.
 - **`small`**: `qa-lead` + `qa-tester` pipeline (as documented).
 - **`studio`**: `qa-lead` + per-story `qa-tester` spawn + sign-off.
-A non-core agent needed at `individual` routes through the nearest active core agent with an informational note. **"Phase gate" means any phase that ends in an `AskUserQuestion`, `request_user_input` or `clarify` decision point this pipeline itself lists** — a transition under Decision Points above, or a **Gate** step written into the pipeline below — **whatever the `automation` mode**: in `guided` or `autonomous`, where that question is skipped or logged, the phase is still a gate. Not every phase is one. Apply the test literally: if the phase below lists no decision point, it is not a gate, and an agent restricted to "phase gates only" is not spawned for it. This active-set scoping applies throughout the pipeline below: any phase that names an agent outside the active set routes through the nearest core agent rather than spawning it.
+A non-core agent needed at `individual` routes through the nearest active core agent with an informational note. **"Phase gate" means any phase that ends in an `AskUserQuestion` decision point this pipeline itself lists** — a transition under Decision Points above, or a **Gate** step written into the pipeline below — **whatever the `automation` mode**: in `guided` or `autonomous`, where that question is skipped or logged, the phase is still a gate. Not every phase is one. Apply the test literally: if the phase below lists no decision point, it is not a gate, and an agent restricted to "phase gates only" is not spawned for it. This active-set scoping applies throughout the pipeline below: any phase that names an agent outside the active set routes through the nearest core agent rather than spawning it.
 
 **Announce the active set before Phase 1 — never let the collapse be silent.**
 Before spawning anything, state in one line which agents this run will actually
@@ -91,7 +91,7 @@ Use the `Agent` tool to spawn each team member as a subagent:
 
 **End every agent prompt with a return contract:** "Write your full output to `[path]` — that named path is your write authorisation under the bounded exception below, so write it without a separate approval prompt. Return **only** (1) the path written, (2) a ≤5-bullet summary of decisions, (3) any BLOCKED/CONCERNS items, one line each. Do not restate the documents you read." Without it, an agent returns everything it read back into this session.
 
-> **Why this does not violate the Collaboration Protocol.** `CLAUDE.md` requires an agent to ask "May I write this to [filepath]?" before Write/Edit. A subagent spawned here writes **without** asking, and that is a deliberate, bounded exception rather than an oversight — the same call already made for `consistency-check` appending to `active.md`. The exception holds only when all three are true: (1) the path is one **you** named in the prompt, so the user approved the destination when they approved the phase; (2) it is a new artifact under `production/`, `docs/` or `tests/`, never an edit to existing source or config; (3) the phase that produced it is a phase gate as defined above — one the pipeline lists as ending in an `AskUserQuestion`, `request_user_input` or `clarify` before it advances, whatever the automation mode. Outside those three, the agent must ask. **Do not "fix" this by asking per subagent** — a prompt per agent per phase makes an orchestrator unusable, which is why the exception exists.
+> **Why this does not violate the Collaboration Protocol.** `CLAUDE.md` requires an agent to ask "May I write this to [filepath]?" before Write/Edit. A subagent spawned here writes **without** asking, and that is a deliberate, bounded exception rather than an oversight — the same call already made for `consistency-check` appending to `active.md`. The exception holds only when all three are true: (1) the path is one **you** named in the prompt, so the user approved the destination when they approved the phase; (2) it is a new artifact under `production/`, `docs/` or `tests/`, never an edit to existing source or config; (3) the phase that produced it is a phase gate as defined above — one the pipeline lists as ending in an `AskUserQuestion` before it advances, whatever the automation mode. Outside those three, the agent must ask. **Do not "fix" this by asking per subagent** — a prompt per agent per phase makes an orchestrator unusable, which is why the exception exists.
 
 At `team.size: studio`, Phase 4 spawns one qa-tester per story, in parallel; below that, one spawn covers the whole group.
 
@@ -214,7 +214,7 @@ options:
 
 Walk through each story in the approved manual QA list.
 
-Batch stories into groups of 3-4 and use `AskUserQuestion`, `request_user_input` or `clarify` for each. **Wait for
+Batch stories into groups of 3-4 and use `AskUserQuestion` for each. **Wait for
 the tester's answer** and record only what they said: a result the tester did not
 give is never filled in for them. A story nobody answered for stays unexecuted,
 which makes the sign-off NOT ASSESSED — it is not BLOCKED unless they say so.
@@ -228,7 +228,7 @@ options:
   - "BLOCKED — cannot test yet (reason)"
 ```
 
-After each FAIL result: use `AskUserQuestion`, `request_user_input` or `clarify` to collect the failure description, then spawn `qa-tester` via `Agent` to write a formal bug report in `production/qa/bugs/`, in `/bug-report`'s format — its Severity and Priority labels exactly as that template lists them (`S2-High`, `P1-Fix this sprint`, …), because `/bug-triage` parses them.
+After each FAIL result: use `AskUserQuestion` to collect the failure description, then spawn `qa-tester` via `Agent` to write a formal bug report in `production/qa/bugs/`, in `/bug-report`'s format — its Severity and Priority labels exactly as that template lists them (`S2-High`, `P1-Fix this sprint`, …), because `/bug-triage` parses them.
 
 **After each PASS or PASS WITH NOTES on a Visual/Feel or UI story, record its
 evidence in `production/qa/evidence/`.** The retained screenshot is the

@@ -3,7 +3,7 @@ name: team-live-ops
 description: "Orchestrate the live-ops team — live-ops-designer, economy-designer, analytics-engineer, community-manager, writer — for a season or live event."
 argument-hint: "[season name or event description] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, TaskCreate, TaskGet, TaskList, TaskUpdate, Bash(bash "*/.claude/skills/team-live-ops/../../hooks/yaml-helper.sh" resolve_config *), request_user_input, clarify
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, TaskCreate, TaskGet, TaskList, TaskUpdate, Bash(bash "*/.claude/skills/team-live-ops/../../hooks/yaml-helper.sh" resolve_config *)
 model: sonnet
 ---
 # Team Live Ops
@@ -43,7 +43,7 @@ below), and the agents that work at them are team members, not director gates.
 - **`individual`** (default): `live-ops-designer` + `economy-designer`. Other agents consulted via these two, not spawned separately.
 - **`small`**: + `analytics-engineer` + `community-manager`.
 - **`studio`**: + `writer` + `narrative-director` (the full pipeline as documented).
-A non-core agent needed at `individual` routes through the nearest active core agent with an informational note. **"Phase gate" means any phase that ends in an `AskUserQuestion`, `request_user_input` or `clarify` decision point this pipeline itself lists** — a transition under Decision Points above, or a **Gate** step written into the pipeline below — **whatever the `automation` mode.** `guided` and `autonomous` change how a gate is passed (it auto-advances, or is recorded with `log_decision`), not whether it is one, so bounded-exception condition (3) below holds at it in every mode. An agent restricted to "phase gates only" is spawned at those points and no others. This active-set scoping applies throughout the pipeline below: any phase that names an agent outside the active set routes through the nearest core agent rather than spawning it.
+A non-core agent needed at `individual` routes through the nearest active core agent with an informational note. **"Phase gate" means any phase that ends in an `AskUserQuestion` decision point this pipeline itself lists** — a transition under Decision Points above, or a **Gate** step written into the pipeline below — **whatever the `automation` mode.** `guided` and `autonomous` change how a gate is passed (it auto-advances, or is recorded with `log_decision`), not whether it is one, so bounded-exception condition (3) below holds at it in every mode. An agent restricted to "phase gates only" is spawned at those points and no others. This active-set scoping applies throughout the pipeline below: any phase that names an agent outside the active set routes through the nearest core agent rather than spawning it.
 
 **Announce the active set before Phase 1 — never let the collapse be silent.**
 Before spawning anything, state in one line which agents this run will actually
@@ -110,7 +110,7 @@ never share one:
 These are working drafts; the final documents under `design/live-ops/seasons/`
 are compiled from them (Output Documents).
 
-> **Why this does not violate the Collaboration Protocol.** `CLAUDE.md` requires an agent to ask "May I write this to [filepath]?" before Write/Edit. A subagent spawned here writes **without** asking, and that is a deliberate, bounded exception rather than an oversight — the same call already made for `consistency-check` appending to `active.md`. The exception holds only when all three are true: (1) the path is one **you** named in the prompt, so the user approved the destination when they approved the phase; (2) it is a new artifact under `production/`, `docs/` or `tests/`, never an edit to existing source or config; (3) the phase that produced it is itself gated by an `AskUserQuestion`, `request_user_input` or `clarify` before the pipeline advances. Outside those three, the agent must ask. **Do not "fix" this by asking per subagent** — a prompt per agent per phase makes an orchestrator unusable, which is why the exception exists.
+> **Why this does not violate the Collaboration Protocol.** `CLAUDE.md` requires an agent to ask "May I write this to [filepath]?" before Write/Edit. A subagent spawned here writes **without** asking, and that is a deliberate, bounded exception rather than an oversight — the same call already made for `consistency-check` appending to `active.md`. The exception holds only when all three are true: (1) the path is one **you** named in the prompt, so the user approved the destination when they approved the phase; (2) it is a new artifact under `production/`, `docs/` or `tests/`, never an edit to existing source or config; (3) the phase that produced it is itself gated by an `AskUserQuestion` before the pipeline advances. Outside those three, the agent must ask. **Do not "fix" this by asking per subagent** — a prompt per agent per phase makes an orchestrator unusable, which is why the exception exists.
 
 Launch independent agents in parallel where the pipeline allows it (Phases 3 and 4 can run simultaneously).
 
@@ -191,7 +191,7 @@ exception covers (`production/`, `docs/`, `tests/`), so a sub-agent handed one o
 these paths must prompt. Do not widen the exception to silence that.
 Follow `team-level`'s pattern instead: sub-agents write their working artifacts
 under `production/`, where the exception does reach them; **you** compile the
-final documents and ask via `AskUserQuestion`, `request_user_input` or `clarify` — "May I write the season plan to
+final documents and ask via `AskUserQuestion` — "May I write the season plan to
 `design/live-ops/…`?" — writing them only on approval.
 
 Paths:
@@ -220,7 +220,7 @@ If a BLOCKED state is unresolvable, end with Verdict: **BLOCKED** instead of COM
 Sub-agents write their working artifacts under `production/`, following the
 **bounded exception** documented above under "Why this does not violate the
 Collaboration Protocol" — the path is one you named, the artifact is new under
-`production/`, `docs/` or `tests/`, and the phase is gated by an `AskUserQuestion`, `request_user_input` or `clarify`.
+`production/`, `docs/` or `tests/`, and the phase is gated by an `AskUserQuestion`.
 A sub-agent does **not** prompt per write inside those bounds; outside them it must
 ask. The **final documents under `design/live-ops/`** — season design, analytics
 plan, communication calendar — are the exception: the orchestrator compiles and

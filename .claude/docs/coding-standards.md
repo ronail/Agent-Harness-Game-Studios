@@ -12,11 +12,6 @@
 - **Verification-driven development**: Write tests first when adding gameplay systems.
   For UI changes, verify with screenshots. Compare expected output to actual output
   before marking work complete. Every implementation should have a way to prove it works.
-- **Godot `.uid` files must always be committed to git**, same as `.import` files — never gitignored.
-  They are deterministic per-file identities referenced by `uid://` links in committed `.tscn`/`.tres`
-  files; gitignoring them causes UID drift between clones and broken resource references. See
-  [ADR-godot-uid-vcs-policy.md](../../docs/architecture/ADR-godot-uid-vcs-policy.md). A new asset's PR
-  must include its `.uid` file staged alongside it — flag this in code review.
 - **A parse check is not a run.** Every story that changes something
   player-observable is launched and observed before it closes, and the
   observation is a retained screenshot in `production/qa/evidence/`. Procedure

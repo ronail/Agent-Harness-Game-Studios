@@ -3,7 +3,7 @@ name: review-all-gdds
 description: "Holistic cross-GDD review — contradictions between systems, dominant strategies, economic imbalance, cognitive overload, pillar drift."
 argument-hint: "[focus: full | consistency | design-theory | since-last-review]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, Agent, Bash(bash "*/.claude/skills/review-all-gdds/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/review-scope.sh*), request_user_input, clarify
+allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Agent, Bash(bash "*/.claude/skills/review-all-gdds/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/review-scope.sh*)
 model: opus
 ---
 
@@ -29,7 +29,7 @@ completeness. This skill reviews the *relationships* between all GDDs.
 - Before `/create-architecture` begins (architecture built on inconsistent GDDs
   inherits those inconsistencies)
 
-Every `AskUserQuestion`, `request_user_input` or `clarify` call follows `.claude/docs/automation-modes.md`
+Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt).
 

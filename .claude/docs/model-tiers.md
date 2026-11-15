@@ -2,21 +2,23 @@
 
 > ### When a skill's `model:` is used — skills only
 >
-> A skill's `model:` overrides the session model for the rest of the turn the
-> skill runs in, and your next prompt returns to the session model. Whether the
-> override happens depends on how the skill starts:
+> On Claude Code 2.1.287: when it is used, a skill's `model:` overrides the
+> session model for the rest of the turn the skill runs in, and your next prompt
+> returns to the session model. Whether it is used depends on how the skill
+> starts:
 >
 > | How the skill starts | Is `model:` used? |
 > |---|---|
 > | You type `/skill-name` in Manual (`default`) mode | Yes |
-> | You type `/skill-name` in auto mode | `sonnet` and `opus`: yes. `haiku`: no — auto mode does not support Haiku, so the session keeps its model |
+> | You type `/skill-name` in auto mode | `haiku`: no — auto mode does not support Haiku, so the session keeps its model. `sonnet` and `opus`: not tested on 2.1.287 |
 > | Claude starts the skill itself, through the Skill tool | No — the session model runs it |
+> | The skill has `context: fork` | Yes, typed or through the Skill tool — it moves only the fork |
 >
 > Two things follow:
 >
 > - **An `opus` skill costs more in a Sonnet session.** Typing
->   `/architecture-review`, `/gate-check` or `/review-all-gdds` moves that turn
->   to Opus.
+>   `/architecture-review`, `/gate-check` or `/review-all-gdds` in Manual mode
+>   moves that turn to Opus.
 > - **A `haiku` skill saves nothing in auto mode** (this project's settings start
 >   terminal sessions in Manual, but a user can switch) — or when Claude starts
 >   it. Never tell a user a `haiku` tier is saving them money.
@@ -35,36 +37,26 @@ the alias `model:` takes, never as a model ID: Claude Code resolves each alias
 to the current model in that family, so this table does not change when a new
 model ships.
 
-| Tier | `model:` | Codex model | Antigravity model | When to use |
-|------|----------|-------------|-------------------|-------------|
-| **Haiku** | `haiku` | `gpt-6-luna` | `gemini-3.5-flash-lite` (`flash`) | Read-only status checks, formatting, simple lookups — no creative judgment needed |
-| **Sonnet** | `sonnet` | `gpt-6.1-terra` | `gemini-3.1-pro-preview` (`pro`) | Implementation, design authoring, analysis of individual systems — default for most work |
-| **Opus** | `opus` | `gpt-6.1-sol` | `gemini-4-argon` (`pro`) | Multi-document synthesis, high-stakes phase gate verdicts, cross-system holistic review |
-| **Session** | `inherit` | (session model) | (session model) | Agents only — runs on whatever model the session runs |
+| Tier | `model:` | When to use |
+|------|----------|-------------|
+| **Haiku** | `haiku` | Read-only status checks, formatting, simple lookups — no creative judgment needed |
+| **Sonnet** | `sonnet` | Implementation, design authoring, analysis of individual systems — default for most work |
+| **Opus** | `opus` | Multi-document synthesis, high-stakes phase gate verdicts, cross-system holistic review |
+| **Session** | `inherit` | Agents only — runs on whatever model the session runs |
 
-The Codex column is the mapping Codex resolves through `.codex/agent-models.toml`
-when it spawns an agent; `/start codex` verifies that setup.
+Skills with `model: haiku` (6): `/next-step`, `/onboard`, `/project-stage-detect`,
+`/scope-check`, `/sprint-status`, and `/help`, the old name of `/next-step`
 
-The Antigravity column is the mapping Antigravity resolves through
-`.agents/agent-models.toml` when it spawns an agent; `/start antigravity`
-verifies that setup. Antigravity subagent frontmatter only accepts
-`inherit`, `flash`, or `pro`, so the generated agent files in
-`.agents/agents/` carry the tier name (`flash` for Haiku, `pro` for
-Sonnet/Opus) and the Gemini model ID is passed explicitly on the spawn request.
-Gemini IDs were last verified against
-`https://aistudio.google.com/docs/models` on 2026-11-08 — re-verify before
-bumping `agent-models.toml`. Sonnet maps to Gemini 3.1 Pro Preview (the only
-Sonnet-class Gemini: $2/$12 vs Sonnet's $2/$10, GPQA 94.3%); Gemini 3.8 Flash
-is a Haiku-class price point ($0.75/$3.75) and is the GA fallback.
-
-Skills with `model: haiku` (5): `/help`, `/onboard`, `/project-stage-detect`,
-`/scope-check`, `/sprint-status`
-
-> `/patch-notes` and `/changelog` are `sonnet`, not `haiku`: both produce
+> `/help`, `/settings` and `/changelog` are the old names of `/next-step`,
+> `/project-settings` and `/write-changelog`. Each carries the
+> `model:` of the skill it points to: typed as `/help`, the old name runs on its
+> own pin, and it then starts the new skill in the same turn.
+>
+> `/patch-notes` and `/write-changelog` are `sonnet`, not `haiku`: both produce
 > **player-facing** copy and need judgement the cheapest tier is defined as not
 > doing. Full reasoning in each skill's own header.
 >
-> `/settings` was moved off `haiku` for the same reason. It does not only read
+> `/project-settings` was moved off `haiku` for the same reason. It does not only read
 > and format — it resolves every leaf with provenance and then compares the
 > configured rigor against the project's observable working practice. That is
 > synthesis, which is what the Haiku row is defined as excluding.
@@ -74,7 +66,8 @@ Skills with `model: opus` (3): `/architecture-review`, `/gate-check`, `/review-a
 All other skills are Sonnet. When creating a new skill, assign Haiku if it only
 reads and formats; assign Opus if it must synthesize 5+ documents with
 high-stakes output; otherwise write `model: sonnet` explicitly. Every skill
-declares a tier. Whether the tier takes effect depends on how the skill starts
+declares a tier except `/prototype`, which has no `model:` line, so it runs on
+the session's model. Whether the tier takes effect depends on how the skill starts
 (see the table at the top of this file).
 
 **Agent model tiers.** 30 agents use `model: inherit` and run on the session's
@@ -103,10 +96,10 @@ Every agent not named above is `inherit`. The `model:` line in the agent's own
 file is what runs.
 
 A pin gets that model's context window, whatever the session runs. On the
-Anthropic API `sonnet` currently resolves to Sonnet 5, which always has a 1M
-window, so a `sonnet` pin is not smaller than a 1M session there; `haiku`
-resolves to Haiku 4.5 and its 200K window, and behind an LLM gateway a `sonnet`
-pin can be smaller too. A subagent starts from
+Anthropic API `sonnet` currently resolves to Sonnet 5.5 and `haiku` to Haiku
+5.5, both with a 1M window (Claude Code 2.1.304, 2026-10-21), so neither pin is
+smaller than a 1M session there; behind an LLM gateway a pin can resolve to an
+older model with a smaller window. A subagent starts from
 the brief it is given, not the parent's conversation, so this only matters when
 a brief is very large. If a pinned agent does overflow, run every subagent on
 the session's model with one line in your `.claude/settings.local.json`

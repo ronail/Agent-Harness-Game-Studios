@@ -3,7 +3,7 @@ name: balance-check
 description: "Find balance outliers, broken progressions, degenerate strategies, economy imbalances in formulas and data. 'Check game balance'."
 argument-hint: "[system-name|path-to-data-file]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, Bash(bash "*/.claude/skills/balance-check/../../hooks/yaml-helper.sh" resolve_config *), request_user_input, clarify
+allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, Bash(bash "*/.claude/skills/balance-check/../../hooks/yaml-helper.sh" resolve_config *)
 model: sonnet
 ---
 
@@ -13,7 +13,7 @@ model: sonnet
 
 
 
-Every `AskUserQuestion`, `request_user_input` or `clarify` call follows `.claude/docs/automation-modes.md`
+Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt).
 
@@ -62,7 +62,7 @@ If no argument, ask the user which system to check.
 
 ## Phase 2: Read Data Files
 
-Read relevant files from `assets/data/` and `design/balance/` for the identified domain.
+Read relevant files from `assets/data/` (`data/` in a web game) and `design/balance/` for the identified domain.
 Note every file read — they will appear in the Data Sources section of the report.
 
 ---
@@ -189,13 +189,13 @@ After presenting the report, use `AskUserQuestion`, `request_user_input` or `cla
   - `[C] Stop here — I'll review the findings manually`
 
 **Run as a subagent?** `game-designer` preloads this skill, and a subagent has
-no `AskUserQuestion`, `request_user_input` or `clarify`. End your reply with the question and these three options
+no `AskUserQuestion`. End your reply with the question and these three options
 as a short list, and stop: whoever called you asks the user and passes the
 answer back.
 
 If [A]:
 - Ask which issue to address first (refer to the Recommendations table by priority row)
-- Guide the user to update the relevant data file in `assets/data/` or formula in `design/balance/`
+- Guide the user to update the relevant data file in `assets/data/` (`data/config.json` in a web game) or formula in `design/balance/`
 - After each fix, offer to re-run the relevant balance checks to verify no new outliers were introduced
 - If the fix changes a tuning knob defined in a GDD or referenced by an ADR, remind the user:
   > "This value is defined in a design document. Run `/propagate-design-change [path]` on the affected GDD to find downstream impacts before committing."

@@ -3,7 +3,7 @@ name: vertical-slice
 description: "Pre-production validation — end-to-end build to confirm the full loop is achievable before committing to Production. After GDDs, architecture, UX specs."
 argument-hint: "[--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/vertical-slice/../../hooks/yaml-helper.sh" resolve_config *), request_user_input, clarify
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/vertical-slice/../../hooks/yaml-helper.sh" resolve_config *)
 model: sonnet
 ---
 
@@ -47,7 +47,7 @@ whether the core idea is worth designing, run `/prototype` (concept prototype) i
 See `.claude/docs/director-gates.md` for the full check pattern. Individual gate definitions live in `.claude/docs/director-gates/[gate-id].md` — the spawned agent reads its own gate file; do not read it in the parent session.
 
 
-Every `AskUserQuestion`, `request_user_input` or `clarify` call follows `.claude/docs/automation-modes.md`
+Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt).
 
@@ -193,7 +193,7 @@ polished enough for unguided testing.
 ## Phase 5: Playtest Debrief
 
 The loop is demonstrable. Before writing the report, collect structured observations
-from actually playing it. Do NOT skip to report generation — the report is only as
+from actually playing it. Do not skip to report generation — the report is only as
 good as the observations you capture here.
 
 Say exactly this:
@@ -310,10 +310,10 @@ CONCERNS or REJECT. Apply it to the recommendation:
 
 - **APPROVE** → the recommendation stands.
 - **CONCERNS** → show the concerns alongside the recommendation, then use
-  `AskUserQuestion`, `request_user_input` or `clarify`: `Revise the recommendation` / `Accept with noted concerns` /
+  `AskUserQuestion`: `Revise the recommendation` / `Accept with noted concerns` /
   `Discuss further`. The user decides; the director does not.
 - **REJECT** (the core fantasy is not present) → a PROCEED recommendation cannot
-  stand. Use `AskUserQuestion`, `request_user_input` or `clarify` to ask the user to choose `PIVOT` or `KILL`, and run
+  stand. Use `AskUserQuestion` to ask the user to choose `PIVOT` or `KILL`, and run
   Phase 8 for that choice. A PIVOT or KILL recommendation stands.
 - **NOT ASSESSED** [missing input] → the director made no judgement, so it neither
   backs nor overturns the recommendation (`.claude/docs/director-gates.md`): name
@@ -409,10 +409,12 @@ checkpoint is where to resume — and, after asking, update REPORT.md and its
 
 ### Important Constraints
 
-- Vertical slice code must NEVER be refactored into production — it is reference only
-- Production code must NEVER import from `prototypes/`
+- Slice code skipped the standards, so it stays reference only: production code is
+  not refactored from it and does not import from `prototypes/`
 - If recommendation is PROCEED, production implementation is written from scratch
   using the slice as a design reference only
+- This is the engine route. A browser one-shot does not go through a slice to become the game:
+  it grows in place from `/prototype`.
 - Scope cuts are acceptable; quality cuts are not — a low-quality slice proves nothing
 - Total effort: 1–3 weeks. If longer, scope is too large — cut the slice, not the quality.
 - Day 3 sunk cost rule: if the full game loop cycle is not demonstrable by then,
