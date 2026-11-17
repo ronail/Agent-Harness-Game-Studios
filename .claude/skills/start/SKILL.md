@@ -37,9 +37,17 @@ set, ask it.
 
 ## Harness arguments
 
-`/start codex`, `/start hermes` and `/start antigravity` skip the onboarding questions. Read
-`.claude/skills/start/harness-setup.md` and run only its Phase 3e (Codex), 3d (Hermes) or 3f
-(Antigravity). `/start claude`, or no argument, runs the onboarding below unchanged.
+**Optional argument**: `/start [claude|codex|hermes|antigravity]`
+
+- Omitting the argument defaults to `claude` mode
+- `/start codex` — reviews the project-local Codex model setup (Phase 3e)
+- `/start hermes` — configures Hermes model routing for subagents (Phase 3d)
+- `/start antigravity` — verifies Antigravity setup and Gemini model mapping (Phase 3f)
+- `/start claude` (explicit) — standard Claude Code mode without Hermes routing
+
+The three harness arguments skip the onboarding questions: read
+`.claude/skills/start/harness-setup.md` and run only the named phase. `/start claude`, or no
+argument, runs the onboarding below unchanged.
 
 ## Phase 1: Read the project
 
