@@ -19,6 +19,7 @@
   <a href=".claude/hooks"><img src="https://img.shields.io/badge/hooks-18-orange" alt="18 Hooks"></a>
   <a href=".claude/rules"><img src="https://img.shields.io/badge/rules-14-red" alt="14 Rules"></a>
   <a href="https://code.claude.com/docs"><img src="https://img.shields.io/badge/built%20for-Claude%20Code-f5f5f5?logo=anthropic" alt="Built for Claude Code"></a>
+  <a href="https://code.claude.com/docs"><img src="https://img.shields.io/badge/Claude%20Code-supported-f5f5f5?logo=anthropic" alt="Claude Code supported"></a>
   <a href="https://developers.openai.com/codex/cli"><img src="https://img.shields.io/badge/Codex-supported-412991?logo=openai&logoColor=white" alt="Codex supported"></a>
   <a href="https://antigravity.google/docs"><img src="https://img.shields.io/badge/Google%20Antigravity-supported-4285F4?logo=google&logoColor=white" alt="Google Antigravity supported"></a>
   <a href="https://www.buymeacoffee.com/donchitos3"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Support%20this%20project-FFDD00?logo=buymeacoffee&logoColor=black" alt="Buy Me a Coffee"></a>
@@ -145,7 +146,8 @@ Hooks fail gracefully if optional tools are missing — you just lose validation
 
 3. **Type `/prototype` and your idea**, or **run `/start`**, which asks where
    you are (make me a game, an idea or none yet, clear design, existing work)
-   and guides you to the right workflow. No assumptions.
+   and guides you to the right workflow. No assumptions. Using another harness? Run
+   `/start codex`, `/start hermes` or `/start antigravity` instead.
 
    Other ways in:
    - `/next-step` — names the one next step wherever you are
@@ -341,7 +343,7 @@ nine stories or features).
 | Category | Count | Description |
 |----------|-------|-------------|
 | **Agents** | 49 | Specialized subagents across design, programming, art, audio, narrative, QA, and production |
-| **Skills** | 75 | Slash commands for every workflow phase (`/prototype`, `/start`, `/design-system`, `/create-epics`, `/create-stories`, `/dev-story`, `/story-done`, etc.) |
+| **Skills** | 77 | Slash commands for every workflow phase (`/prototype`, `/start`, `/design-system`, `/create-epics`, `/create-stories`, `/dev-story`, `/story-done`, etc.) |
 | **Hooks** | 15 | Automated validation on commits, pushes, asset changes, design-doc reads, writes and registries, session lifecycle, agent audit trail, and gap detection |
 | **Rules** | 14 | Path-scoped coding standards enforced when editing gameplay, engine, AI, UI, network code, scene and asset files, and more |
 | **Templates** | 62 | Document templates for GDDs, UX specs, ADRs, sprint plans, HUD design, accessibility, and more |
@@ -495,7 +497,7 @@ This template is grounded in professional game development practices:
 
 ## Alternative Harnesses (Codex, Antigravity, Hermes)
 
-Claude Code is the primary runtime. Codex, Google Antigravity and Hermes are supported as alternatives; `/start codex`, `/start antigravity` and `/start hermes` set each up.
+Claude Code is the primary workflow runtime. Codex, Google Antigravity and Hermes are supported as alternatives; `/start codex`, `/start antigravity` and `/start hermes` set each up.
 
 Codex can use the project-local
 `.codex/` configuration, Hermes can follow the repository's shared agent,
