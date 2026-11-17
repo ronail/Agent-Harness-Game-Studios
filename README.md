@@ -526,7 +526,7 @@ project-local plan (`production/hermes-delegation.yaml` plus
 `production/hermes-profile-mapping.json`) that you paste into the profile you
 run the studio from.
 
-### Optional: Hermes Model Routing
+## Optional: Hermes Model Routing
 
 When using **Hermes as the harness**, the `model:` fields in skill/agent
 frontmatter are advisory only. Subagent models are resolved from the `delegation`
