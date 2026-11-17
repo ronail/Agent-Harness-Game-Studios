@@ -249,6 +249,19 @@ project.yaml                        # Project settings: engine, modes, goal
     templates/                      # 62 document templates (+ per-section guidance)
 prototypes/                         # One-shots, one folder each (isolated from src/)
 references/                         # Optional: images and sounds you like, for /prototype
+.codex/
+  config.toml                       # Approval policy, model default, sandbox, and feature flags
+  hooks.json                        # Codex lifecycle and validation hook wiring
+  hooks/                            # Codex command guard and adapter hooks
+  rules/                            # Codex command-specific safety rules
+.agents/
+  agent-models.toml                 # Antigravity/Gemini tier mapping (opus→pro/gemini-4-argon, …)
+  generate_compat.py                # Generates agents/ wrappers from .claude/agents/
+  agents/                           # 49 Antigravity custom subagents (generated, gitignored)
+  hooks.json                        # Antigravity hook wiring
+  hooks/                            # Antigravity hook adapters (reuse .claude/hooks/)
+  rules/                            # Antigravity rules (studio.md, model_decision)
+  skills -> ../.claude/skills       # Antigravity skill discovery (symlink)
 src/                                # Game source code (Godot, Web). The code root is
                                     #   ENGINE-SPECIFIC: Unity compiles only
                                     #   Assets/, Unreal builds from Source/<Module>/
