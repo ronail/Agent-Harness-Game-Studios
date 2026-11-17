@@ -567,7 +567,7 @@ For each agent in catalog's `agents:` section:
 Date: [date]
 
 SKILLS (75 total)
-Specs written: 75 (100%) | Never static tested: 75 | Never category tested: 75
+Specs written: 76 (99%) | Never static tested: 77 | Never category tested: 77
 
 Skill                  | Cat      | Has Spec | Last Static | S.Result | Last Cat | C.Result | Priority
 -----------------------|----------|----------|-------------|----------|----------|----------|----------
