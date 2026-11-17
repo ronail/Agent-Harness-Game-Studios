@@ -1602,7 +1602,7 @@ conflicts go to `producer`.
 
 ## Appendix B: Slash Command Quick-Reference
 
-### All 75 Commands by Category
+### All 77 Commands by Category
 
 #### Onboarding and Navigation (7)
 
