@@ -1,6 +1,6 @@
 # Available Skills (Slash Commands)
 
-75 slash commands organized by phase. Type `/` in Claude Code to access any of them.
+77 slash commands organized by phase. Type `/` in Claude Code to access any of them.
 
 > **Renamed in 1.3.0:** `/help` is now `/next-step`, `/settings` is now
 > `/project-settings` and `/changelog` is now `/write-changelog`, because other
