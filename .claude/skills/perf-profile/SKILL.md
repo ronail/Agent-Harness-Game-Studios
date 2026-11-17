@@ -14,7 +14,7 @@ Resolved above — use as-is. No block → defaults in
 
 # Performance Profile
 
-Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
+Every `AskUserQuestion`, `request_user_input` or `clarify` call follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt).
 
@@ -63,7 +63,7 @@ same way at every level:
 Only `warn`, `block` and `off` are recognized. Surface any other value to the
 user and fall back to `warn` rather than guessing.
 
-> The value is locally overridable (`/settings --local performance.enforce=block`),
+> The value is locally overridable (`/project-settings --local performance.enforce=block`),
 > so use the resolved block above rather than reading `project.yaml` — a
 > teammate's stricter local setting is meant to bite on their machine only.
 

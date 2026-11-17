@@ -3,23 +3,24 @@
 This template requires a few tools to be installed for full functionality.
 Hooks carry on without an optional tool and lose only the check it powers. The
 required ones are required: without Python 3 every setting falls back to its
-default and a commit that stages data JSON is blocked, and without Bash no hook
-runs at all.
+default and a commit that stages data JSON is blocked, and on Windows without
+Git Bash every hook skips itself, so none of their checks run (session start
+says so).
 
 ## Required
-
-| Tool | Purpose | Install |
-| ---- | ---- | ---- |
-| **Git** | Version control, branch management | [git-scm.com](https://git-scm.com/) |
-| **Claude Code** | AI agent CLI | Native installer: `curl -fsSL https://claude.ai/install.sh \| bash` (macOS, Linux, WSL) or `irm https://claude.ai/install.ps1 \| iex` (Windows PowerShell). npm also works: `npm install -g @anthropic-ai/claude-code` (Node.js 22+). See [code.claude.com/docs/en/setup](https://code.claude.com/docs/en/setup) |
-| **Python 3** | Reads `project.yaml` for every skill and hook | [python.org](https://www.python.org/). Without it every setting silently falls back to its default, and a commit that stages data JSON is blocked because it cannot be validated |
-| **Bash** | Runs every hook | Built into macOS and Linux. On Windows, install [Git for Windows](https://git-scm.com/downloads/win) — Claude Code runs without it, but no CCGS hook does |
 
 Claude Code is the primary workflow runtime. Codex users should also install
 the [Codex CLI](https://developers.openai.com/codex/cli) to use the project
 configuration in `.codex/`. Hermes users can follow the shared repository
 conventions and configure subagent model routing interactively via `/start
 hermes` (see the Hermes Setup section below for details).
+
+| Tool | Purpose | Install |
+| ---- | ---- | ---- |
+| **Git** | Version control, branch management | [git-scm.com](https://git-scm.com/) |
+| **Claude Code** | AI agent CLI | Native installer: `curl -fsSL https://claude.ai/install.sh \| bash` (macOS, Linux, WSL) or `irm https://claude.ai/install.ps1 \| iex` (Windows PowerShell). npm also works: `npm install -g @anthropic-ai/claude-code` (Node.js 22+). See [code.claude.com/docs/en/setup](https://code.claude.com/docs/en/setup) |
+| **Python 3** | Reads `project.yaml` for every skill and hook | [python.org](https://www.python.org/). Without it every setting silently falls back to its default, and a commit that stages data JSON is blocked because it cannot be validated |
+| **Bash** | Runs every hook | Built into macOS and Linux. On Windows, install [Git for Windows](https://git-scm.com/downloads/win) before the first session. Without Git Bash, Claude Code runs the hooks in PowerShell. Each Agent Harness Game Studios hook command then exits 0 without running, and session start prints a warning: no call is refused, but the read, write and commit checks are off until Git Bash is installed. A plain `bash "..."` hook command would instead get every Read, Write, Edit and shell call refused (seen with Claude Code 2.1.312). Having Git off `PATH` is fine: Claude Code finds it at `C:\Program Files\Git`, or set `CLAUDE_CODE_GIT_BASH_PATH` to its `bash.exe` |
 
 ## Recommended
 
@@ -56,8 +57,12 @@ sudo pacman -S jq       # Arch
 - If Claude Code can't find Git Bash, set `CLAUDE_CODE_GIT_BASH_PATH` to its
   `bash.exe` in the `env` block of your settings (for example
   `C:\\Program Files\\Git\\bin\\bash.exe` in JSON)
-- Hooks use `bash .claude/hooks/[name].sh` — this works on Windows because
-  Claude Code invokes commands through a shell that can find `bash.exe`
+- Each hook command in `settings.json` is one line both shells read:
+  ``echo `# <#` >/dev/null; bash "$CLAUDE_PROJECT_DIR/.claude/hooks/[name].sh"; exit $? #> ; exit 0``.
+  bash runs the hook and keeps its verdict; PowerShell, which Claude Code uses
+  when it finds no Git Bash, reads the bash part as a comment and exits 0. A
+  hook of your own needs the same form: a plain `bash "..."` command blocks
+  every tool call on a machine without Git Bash
 
 ### macOS / Linux
 - Bash is available natively
@@ -84,7 +89,7 @@ python --version       # Required: Python 3 (python3 or py also work)
 
 ## Optional Performance Settings
 
-CCGS deliberately ships **no** values for the settings below. Each one's best
+Agent Harness Game Studios deliberately ships **no** values for the settings below. Each one's best
 value depends on your machine, your Claude plan and how you work, so a value
 committed here would be a guess every user inherits without noticing. Set the
 ones you want in `.claude/settings.local.json`, which is gitignored and yours
@@ -95,13 +100,17 @@ alone.
 | `promptCacheTtl` | How long the main conversation's prompt cache lives. | Raise it if you work in long sessions with gaps; the cache surviving a break avoids re-sending context. |
 | `subagentPromptCacheTtl` | The same, for subagents and other off-conversation requests. | Worth raising on a 49-agent project like this one, where `team-*` skills spawn repeatedly. |
 | `autoCompactWindow` | How full the context gets before Claude Code compacts it. | Lower it if compaction keeps surprising you mid-task; raise it if you would rather compact less often and keep more history. |
-| `skillListingBudgetFraction` | How much context the skill listing may occupy. | CCGS ships 76 skills, so the listing is not small. Lower it if you want more room for work; `skillListingMaxDescChars` trims each description instead. |
+| `skillListingBudgetFraction` | How much context the skill listing may occupy. | Agent Harness Game Studios ships 77 skills, so the listing is not small. Lower it if you want more room for work; `skillListingMaxDescChars` trims each description instead. |
 
 `sandbox.enabled` isolates shell commands from your filesystem and network. It
 is worth turning on, but it runs on **macOS, Linux and WSL2 only** — it is not
-available on native Windows, which is CCGS's primary platform.
+available on native Windows, which is Agent Harness Game Studios' primary platform. On Windows,
+run Claude Code inside WSL2 when you want sandboxed runs. On Linux and
+WSL2 it also refuses the socket a game window needs, so an engine launched for
+a screenshot of your game runs outside it, and Claude Code asks you first
+(`.claude/docs/run-and-observe.md`, "Inside Claude Code's sandbox").
 
-### One setting CCGS does ship
+### One setting Agent Harness Game Studios does ship
 
 `permissions.defaultMode` is set to `default` in `.claude/settings.json`, on
 purpose. A terminal session started **at the project root** then starts in

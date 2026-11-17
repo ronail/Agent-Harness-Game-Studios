@@ -4,13 +4,13 @@ description: "Launch readiness across every department: code, content, store, ma
 argument-hint: "[launch-date or 'dry-run']"
 user-invocable: true
 disable-model-invocation: true
-allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, Bash(bash "*/.claude/skills/launch-checklist/../../hooks/yaml-helper.sh" resolve_config *)
+allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, Bash(bash "*/.claude/skills/launch-checklist/../../hooks/yaml-helper.sh" resolve_config *), request_user_input, clarify
 model: sonnet
 ---
 !`bash "${CLAUDE_SKILL_DIR}/../../hooks/yaml-helper.sh" resolve_config --keys rigor,workflow,project.stage,cert_tier,automation`
 
 **Automation mode**: Resolve `modes.automation` (`project.local.yaml` →
-`project.yaml` → default `collaborative`). Every `AskUserQuestion` call and
+`project.yaml` → default `collaborative`). Every `AskUserQuestion`, `request_user_input` or `clarify` call and
 every file write follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt).
@@ -351,7 +351,7 @@ of them stays unconfirmed and the Overall Status can only be NOT ASSESSED, so as
 
 For each of the seven sections, collect the items no scan or file settled (the
 Phase 3 counts and anything read in Phase 2 are not asked again) and ask **one
-`AskUserQuestion` per section**, listing those items numbered. Each item's
+`AskUserQuestion`, `request_user_input` or `clarify` per section**, listing those items numbered. Each item's
 answer is **yes / no / not yet / N/A**. Options: `Yes — all of them` /
 `Not yet — none of them` / `N/A — this section does not apply` /
 `Some differ — I'll answer per item` (the user then gives each numbered item its

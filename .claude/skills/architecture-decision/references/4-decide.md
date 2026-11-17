@@ -7,7 +7,7 @@
 
 Before asking anything, derive the skill's best guesses from the context already
 gathered (GDDs read, engine reference loaded, existing ADRs scanned). Then present
-a **confirm/adjust** prompt using `AskUserQuestion` — not open-ended questions.
+a **confirm/adjust** prompt using `AskUserQuestion`, `request_user_input` or `clarify` — not open-ended questions.
 
 **Derive assumptions first:**
 - **Problem**: Infer from the title + GDD context what decision needs to be made
@@ -27,9 +27,9 @@ a **confirm/adjust** prompt using `AskUserQuestion` — not open-ended questions
 
 **Scope of assumptions tab**: Assumptions cover only: problem framing, alternative approaches, upstream dependencies, GDD linkage, and status. Schema design questions (e.g., "How should spawn timing work?", "Should data be inline or external?") are NOT assumptions — they are design decisions belonging to a separate step after the assumptions are confirmed. Do not include schema design questions in the assumptions AskUserQuestion widget.
 
-**After assumptions are confirmed**, if the ADR involves schema or data design choices, use a separate multi-tab `AskUserQuestion` to ask each design question independently before drafting.
+**After assumptions are confirmed**, if the ADR involves schema or data design choices, use a separate multi-tab `AskUserQuestion`, `request_user_input` or `clarify` to ask each design question independently before drafting.
 
-**Present assumptions with `AskUserQuestion`:**
+**Present assumptions with `AskUserQuestion`, `request_user_input` or `clarify`:**
 
 ```
 Here's what I'm assuming before drafting:
@@ -53,7 +53,7 @@ Status: Proposed
 Do not generate the ADR until the user confirms assumptions or provides corrections.
 
 **After engine specialist and TD reviews return** (Step 5.5/5.6), if unresolved
-decisions remain, present each one as a separate `AskUserQuestion` with the proposed
+decisions remain, present each one as a separate `AskUserQuestion`, `request_user_input` or `clarify` with the proposed
 options as choices plus a free-text escape:
 
 ```

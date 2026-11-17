@@ -93,6 +93,12 @@ impact) in one reply, each as a short list of its options, and stop: whoever
 called you asks the user. Nothing goes into the register until the answers
 come back.
 
+**Run as a subagent?** `lead-programmer` preloads this skill, and a subagent has
+no `AskUserQuestion`, `request_user_input` or `clarify`. Return the three questions below (category, effort,
+impact) in one reply, each as a short list of its options, and stop: whoever
+called you asks the user. Nothing goes into the register until the answers
+come back.
+
 Then use `AskUserQuestion`, `request_user_input` or `clarify` to collect the **category**:
 - Prompt: "What category does this tech debt belong to?"
 - Options:

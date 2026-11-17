@@ -1,4 +1,4 @@
-# Project-local Codex defaults for Claude Code Game Studios.
+# Project-local Codex defaults for Agent Harness Game Studios.
 #
 # Keep command approvals interactive and limit writes/network access to the
 # trusted workspace. The project must be trusted before Codex loads this file.
