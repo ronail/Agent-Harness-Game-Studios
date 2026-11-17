@@ -144,10 +144,10 @@ Hooks fail gracefully if optional tools are missing — you just lose validation
    Starting it in a subfolder such as `src/` skips the project's hooks, deny
    rules and ask-first permission mode.
 
-3. **Type `/prototype` and your idea**, or **run `/start`**, which asks where
-   you are (make me a game, an idea or none yet, clear design, existing work)
-   and guides you to the right workflow. No assumptions. Using another harness? Run
-   `/start codex`, `/start hermes` or `/start antigravity` instead.
+3. **Type `/prototype` and your idea**, or **run `/start`** — in Claude Code, or `/start codex` when using Codex, or
+   `/start hermes` when using Hermes, or `/start antigravity` when using
+   Antigravity. The system asks where you are (make me a game, an idea or none yet, clear design, existing work)
+   and guides you to the right workflow. No assumptions.
 
    Other ways in:
    - `/next-step` — names the one next step wherever you are
