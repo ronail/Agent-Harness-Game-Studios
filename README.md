@@ -520,6 +520,17 @@ This template is grounded in professional game development practices:
 
 Claude Code is the primary workflow runtime. Codex, Google Antigravity and Hermes are supported as alternatives; `/start codex`, `/start antigravity` and `/start hermes` set each up.
 
+Claude Code is the primary workflow runtime. Codex can use the project-local
+`.codex/` configuration, Hermes can follow the repository's shared agent,
+skill, hook, and rule conventions, and Antigravity discovers the `.agents/`
+customizations described above.
+
+To get started on a harness: **Run `/start`** — in Claude Code, or `/start codex` when using Codex, or
+`/start hermes` when using Hermes, or `/start antigravity` when using
+Antigravity. The system asks where you are (no idea,
+vague concept, clear design, existing work) and guides you to the right
+workflow. No assumptions.
+
 Codex can use the project-local
 `.codex/` configuration, Hermes can follow the repository's shared agent,
 skill, hook, and rule conventions, and Antigravity discovers the `.agents/`
