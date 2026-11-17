@@ -5,11 +5,17 @@
     and builds a playable browser game from it.
     <br />
     Then you change it, grow it and finish it, one step at a time.
+    <br />
+    49 agents. 77 skills. One coordinated AI team.
   </p>
 </p>
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
+  <a href=".claude/agents"><img src="https://img.shields.io/badge/agents-49-blueviolet" alt="49 Agents"></a>
+  <a href=".claude/skills"><img src="https://img.shields.io/badge/skills-77-green" alt="77 Skills"></a>
+  <a href=".claude/hooks"><img src="https://img.shields.io/badge/hooks-18-orange" alt="18 Hooks"></a>
+  <a href=".claude/rules"><img src="https://img.shields.io/badge/rules-14-red" alt="14 Rules"></a>
   <a href="https://code.claude.com/docs"><img src="https://img.shields.io/badge/built%20for-Claude%20Code-f5f5f5?logo=anthropic" alt="Built for Claude Code"></a>
   <a href="https://developers.openai.com/codex/cli"><img src="https://img.shields.io/badge/Codex-supported-412991?logo=openai&logoColor=white" alt="Codex supported"></a>
   <a href="https://antigravity.google/docs"><img src="https://img.shields.io/badge/Google%20Antigravity-supported-4285F4?logo=google&logoColor=white" alt="Google Antigravity supported"></a>
