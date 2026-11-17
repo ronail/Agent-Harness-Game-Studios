@@ -11,6 +11,8 @@
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
   <a href="https://code.claude.com/docs"><img src="https://img.shields.io/badge/built%20for-Claude%20Code-f5f5f5?logo=anthropic" alt="Built for Claude Code"></a>
+  <a href="https://developers.openai.com/codex/cli"><img src="https://img.shields.io/badge/Codex-supported-412991?logo=openai&logoColor=white" alt="Codex supported"></a>
+  <a href="https://antigravity.google/docs"><img src="https://img.shields.io/badge/Google%20Antigravity-supported-4285F4?logo=google&logoColor=white" alt="Google Antigravity supported"></a>
   <a href="https://www.buymeacoffee.com/donchitos3"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Support%20this%20project-FFDD00?logo=buymeacoffee&logoColor=black" alt="Buy Me a Coffee"></a>
   <a href="https://github.com/sponsors/Donchitos"><img src="https://img.shields.io/badge/GitHub%20Sponsors-Support%20this%20project-ea4aaa?logo=githubsponsors&logoColor=white" alt="GitHub Sponsors"></a>
 </p>
@@ -479,6 +481,117 @@ This template is grounded in professional game development practices:
 - **Flow State Design** — Challenge-skill balance for player engagement
 - **Bartle Player Types** — Audience targeting and validation
 - **Verification-Driven Development** — Tests first, then implementation
+
+## Alternative Harnesses (Codex, Antigravity, Hermes)
+
+Claude Code is the primary runtime. Codex, Google Antigravity and Hermes are supported as alternatives; `/start codex`, `/start antigravity` and `/start hermes` set each up.
+
+Codex can use the project-local
+`.codex/` configuration, Hermes can follow the repository's shared agent,
+skill, hook, and rule conventions, and Antigravity discovers the `.agents/`
+customizations described above.
+
+Codex discovers the project skills through the `.agents/skills` symlink, which
+keeps `.claude/skills` as the canonical source while exposing each skill's
+`agents/openai.yaml` metadata. After changing a skill or role definition,
+regenerate the Codex compatibility files with `python3 .codex/generate_compat.py`.
+Antigravity uses the same symlink for skills and its own generated agents —
+after changing a role definition, regenerate with
+`python3 .agents/generate_compat.py`. Agent wrappers are gitignored and
+created by `/start antigravity`; hooks live in `.agents/hooks.json`.
+
+The project keeps its detailed workflow definitions in `.claude/`, so Claude
+Code remains the primary supported runtime. The configuration layers map as
+follows:
+
+| Claude Code | Codex | Purpose |
+|-------------|-------|---------|
+| `.claude/settings.json` permissions | `.codex/config.toml` | Approval policy and sandbox mode |
+| Permission rules | `.codex/rules/*.rules` | Command-specific allow, prompt, and forbidden decisions |
+| Claude hooks | `.codex/hooks.json` | Codex lifecycle and validation hook wiring |
+| Claude model tiers | `.codex/config.toml` model setting | GPT model equivalents |
+| User settings | `~/.codex/config.toml`, `~/.codex/hooks.json` | Personal Codex overrides |
+
+Hermes has no shipped configuration layer in this repository. Hermes resolves
+models per profile rather than per project, so `/start hermes` writes a
+project-local plan (`production/hermes-delegation.yaml` plus
+`production/hermes-profile-mapping.json`) that you paste into the profile you
+run the studio from.
+
+### Optional: Hermes Model Routing
+
+When using **Hermes as the harness**, the `model:` fields in skill/agent
+frontmatter are advisory only. Subagent models are resolved from the `delegation`
+section of the active Hermes profile (`~/.hermes/profiles/<name>/config.yaml`),
+and `delegation.backend` picks the mode: `default` sends every child to
+`delegation.model`, while the official `advanced-delegation` plugin adds
+`profile_routes` (the agent runs each child as one of your Hermes profiles — the
+recommended mode here, since it keeps this project's role-to-profile mapping
+meaningful) and `model_map` (the agent picks a named model route per task).
+
+To configure that routing, run:
+
+```bash
+/start hermes
+```
+
+Phase 3d of `/start` detects your profiles and whether the plugin is installed,
+asks how a subagent should be routed, and writes a paste-ready
+`production/hermes-delegation.yaml` plus `production/hermes-profile-mapping.json`
+as the recorded plan. Without a plugin mode, one route applies to every child, so
+a per-role map alone cannot change which model a subagent runs on.
+
+If you are **not** using Hermes, the `model:` field in each agent/skill
+definition is used directly — no changes are needed.
+
+### Codex Model Setup
+
+When using **Codex as the harness**, the `model:` fields in skill and agent
+frontmatter remain the shared `haiku` / `sonnet` / `opus` tier labels. The
+project-local `.codex/config.toml` sets the standard GPT model, while the tier
+mapping is:
+
+| Shared tier | Codex model |
+|-------------|-------------|
+| Haiku | `gpt-6-luna` |
+| Sonnet | `gpt-6.1-terra` |
+| Opus | `gpt-6.1-sol` |
+
+The standard tier is the project default (`gpt-6.1-terra`). The complete
+machine-readable mapping is in `.codex/agent-models.toml`. When Codex spawns a
+studio agent, it reads that agent's `model:` tier from `.claude/agents/` and
+passes the mapped model explicitly; `model: opus` therefore uses
+`gpt-6.1-sol`. Run `/start codex` to verify the setup.
+
+### Antigravity Model Setup
+
+When using **Google Antigravity as the harness** (App or CLI / `agy`), the
+`model:` fields in skill and agent frontmatter remain the shared
+`haiku` / `sonnet` / `opus` tier labels. Antigravity discovers workspace
+customizations from `.agents/` — skills via the existing `.agents/skills`
+symlink, custom subagents in `.agents/agents/` (thin wrappers generated
+on demand by `/start antigravity` from `.claude/agents/`), hooks in
+`.agents/hooks.json` (adapters reusing the canonical `.claude/hooks/`
+scripts), and rules in `.agents/rules/`. The tier mapping is:
+
+| Shared tier | Antigravity tier | Gemini model |
+|-------------|------------------|--------------|
+| Haiku | `flash` | `gemini-3.5-flash-lite` |
+| Sonnet | `pro` | `gemini-3.1-pro-preview` |
+| Opus | `pro` | `gemini-4-argon` |
+| Inherit | `inherit` | (session model) |
+
+The complete machine-readable mapping is in `.agents/agent-models.toml`
+(last verified 2026-11-08). Antigravity subagent frontmatter only accepts
+`inherit`, `flash`, or `pro`, so the Gemini model ID is passed explicitly
+on the spawn request. Run `/start antigravity` to verify the setup.
+
+## Getting Started
+
+### Prerequisites
+
+- [Git](https://git-scm.com/)
+- [Claude Code](https://code.claude.com/docs/en/setup) — the native installer is recommended (`npm install -g @anthropic-ai/claude-code` also works, on Node.js 22+)
 
 ## Customization
 

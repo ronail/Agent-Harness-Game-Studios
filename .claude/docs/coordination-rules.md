@@ -25,6 +25,35 @@
 Read `.claude/docs/model-tiers.md` on demand. It carries the tier table, the
 per-skill assignments and the authoring rule.
 
+> **Hermes Subagent Routing (optional)**: When using Hermes as the harness, model
+> tier assignments in skill/agent frontmatter are advisory only. Subagent models
+> come from the `delegation` section of the active Hermes profile, and
+> `delegation.backend` picks the mode — `default`, or `profile_routes` /
+> `model_map` from the official `advanced-delegation` plugin. `profile_routes`
+> (a Hermes profile per subagent) is the recommended mode, because it keeps the
+> role → profile mapping enforceable. Run `/start hermes` during onboarding to
+> set up the routing. See `.claude/docs/quick-start.md` → Optional: Hermes
+> Subagent Routing.
+
+> **Codex Model Setup**: When using Codex as the harness, the `model:` fields
+> in skill/agent frontmatter remain the shared tier labels. The project-local
+> `.codex/config.toml` sets only the standard GPT fallback. Before spawning a
+> studio agent, read `.codex/agent-models.toml`, resolve the target definition's
+> `model:` tier, and pass the resulting GPT model explicitly. Run `/start codex`
+> during onboarding to verify this setup. For example, `model: opus` must spawn
+> with `gpt-6.1-sol`, even when the project default is Sonnet.
+
+> **Antigravity Model Setup**: When using Antigravity as the harness, the
+> `model:` fields in skill/agent frontmatter remain the shared tier labels.
+> Custom subagents live in `.agents/agents/` (generated from
+> `.claude/agents/` by `.agents/generate_compat.py`) and carry Antigravity's
+> `inherit`/`flash`/`pro` tier. Before spawning a studio agent, read
+> `.agents/agent-models.toml`, resolve the target definition's tier, and
+> pass the resulting Gemini model explicitly. Run `/start antigravity`
+> during onboarding to verify this setup. For example, `model: pro` must
+> spawn with `gemini-4-argon`, even when the project default is Sonnet.
+> See `AGENTS.md` → Antigravity studio-agent spawning.
+
 **Key point:** whether a skill's `model:` is used
 depends on how the skill starts. Typed as `/skill-name`: yes, except a `haiku`
 pin in auto mode. Started by Claude through the Skill tool: no. Never tell a

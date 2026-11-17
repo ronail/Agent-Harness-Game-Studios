@@ -9,6 +9,12 @@ says so).
 
 ## Required
 
+Claude Code is the primary workflow runtime. Codex users should also install
+the [Codex CLI](https://developers.openai.com/codex/cli) to use the project
+configuration in `.codex/`. Hermes users can follow the shared repository
+conventions and configure subagent model routing interactively via `/start
+hermes` (see the Hermes Setup section below for details).
+
 | Tool | Purpose | Install |
 | ---- | ---- | ---- |
 | **Git** | Version control, branch management | [git-scm.com](https://git-scm.com/) |
@@ -135,6 +141,140 @@ To start terminal sessions in a different mode, set `permissions.defaultMode` in
 `.claude/settings.local.json`, which takes precedence. Terminal sessions accept
 any mode from it except `auto` and `bypassPermissions`. Understand what you are
 turning off first.
+
+## Hermes Setup (Alternative Harness)
+
+Hermes is supported as an alternative harness to Claude Code. The repository
+provides shared conventions (skills, agents, hooks) that work with Hermes
+profiles, and Hermes resolves subagent models through its own delegation
+configuration rather than through frontmatter.
+
+### Installing Hermes
+
+See the [Hermes Agent documentation](https://hermes-agent.nousresearch.com/docs)
+for installation instructions. Once installed, verify with:
+
+```bash
+hermes --version
+```
+
+### Profile and delegation configuration
+
+Hermes profiles reside in `~/.hermes/profiles/<name>/config.yaml` and control
+model resolution, API keys, and provider settings. This repository does not
+ship Hermes-specific configuration — you manage profiles in your Hermes
+installation.
+
+To configure how subagents pick their model:
+
+1. Run `/start hermes` during onboarding
+2. Phase 3d detects your profiles, the active `delegation.backend`, and whether
+   the `advanced-delegation` plugin is installed, then asks for a mode:
+   `profile_routes` (the agent runs each child as one of your Hermes profiles —
+   recommended), `model_map` (a per-task named model route), or `default` (one
+   model for every subagent)
+3. The plan is written to `production/hermes-delegation.yaml` (paste-ready
+   config) and `production/hermes-profile-mapping.json` (the record)
+
+`profile_routes` and `model_map` need the official plugin in the profile that
+delegates (Hermes 0.22.5 or newer):
+
+```bash
+hermes plugins install advanced-delegation
+hermes delegation config        # or paste production/hermes-delegation.yaml
+```
+
+A selected backend that is missing or cannot run fails closed — `delegate_task`
+errors instead of falling back to `default`.
+
+When using Hermes, the `model:` fields in skill/agent frontmatter are advisory
+only — the `delegation` configuration determines which model actually runs.
+Without Hermes (e.g., using Claude Code directly), those `model:` fields are
+used directly.
+
+### Verifying Hermes Integration
+
+After running `/start hermes`, check that the routing record and config were
+written:
+
+```bash
+cat production/hermes-profile-mapping.json production/hermes-delegation.yaml
+```
+
+The JSON carries `"schemaVersion": 2` with a `delegation` block (strategy,
+backend, route table) and a `roles` map. A legacy file with no `schemaVersion`
+key is the older flat `{"agent-name": "profile-name"}` mapping and is still
+readable.
+
+## Antigravity Setup (Alternative Harness)
+
+Google Antigravity (App or CLI / `agy`) is supported as an alternative
+harness. Antigravity loads workspace customizations from the `.agents/`
+folder plus root `AGENTS.md` / `GEMINI.md` — the same layout for both the
+App and the CLI. This repository ships that layout: skills via the
+`.agents/skills` symlink, thin custom subagents in `.agents/agents/`
+(generated on demand by `/start antigravity`, gitignored), hooks in
+`.agents/hooks.json`, and a model-decision rule in `.agents/rules/studio.md`.
+
+### Installing Antigravity
+
+See the [Antigravity documentation](https://antigravity.google/docs) for
+installation. Once installed, verify the CLI with:
+
+```bash
+agy --version
+```
+
+### Discovering the studio customizations
+
+1. Open this repository root as the workspace in Antigravity.
+2. Run `/start antigravity` during onboarding — Phase 3f checks `agy`
+   availability, generates `.agents/agents/` (gitignored), verifies
+   `.agents/agent-models.toml` and hooks, and explains the tier mapping.
+3. Check the **Customizations** panel (App) or `/customizations` (CLI):
+   49 custom subagents and 76 skills should be listed from `.agents/`.
+
+### Model mapping
+
+Antigravity subagent frontmatter only accepts `inherit`, `flash`, or
+`pro`. The shared tiers resolve through `.agents/agent-models.toml`
+(last verified 2026-11-08):
+
+| Shared tier | Antigravity tier | Gemini model |
+|-------------|------------------|--------------|
+| Haiku | `flash` | `gemini-3.5-flash-lite` |
+| Sonnet | `pro` | `gemini-3.1-pro-preview` |
+| Opus | `pro` | `gemini-4-argon` |
+| Inherit | `inherit` | (session model) |
+
+After editing `.claude/agents/*.md` frontmatter, regenerate (bodies are
+linked, so body edits need no regeneration):
+
+```bash
+python3 .agents/generate_compat.py
+python3 .agents/generate_compat.py --check   # verify local wrappers match
+bash .agents/test_hooks.sh                   # hook adapter tests
+```
+
+### Hooks
+
+Antigravity loads hooks from `.agents/hooks.json`. Adapter scripts in
+`.agents/hooks/` translate Antigravity's JSON hook contract to the
+canonical `.claude/hooks/` scripts: SessionStart injects session context,
+PreToolUse gates `run_command` (commit/push policy + command guard) and
+file writes, PostToolUse runs asset/skill validators, Stop runs session
+logging. Antigravity has no SubagentStart/PreCompact/Notification events,
+so those Claude-only hooks don't run there. Verify with
+`bash .agents/test_hooks.sh`.
+
+### Verifying Antigravity Integration
+
+```bash
+ls .agents/agents/*.md | wc -l    # 49
+ls -d .agents/skills/*/ | wc -l   # 76
+python3 .agents/generate_compat.py --check
+bash .agents/test_hooks.sh
+```
 
 ## Recommended IDE
 

@@ -1,9 +1,9 @@
 ---
 name: start
 description: "Guides a first-time user through onboarding and picks the right workflow. Use when the user is new, just cloned or installed the studio, has no idea or engine yet, asks where to begin, or wants to bring in an existing game. A request for a game itself ('make me a game where...') is /prototype's."
-argument-hint: "[no arguments]"
+argument-hint: "[claude|codex|hermes|antigravity]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, AskUserQuestion, Skill, Bash(bash .claude/scripts/project-state.sh*), Bash(bash .claude/scripts/set-stage.sh *), Bash(bash .claude/scripts/config-set.sh *)
+allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, Skill, Bash(command -v *), Bash(bash .claude/scripts/project-state.sh*), Bash(bash .claude/scripts/set-stage.sh *), Bash(bash .claude/scripts/config-set.sh *)
 model: sonnet
 ---
 
@@ -34,6 +34,12 @@ The questions in Phases 2, 4 and 5 shape the project, so they are asked in every
 The engine is not one of them: `/setup-engine` chooses it. Phase 6's last question follows a
 `modes.automation` already in `project.yaml`, per `.claude/docs/automation-modes.md`; with none
 set, ask it.
+
+## Harness arguments
+
+`/start codex`, `/start hermes` and `/start antigravity` skip the onboarding questions. Read
+`.claude/skills/start/harness-setup.md` and run only its Phase 3e (Codex), 3d (Hermes) or 3f
+(Antigravity). `/start claude`, or no argument, runs the onboarding below unchanged.
 
 ## Phase 1: Read the project
 

@@ -5,6 +5,7 @@
 ├── CLAUDE.md                    # Master configuration
 ├── project.yaml                 # Machine-readable project config — engine, modes, stage (source of truth)
 ├── .claude/                     # Agent definitions, skills, hooks, rules, docs
+├── .codex/                      # Codex approvals, rules, hooks, and safety adapters
 ├── <code root>/                 # Game source code — THE PATH IS ENGINE-SPECIFIC, see below
 ├── assets/                      # Game assets (art, audio, vfx, shaders, data)
 ├── design/                      # Game design documents (gdd, narrative, levels, balance)
