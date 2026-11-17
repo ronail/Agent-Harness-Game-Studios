@@ -121,6 +121,9 @@ clutter, not evidence.
 - Bash — runs every hook; built into macOS and Linux, and on Windows it comes with [Git for Windows](https://git-scm.com/downloads/win). Without it on Windows the hooks skip themselves, and session start says their checks are off
 - **Chrome, Edge or Chromium** — `/prototype` plays and screenshots each game in it; without one, those checks say they were not assessed
 - **Recommended**: [Node.js](https://nodejs.org/) (to grow a game into a web project, for a 3D game's three.js, and for the web engine's build and tests) and [jq](https://jqlang.github.io/jq/) (for hook validation)
+- [Codex CLI](https://developers.openai.com/codex/cli) — optional alternative harness
+- [Google Antigravity](https://antigravity.google/docs) — optional alternative harness (App or CLI / `agy`)
+- [Hermes Agent](https://hermes-agent.nousresearch.com/docs) — optional alternative harness
 
 Hooks fail gracefully if optional tools are missing — you just lose validation — with one deliberate exception: a commit that stages data JSON is blocked when there is no Python to validate it.
 

@@ -26,7 +26,7 @@ of the other knobs rigor fronts (`modes.workflow`, `docs.density`, `qa.level`,
 and a mirror file outranks it. The make-me-a-game route writes nothing: `/prototype`'s card is
 that route's assumptions card.
 
-Ask with the question tool. Without one, list the options numbered and end your turn to wait. The
+Ask with the question tool — `AskUserQuestion`, `request_user_input` or `clarify`, whichever the harness provides. Without one, list the options numbered and end your turn to wait. The
 question is the last thing in the reply: no path, note or advice after it. A skipped or dismissed
 question is not an answer: ask again in plain text.
 

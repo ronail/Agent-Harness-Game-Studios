@@ -294,7 +294,8 @@ Review the producer's response (Complex route only):
 
 - **If the producer decomposed the request** and assigned tasks: confirm the
   assignment list and acceptance criteria are clear.
-- **If the producer returned CONCERNS**: surface them via `AskUserQuestion`, `request_user_input` or `clarify`:
+- **If the producer returned CONCERNS**: surface them via `AskUserQuestion`/
+  `clarify`:
   - `[A] Proceed with adjustments — apply the producer's recommendations`
   - `[B] Revise scope — I'll adjust the feature description and re-run`
   - `[C] Escalate to creative-director — let the director make the call`
