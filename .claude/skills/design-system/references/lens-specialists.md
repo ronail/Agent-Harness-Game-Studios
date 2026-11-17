@@ -11,7 +11,7 @@ excerpts) through **each picked role in turn**, and write one short block per
 role: what it would add, what it warns about. Then draft. Where two roles pull
 different ways (feel vs telegraph time, depth vs readability, design vs
 feasibility), **show both positions and put the choice to the person with
-`AskUserQuestion`**; never settle it inside the draft. A tension between the
+`AskUserQuestion`, `request_user_input` or `clarify`**; never settle it inside the draft. A tension between the
 person's idea and a pillar or a dependency GDD is shown the same way.
 
 ## Roles

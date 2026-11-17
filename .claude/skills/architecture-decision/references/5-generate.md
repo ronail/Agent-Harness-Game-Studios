@@ -203,7 +203,7 @@ branch and render like a clean result.
 
 Only the warning block itself is conditional; the check always reports.
 
-5. **Write approval** — Use `AskUserQuestion`:
+5. **Write approval** — Use `AskUserQuestion`, `request_user_input` or `clarify`:
 
 If GDD sync issues were found:
 - "ADR draft is complete. How would you like to proceed?"
@@ -246,7 +246,7 @@ Registry candidates from this ADR:
 
 **BLOCKING — do not write to `docs/registry/architecture.yaml` without explicit user approval.**
 
-Ask using `AskUserQuestion`:
+Ask using `AskUserQuestion`, `request_user_input` or `clarify`:
 - "May I update `docs/registry/architecture.yaml` with these [N] new stances?"
   - Options: "Yes — update the registry", "Not yet — I want to review the candidates", "Skip registry update"
 

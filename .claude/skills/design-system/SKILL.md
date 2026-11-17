@@ -3,7 +3,7 @@ name: design-system
 description: "Section-by-section GDD authoring for one system — walks through each required section, cross-references dependencies."
 argument-hint: "<system-name> [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, TaskCreate, TaskGet, TaskList, TaskUpdate, Bash(bash "*/.claude/skills/design-system/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/registry.sh *)
+allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, TaskCreate, TaskGet, TaskList, TaskUpdate, Bash(bash "*/.claude/skills/design-system/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/registry.sh *), request_user_input, clarify
 model: sonnet
 ---
 
@@ -88,7 +88,7 @@ If two rows fit, use the union of their Primary roles and say why.
 **When applying a lens**:
 - Look at the system name, concept summary, dependency GDD excerpts and the section
   in hand through that role, and write its view as its own block named by role
-- Present the views, and any conflict between them, to the user via `AskUserQuestion`
+- Present the views, and any conflict between them, to the user via `AskUserQuestion`, `request_user_input` or `clarify`
 - The user decides; you write to file
 
 ---

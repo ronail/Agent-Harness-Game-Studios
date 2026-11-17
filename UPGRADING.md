@@ -45,7 +45,7 @@ your repo shares history with the template.
 
 ```bash
 # Add the template as a remote (one-time setup; skip this if `git remote -v` already lists template)
-git remote add template https://github.com/Donchitos/Claude-Code-Game-Studios.git
+git remote add template https://github.com/ronail/Agent-Harness-Game-Studios.git
 
 # Fetch the new version and its release tag
 git fetch --tags template main
@@ -86,7 +86,7 @@ Best when: your repo has no common history with the template but you do use git.
 
 ```bash
 # One-time setup; skip it if `git remote -v` already lists template
-git remote add template https://github.com/Donchitos/Claude-Code-Game-Studios.git
+git remote add template https://github.com/ronail/Agent-Harness-Game-Studios.git
 git fetch template main
 
 # Take the framework-owned paths wholesale from the new version.
@@ -151,7 +151,7 @@ the full update).
 
 ```bash
 # One-time setup; skip it if `git remote -v` already lists template
-git remote add template https://github.com/Donchitos/Claude-Code-Game-Studios.git
+git remote add template https://github.com/ronail/Agent-Harness-Game-Studios.git
 git fetch template main
 
 # Cherry-pick the specific commit(s) you want

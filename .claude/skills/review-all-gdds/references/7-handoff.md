@@ -5,7 +5,7 @@
 
 ## Phase 7: Handoff
 
-After all file writes are complete, use `AskUserQuestion` for a closing widget.
+After all file writes are complete, use `AskUserQuestion`, `request_user_input` or `clarify` for a closing widget.
 
 Before building options, check project state:
 - Are there any Warning-level items that are simple edits (flagged with "30-second edit", "brief addition", or similar)? → offer inline quick-fix option

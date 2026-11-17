@@ -198,7 +198,7 @@ At `workflow: minimal`, when a story sent you here (a `deepen — <system>` stor
 "Next: type `/dev-story <that story>`" and ask nothing: leave out `/consistency-check` and
 `/gate-check` unless the person asks for them. Otherwise:
 
-Use `AskUserQuestion`:
+Use `AskUserQuestion`, `request_user_input` or `clarify`:
 - "What's next?"
   - Options:
     - "Run `/consistency-check` — verify this GDD's values don't conflict with existing GDDs (recommended before designing the next system)"

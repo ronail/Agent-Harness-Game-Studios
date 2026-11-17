@@ -149,7 +149,7 @@ Then present the **timing decision** to the user. They now know:
 **Flow**: Phase 4+ (Delegation → Review → Verify → Output) runs **only if
 the user selects `[A] Handle now`**. Options `[B]` and `[C]` are terminal.
 
-**Present the options** (using `AskUserQuestion`/`clarify`):
+**Present the options** (using `AskUserQuestion`, `request_user_input` or `clarify`/`clarify`):
 
 > The feature request has been assessed and broken down:
 > - **Validity**: [VALID / NEEDS CLARIFICATION / BLOCKED]
@@ -282,7 +282,7 @@ Review the domain agent's response:
   - `[A] Re-route to producer — this needs cross-domain coordination`
   - `[B] Proceed with direct delegation — I'll handle the cross-domain parts myself`
 - **If the agent raised CONCERNS** about scope/feasibility: surface via
-  `AskUserQuestion`/`clarify`:
+  `AskUserQuestion`, `request_user_input` or `clarify`/`clarify`:
   - `[A] Address the concerns — adjust the feature description`
   - `[B] Proceed anyway — I accept the risk`
 
@@ -294,7 +294,7 @@ Review the producer's response (Complex route only):
 
 - **If the producer decomposed the request** and assigned tasks: confirm the
   assignment list and acceptance criteria are clear.
-- **If the producer returned CONCERNS**: surface them via `AskUserQuestion`/
+- **If the producer returned CONCERNS**: surface them via `AskUserQuestion`, `request_user_input` or `clarify`/
   `clarify`:
   - `[A] Proceed with adjustments — apply the producer's recommendations`
   - `[B] Revise scope — I'll adjust the feature description and re-run`

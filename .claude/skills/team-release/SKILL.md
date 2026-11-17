@@ -3,15 +3,15 @@ name: team-release
 description: "Orchestrate the release team — release-manager, qa-lead, devops-engineer, producer — to execute a release from candidate to deployment."
 argument-hint: "[version number or 'next'] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, TaskCreate, TaskGet, TaskList, TaskUpdate, Bash(bash "*/.claude/skills/team-release/../../hooks/yaml-helper.sh" resolve_config *)
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, TaskCreate, TaskGet, TaskList, TaskUpdate, Bash(bash "*/.claude/skills/team-release/../../hooks/yaml-helper.sh" resolve_config *), request_user_input, clarify
 model: sonnet
 ---
 # Team Release
 
 **Argument check:** If no version number is provided:
 1. Read `production/session-state/active.md` and the most recent file in `production/milestones/` (if they exist) to infer the target version.
-2. If a version is found: report "No version argument provided — inferred [version] from milestone data. Proceeding." Then confirm with `AskUserQuestion`: "Releasing [version]. Is this correct?"
-3. If no version is discoverable: use `AskUserQuestion` to ask "What version number should be released? (e.g., v1.0.0)" and wait for user input before proceeding. Do not default to a hardcoded version string.
+2. If a version is found: report "No version argument provided — inferred [version] from milestone data. Proceeding." Then confirm with `AskUserQuestion`, `request_user_input` or `clarify`: "Releasing [version]. Is this correct?"
+3. If no version is discoverable: use `AskUserQuestion`, `request_user_input` or `clarify` to ask "What version number should be released? (e.g., v1.0.0)" and wait for user input before proceeding. Do not default to a hardcoded version string.
 
 When this skill is invoked, orchestrate the release team through a structured pipeline.
 
@@ -41,7 +41,7 @@ nothing:
 > "The release readiness gate has not passed (project.stage: [stage]) — run
 > `/gate-check release` first."
 
-Then ask with `AskUserQuestion`, in every `automation` mode — an override is never
+Then ask with `AskUserQuestion`, `request_user_input` or `clarify`, in every `automation` mode — an override is never
 taken on the user's behalf: `[A] Stop — I'll run /gate-check release (recommended)`
 / `[B] Proceed anyway — override the stage check`. On `[A]`, end the run: Verdict
 **BLOCKED** — release gate not passed. On `[B]`, ask (plain text) why, then record
@@ -62,7 +62,7 @@ below), and the agents that work at them are team members, not director gates.
 - **`individual`** (default): `release-manager` only. Other agents consulted via the release-manager, not spawned separately.
 - **`small`**: + `producer` + `devops-engineer` + `qa-lead` + `community-manager`.
 - **`studio`**: + `security-engineer` + `analytics-engineer` + `localization-lead` + `performance-analyst`, and `network-programmer` when the game is multiplayer (the full pipeline as documented).
-A non-core agent needed at `individual` routes through the nearest active core agent with an informational note. **"Phase gate" means any phase that ends in an `AskUserQuestion` decision point this pipeline itself lists** — a transition under Decision Points above, the stage check, or the Phase 6 deploy question — **whatever the `automation` mode.** `guided` and `autonomous` change how a gate is passed (it auto-advances, or is recorded with `log_decision`), not whether it is one, so bounded-exception condition (3) below holds at it in every mode. An agent restricted to "phase gates only" is spawned at those points and no others. This active-set scoping applies throughout the pipeline below: any phase that names an agent outside the active set routes through the nearest core agent rather than spawning it.
+A non-core agent needed at `individual` routes through the nearest active core agent with an informational note. **"Phase gate" means any phase that ends in an `AskUserQuestion`, `request_user_input` or `clarify` decision point this pipeline itself lists** — a transition under Decision Points above, the stage check, or the Phase 6 deploy question — **whatever the `automation` mode.** `guided` and `autonomous` change how a gate is passed (it auto-advances, or is recorded with `log_decision`), not whether it is one, so bounded-exception condition (3) below holds at it in every mode. An agent restricted to "phase gates only" is spawned at those points and no others. This active-set scoping applies throughout the pipeline below: any phase that names an agent outside the active set routes through the nearest core agent rather than spawning it.
 
 **Announce the active set before Phase 1 — never let the collapse be silent.**
 Before spawning anything, state in one line which agents this run will actually
@@ -148,7 +148,7 @@ agent standing in for one outside the active set writes that agent's file:
 > spawn agents in parallel; two agents appending to one file race, and the loser's
 > section vanishes silently.
 
-> **Why this does not violate the Collaboration Protocol.** `CLAUDE.md` requires an agent to ask "May I write this to [filepath]?" before Write/Edit. A subagent spawned here writes **without** asking, and that is a deliberate, bounded exception rather than an oversight — the same call already made for `consistency-check` appending to `active.md`. The exception holds only when all three are true: (1) the path is one **you** named in the prompt, so the user approved the destination when they approved the phase; (2) it is a new artifact under `production/`, `docs/` or `tests/`, never an edit to existing source or config; (3) the phase that produced it is itself gated by an `AskUserQuestion` before the pipeline advances. Outside those three, the agent must ask. **Do not "fix" this by asking per subagent** — a prompt per agent per phase makes an orchestrator unusable, which is why the exception exists.
+> **Why this does not violate the Collaboration Protocol.** `CLAUDE.md` requires an agent to ask "May I write this to [filepath]?" before Write/Edit. A subagent spawned here writes **without** asking, and that is a deliberate, bounded exception rather than an oversight — the same call already made for `consistency-check` appending to `active.md`. The exception holds only when all three are true: (1) the path is one **you** named in the prompt, so the user approved the destination when they approved the phase; (2) it is a new artifact under `production/`, `docs/` or `tests/`, never an edit to existing source or config; (3) the phase that produced it is itself gated by an `AskUserQuestion`, `request_user_input` or `clarify` before the pipeline advances. Outside those three, the agent must ask. **Do not "fix" this by asking per subagent** — a prompt per agent per phase makes an orchestrator unusable, which is why the exception exists.
 
 Launch independent agents in parallel where the pipeline allows it (e.g., Phase 3 agents can run simultaneously).
 
@@ -223,7 +223,7 @@ After the user selects "Override NO-GO with documented rationale":
 `modes.automation` — including `autonomous` mode.** Production deployment is
 irreversible and high-stakes; it is NOT covered by the configurable
 `automation_always_ask` categories, so this skill guards it unconditionally.
-Before tagging or deploying, use `AskUserQuestion`:
+Before tagging or deploying, use `AskUserQuestion`, `request_user_input` or `clarify`:
 - Prompt: "Producer verdict is GO. Execute Phase 6 — tag, deploy to staging,
   deploy to production?"
 - Options: `[A] Yes, deploy` / `[B] Staging only — hold production` / `[C] Stop here`
@@ -281,7 +281,7 @@ distinction matters here more than anywhere else in the pipeline:
 - **Sub-agents spawned via `Agent`** follow the **bounded exception** documented above
   under "Why this does not violate the Collaboration Protocol" — the path is one you
   named, the artifact is new under `production/`, `docs/` or `tests/`, and the phase
-  is gated by an `AskUserQuestion`. A sub-agent does **not** prompt per write inside
+  is gated by an `AskUserQuestion`, `request_user_input` or `clarify`. A sub-agent does **not** prompt per write inside
   those bounds; outside them it must ask.
 - **Sub-skills** are not sub-agents and the exception does not reach them. They
   follow the normal Collaboration Protocol and ask before writing.

@@ -3,14 +3,14 @@ name: team-audio
 description: "Orchestrate the audio team — audio-director, sound-designer, technical-artist, gameplay-programmer — direction through implementation."
 argument-hint: "[feature or area to design audio for] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, TaskCreate, TaskGet, TaskList, TaskUpdate, Bash(bash "*/.claude/skills/team-audio/../../hooks/yaml-helper.sh" resolve_config *)
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, TaskCreate, TaskGet, TaskList, TaskUpdate, Bash(bash "*/.claude/skills/team-audio/../../hooks/yaml-helper.sh" resolve_config *), request_user_input, clarify
 model: sonnet
 ---
 
 # Team Audio
 
 If no argument is provided, output usage guidance and exit without spawning any agents:
-> Usage: `/team-audio [feature or area to design audio for] [--review full|lean|solo]` — specify the feature or area to design audio for (e.g., `combat`, `main menu`, `forest biome`, `boss encounter`). Do not use `AskUserQuestion` here; output the guidance directly.
+> Usage: `/team-audio [feature or area to design audio for] [--review full|lean|solo]` — specify the feature or area to design audio for (e.g., `combat`, `main menu`, `forest biome`, `boss encounter`). Do not use `AskUserQuestion`, `request_user_input` or `clarify` here; output the guidance directly.
 
 When this skill is invoked with an argument, orchestrate the audio team through a structured pipeline.
 
@@ -43,7 +43,7 @@ below), and the agents that work at them are team members, not director gates.
 - **`individual`** (default): `sound-designer` only. Other agents consulted via the sound-designer, not spawned separately.
 - **`small`**: + `audio-director` + `technical-artist` + `gameplay-programmer`.
 - **`studio`**: + `accessibility-specialist` + the primary engine specialist (the full pipeline as documented).
-A non-core agent needed at `individual` routes through the nearest active core agent with an informational note. **"Phase gate" means any phase that ends in an `AskUserQuestion` decision point this pipeline itself lists** — a transition under Decision Points above, or a **Gate** step written into the pipeline below — **whatever the `automation` mode.** `guided` and `autonomous` change how a gate is passed (it auto-advances, or is recorded with `log_decision`), not whether it is one, so bounded-exception condition (3) below holds at it in every mode. An agent restricted to "phase gates only" is spawned at those points and no others. This active-set scoping applies throughout the pipeline below: any phase that names an agent outside the active set routes through the nearest core agent rather than spawning it.
+A non-core agent needed at `individual` routes through the nearest active core agent with an informational note. **"Phase gate" means any phase that ends in an `AskUserQuestion`, `request_user_input` or `clarify` decision point this pipeline itself lists** — a transition under Decision Points above, or a **Gate** step written into the pipeline below — **whatever the `automation` mode.** `guided` and `autonomous` change how a gate is passed (it auto-advances, or is recorded with `log_decision`), not whether it is one, so bounded-exception condition (3) below holds at it in every mode. An agent restricted to "phase gates only" is spawned at those points and no others. This active-set scoping applies throughout the pipeline below: any phase that names an agent outside the active set routes through the nearest core agent rather than spawning it.
 
 **Announce the active set before Step 1 — never let the collapse be silent.**
 Before spawning anything, state in one line which agents this run will actually
@@ -119,7 +119,7 @@ the "Save to" step uses. One file per agent, so parallel steps never share one:
 These are working drafts; the durable record is the audio design document you
 compile from them.
 
-> **Why this does not violate the Collaboration Protocol.** `CLAUDE.md` requires an agent to ask "May I write this to [filepath]?" before Write/Edit. A subagent spawned here writes **without** asking, and that is a deliberate, bounded exception rather than an oversight — the same call already made for `consistency-check` appending to `active.md`. The exception holds only when all three are true: (1) the path is one **you** named in the prompt, so the user approved the destination when they approved the phase; (2) it is a new artifact under `production/`, `docs/` or `tests/`, never an edit to existing source or config; (3) the phase that produced it is itself gated by an `AskUserQuestion` before the pipeline advances. Outside those three, the agent must ask. **Do not "fix" this by asking per subagent** — a prompt per agent per phase makes an orchestrator unusable, which is why the exception exists.
+> **Why this does not violate the Collaboration Protocol.** `CLAUDE.md` requires an agent to ask "May I write this to [filepath]?" before Write/Edit. A subagent spawned here writes **without** asking, and that is a deliberate, bounded exception rather than an oversight — the same call already made for `consistency-check` appending to `active.md`. The exception holds only when all three are true: (1) the path is one **you** named in the prompt, so the user approved the destination when they approved the phase; (2) it is a new artifact under `production/`, `docs/` or `tests/`, never an edit to existing source or config; (3) the phase that produced it is itself gated by an `AskUserQuestion`, `request_user_input` or `clarify` before the pipeline advances. Outside those three, the agent must ask. **Do not "fix" this by asking per subagent** — a prompt per agent per phase makes an orchestrator unusable, which is why the exception exists.
 
 3. **Orchestrate the audio team** in sequence:
 
@@ -184,7 +184,7 @@ Spawn the `gameplay-programmer` agent to:
    prompt. Do not
    resolve that by widening the exception. Instead, follow the same pattern
    `team-level` uses: **you** already hold every sub-agent's output, so compile
-   the document yourself and ask directly via `AskUserQuestion` — "May I write the
+   the document yourself and ask directly via `AskUserQuestion`, `request_user_input` or `clarify` — "May I write the
    audio design to `design/audio/audio-[feature].md`?" — then write it on
    approval. Sub-agent working artifacts stay under `production/` where the
    exception does reach them.
@@ -211,7 +211,7 @@ Per-agent artifacts (SFX specs, integration plans) are written by the sub-agent
 that produced them, under the **bounded exception** documented above under "Why
 this does not violate the Collaboration Protocol" — the path is one you named, the
 artifact is new under `production/`, `docs/` or `tests/`, and the phase is gated by
-an `AskUserQuestion`. A sub-agent does **not** prompt per write inside those bounds;
+an `AskUserQuestion`, `request_user_input` or `clarify`. A sub-agent does **not** prompt per write inside those bounds;
 outside them it must ask. **Implementation files** — gameplay-programmer's audio
 integration code, anything under the code root or `assets/` — are outside those
 bounds: the agent returns the files it will create or change, you ask once for the

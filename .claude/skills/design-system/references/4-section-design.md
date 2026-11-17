@@ -40,12 +40,12 @@ Context  ->  Questions  ->  Options  ->  Decision  ->  Draft  ->  Approval  ->  
    decisions from dependency GDDs that constrain it.
 
 2. **Questions**: Ask clarifying questions specific to this section. Use
-   `AskUserQuestion` for constrained questions, conversational text for open-ended
+   `AskUserQuestion`, `request_user_input` or `clarify` for constrained questions, conversational text for open-ended
    exploration.
 
 3. **Options**: Where the section involves design choices (not just documentation),
    present 2-4 approaches with pros/cons. Explain reasoning in conversation text,
-   then use `AskUserQuestion` to capture the decision.
+   then use `AskUserQuestion`, `request_user_input` or `clarify` to capture the decision.
 
 4. **Decision**: User picks an approach or provides custom direction.
 
@@ -56,7 +56,7 @@ Context  ->  Questions  ->  Options  ->  Decision  ->  Draft  ->  Approval  ->  
    (`.claude/docs/automation-modes.md`):
 
    **In `collaborative` mode**: Immediately after the draft — in the SAME
-   response — use `AskUserQuestion`, not plain text, and do not skip
+   response — use `AskUserQuestion`, `request_user_input` or `clarify`, not plain text, and do not skip
    this step: a plain-text ask is easy to miss.
    - Prompt: "Approve the [Section Name] section?"
    - Options: `[A] Approve — write it to file` / `[B] Make changes — describe what to fix` / `[C] Start over`
@@ -122,7 +122,7 @@ must say so in the output, whichever mode skipped it.
 
 Append `(Recommended)` to the appropriate option text in each tab.
 
-**Framing questions (ask BEFORE drafting)**: Use `AskUserQuestion` with a multi-tab widget:
+**Framing questions (ask BEFORE drafting)**: Use `AskUserQuestion`, `request_user_input` or `clarify` with a multi-tab widget:
 - Tab "Framing" — "How should the overview frame this system?" Options: `[A] As a data/infrastructure layer (technical framing)` / `[B] Through its player-facing effect (design framing)` / `[C] Both — describe the data layer and its player impact`
 - Tab "ADR ref" — "Should the overview reference the existing ADR for this system?" Options: `[A] Yes — cite the ADR for implementation details` / `[B] No — keep the GDD at pure design level`
 - Tab "Fantasy" — "Does this system have a player fantasy worth stating?" Options: `[A] Yes — players feel it directly` / `[B] No — pure infrastructure, players feel what it enables`
@@ -166,7 +166,7 @@ Framing tab above.
 
 Append `(Recommended)` to the appropriate option text.
 
-**Framing question (ask BEFORE drafting)**: Use `AskUserQuestion`:
+**Framing question (ask BEFORE drafting)**: Use `AskUserQuestion`, `request_user_input` or `clarify`:
 - Prompt: "Is this system something the player engages with directly, or infrastructure they experience indirectly?"
 - Options: `[A] Direct — player actively uses or feels this system` / `[B] Indirect — player experiences the effects, not the system` / `[C] Both — has a direct interaction layer and infrastructure beneath it`
 
@@ -225,7 +225,7 @@ This is usually the largest section. Break it into sub-sections:
 - Look up the system category in the routing table (Section 6 of this skill) and take its Primary and Supporting roles
 - Read `references/lens-specialists.md` and look at the system name, concept summary, pillar set and dependency GDD excerpts through each picked role in turn
 - Show one short block per role (its additions and warnings), named by role, before the draft
-- Surface any disagreement between roles, or between the user's idea and a pillar or a dependency GDD, to the user via `AskUserQuestion`, both positions as options
+- Surface any disagreement between roles, or between the user's idea and a pillar or a dependency GDD, to the user via `AskUserQuestion`, `request_user_input` or `clarify`, both positions as options
 - Draft only after that
 
 **Do not draft Section C without that step.** Rules seen from one angle miss the gaps
@@ -282,7 +282,7 @@ table. A formula without defined variables cannot be implemented without guesswo
 **Specialist step (MANDATORY outside `solo`)**: Before proposing any formulas or balance values, read `references/lens-systems-designer.md`:
 - **Always apply its Section D checks**: from Core Rules (Section C), the user's tuning goals and the dependency GDDs' balance context, propose formulas with variable tables and output ranges, and work every variable at its minimum, its maximum and 0 to find values the system cannot use.
 - **For economy/cost systems, also apply its costs checks**: cost curves and ratios against progression.
-- Present the proposals, and any boundary problem found, to the user for review via `AskUserQuestion`
+- Present the proposals, and any boundary problem found, to the user for review via `AskUserQuestion`, `request_user_input` or `clarify`
 - The user decides; you write to file
 - **Do not offer formula values or balance numbers without the reasoning behind them.** A user without balance design expertise cannot evaluate raw numbers.
 
@@ -477,7 +477,7 @@ after the required sections.
 > Visual/Audio or Game Feel mandatory. §1 wins: at `minimal` both drop to
 > optional and the whole set goes through the widget below.
 
-Use `AskUserQuestion`:
+Use `AskUserQuestion`, `request_user_input` or `clarify`:
 - "The required sections for this workflow tier are complete. Which of the
   remaining template sections do you want to define?"
   - Options: "All of them", "Just Cross-References and open questions", "Skip — I'll add these later"

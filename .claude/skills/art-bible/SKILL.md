@@ -3,7 +3,7 @@ name: art-bible
 description: "Author the Art Bible — visual identity gating asset production. Run before /map-systems."
 argument-hint: "[--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/art-bible/../../hooks/yaml-helper.sh" resolve_config *)
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/art-bible/../../hooks/yaml-helper.sh" resolve_config *), request_user_input, clarify
 model: sonnet
 ---
 
@@ -35,7 +35,7 @@ Sections 7 and 8, do not load `references/lens-ux-designer.md` or
 `references/lens-technical-artist.md`.
 
 
-Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
+Every `AskUserQuestion`, `request_user_input` or `clarify` call follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt).
 
@@ -114,7 +114,7 @@ approved section then replaces its own `[To be designed]` line with `Edit`;
 keep the headings as the template has them.
 
 **A section's approval names its write.** Every section is approved through an
-`AskUserQuestion` whose approving option is `[A] Lock this in and write it to
+`AskUserQuestion`, `request_user_input` or `clarify` whose approving option is `[A] Lock this in and write it to
 design/art/art-bible.md` (Section 1's full option list is below). Choosing it is
 the approval to write that section; no section is written without it, fresh or
 retrofit.
@@ -190,7 +190,7 @@ If a visual anchor exists from game-concept.md: present it and ask:
 - Provide: game concept (elevator pitch, core fantasy), full pillar set, platform target, any reference games/art from Phase 1 framing, the visual anchor if it exists
 - Ask: "Draft a Visual Identity Statement for this game. Provide: (1) a one-line visual rule that could resolve any visual decision ambiguity, (2) 2–3 supporting visual principles, each with a one-sentence design test ('when X is ambiguous, this principle says choose Y'). Anchor all principles directly in the stated pillars — each principle must serve a specific pillar. (From a one-page brief, which has no pillars, anchor them in its pitch and "what they feel" line.)"
 
-Present the art-director's draft to the user. Use `AskUserQuestion`:
+Present the art-director's draft to the user. Use `AskUserQuestion`, `request_user_input` or `clarify`:
 - Options: `[A] Lock this in and write it to design/art/art-bible.md` / `[B] Revise the one-liner` / `[C] Revise a supporting principle` / `[D] Describe my own direction`
 
 Write the approved section to file immediately.
@@ -283,7 +283,7 @@ Write the approved section to file.
 
 **Two views, written separately.** First draft the **art view** under the art lens: diegetic vs. screen-space HUD, typography direction (font personality, weight, size hierarchy), iconography style (flat/outlined/illustrated/photorealistic), animation feel for UI elements. Then read `references/lens-ux-designer.md` and write the **UX view** as its own block: does the visual direction support the interaction patterns this game requires? Flag any conflict between the art direction and readability/accessibility needs.
 
-Show both blocks. If they conflict (e.g., the art view wants elaborate diegetic UI but the UX view finds it would reduce combat readability), surface the conflict explicitly with both positions. Do not silently resolve — use `AskUserQuestion` to let the user decide.
+Show both blocks. If they conflict (e.g., the art view wants elaborate diegetic UI but the UX view finds it would reduce combat readability), surface the conflict explicitly with both positions. Do not silently resolve — use `AskUserQuestion`, `request_user_input` or `clarify` to let the user decide.
 
 Write the approved section to file.
 
@@ -291,7 +291,7 @@ Write the approved section to file.
 
 **Two views, written separately.** First draft the **art view** under the art lens: file format preferences, naming convention direction, texture resolution tiers, LOD level expectations, export settings philosophy. Then read `references/lens-technical-artist.md` and write the **technical view** as its own block: engine-specific hard constraints — poly count budgets per asset category, texture memory limits, material slot counts, importer constraints, anything from the performance budgets (`performance.*` in `project.yaml`, falling back to `.claude/docs/technical-preferences.md`).
 
-If any art preference conflicts with a technical constraint (e.g., art-director wants 4K textures but performance budget requires 2K for mobile), surface the conflict explicitly with both positions — the ideal and the constrained standard, and the tradeoff. Do not silently resolve it — use `AskUserQuestion` to let the user pick (options: the ideal standard, the constrained standard, or document both and let per-asset judgment apply). Ambiguity in asset standards is where production costs are born.
+If any art preference conflicts with a technical constraint (e.g., art-director wants 4K textures but performance budget requires 2K for mobile), surface the conflict explicitly with both positions — the ideal and the constrained standard, and the tradeoff. Do not silently resolve it — use `AskUserQuestion`, `request_user_input` or `clarify` to let the user pick (options: the ideal standard, the constrained standard, or document both and let per-asset judgment apply). Ambiguity in asset standards is where production costs are born.
 
 Write the approved section to file.
 

@@ -3,7 +3,7 @@ name: vertical-slice
 description: "Pre-production validation — end-to-end build to confirm the full loop is achievable before committing to Production. After GDDs, architecture, UX specs."
 argument-hint: "[--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/vertical-slice/../../hooks/yaml-helper.sh" resolve_config *)
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/vertical-slice/../../hooks/yaml-helper.sh" resolve_config *), request_user_input, clarify
 model: sonnet
 ---
 
@@ -47,7 +47,7 @@ whether the core idea is worth designing, run `/prototype` (concept prototype) i
 See `.claude/docs/director-gates.md` for the full check pattern. Individual gate definitions live in `.claude/docs/director-gates/[gate-id].md` — the spawned agent reads its own gate file; do not read it in the parent session.
 
 
-Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
+Every `AskUserQuestion`, `request_user_input` or `clarify` call follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt).
 
@@ -310,10 +310,10 @@ CONCERNS or REJECT. Apply it to the recommendation:
 
 - **APPROVE** → the recommendation stands.
 - **CONCERNS** → show the concerns alongside the recommendation, then use
-  `AskUserQuestion`: `Revise the recommendation` / `Accept with noted concerns` /
+  `AskUserQuestion`, `request_user_input` or `clarify`: `Revise the recommendation` / `Accept with noted concerns` /
   `Discuss further`. The user decides; the director does not.
 - **REJECT** (the core fantasy is not present) → a PROCEED recommendation cannot
-  stand. Use `AskUserQuestion` to ask the user to choose `PIVOT` or `KILL`, and run
+  stand. Use `AskUserQuestion`, `request_user_input` or `clarify` to ask the user to choose `PIVOT` or `KILL`, and run
   Phase 8 for that choice. A PIVOT or KILL recommendation stands.
 - **NOT ASSESSED** [missing input] → the director made no judgement, so it neither
   backs nor overturns the recommendation (`.claude/docs/director-gates.md`): name

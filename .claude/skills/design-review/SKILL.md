@@ -3,7 +3,7 @@ name: design-review
 description: "Reviews one design document for completeness, internal consistency, implementability, and design standards. Before handing to programmers."
 argument-hint: "[path-to-design-doc] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/design-review/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/review-receipts.sh check *), Bash(bash .claude/scripts/review-receipts.sh hash *), Bash(bash .claude/scripts/gdd-structure-check.sh *), Bash(grep -E '^  - name:' design/registry/entities.yaml), Bash(grep -n -i -E *)
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/design-review/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/review-receipts.sh check *), Bash(bash .claude/scripts/review-receipts.sh hash *), Bash(bash .claude/scripts/gdd-structure-check.sh *), Bash(grep -E '^  - name:' design/registry/entities.yaml), Bash(grep -n -i -E *), request_user_input, clarify
 model: sonnet
 ---
 
@@ -24,7 +24,7 @@ wins and `--depth` is ignored — say so. No block → defaults in
 See `.claude/docs/director-gates.md` for the full check pattern. Individual gate definitions live in `.claude/docs/director-gates/[gate-id].md` — the spawned agent reads its own gate file; do not read it in the parent session.
 
 
-Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
+Every `AskUserQuestion`, `request_user_input` or `clarify` call follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt).
 
@@ -74,7 +74,7 @@ existed and covers nothing.
 - **All `UNCHANGED`** and the log's latest entry carries a verdict — surface it:
   *"This document is byte-identical to its last review on [date] ([mode]
   review, verdict: [verdict])."* If that verdict was APPROVED and that review
-  covers this run, offer via `AskUserQuestion`:
+  covers this run, offer via `AskUserQuestion`, `request_user_input` or `clarify`:
   `[A] Use the prior verdict (Recommended)` / `[B] Re-review anyway` —
   `guided` proceeds with [A] and notes it; `autonomous` logs via
   `log_decision` and uses the prior verdict. If it was APPROVED but the
@@ -408,7 +408,7 @@ If the review-log option is selected, append the same format as below. Execute b
 
 When the verdict is NEEDS REVISION or MAJOR REVISION NEEDED, use separate widgets as before:
 
-Use a second `AskUserQuestion`:
+Use a second `AskUserQuestion`, `request_user_input` or `clarify`:
 - Prompt: "May I update `design/gdd/systems-index.md` to mark [system] as [Needs Revision / In Review]?" — `Needs Revision` (that exact string) while the revisions are outstanding, `In Review` once they are applied and await re-review. This prompt never offers `Approved`: a revision verdict is not an approval.
 - Options: `[A] Yes — update it` / `[B] No — leave it as-is`
 

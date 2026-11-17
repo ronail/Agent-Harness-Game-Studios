@@ -3,7 +3,7 @@ name: cut
 description: "Proposes cuts and a polish list to finish the game from its brief and what is built; the person picks each cut. A game to sell also gets a release date and a feature freeze. Use when asked what to cut, how to finish or ship it, or for a polish list."
 argument-hint: "[no arguments]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, AskUserQuestion, Bash(bash "*/.claude/skills/cut/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/cut-read.sh*), Bash(bash .claude/scripts/cut-apply.sh *), Bash(bash .claude/scripts/config-set.sh project.goal *), Bash(bash .claude/scripts/one-shot-check.sh *), Bash(bash .claude/scripts/one-shot-run.sh *), Bash(find prototypes/*), Bash(timeout 900 npm run smoke), Bash(timeout 900 godot --headless *), Bash(git rev-parse *), Bash(git add design/*), Bash(git commit -m *)
+allowed-tools: Read, Glob, Grep, AskUserQuestion, Bash(bash "*/.claude/skills/cut/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/cut-read.sh*), Bash(bash .claude/scripts/cut-apply.sh *), Bash(bash .claude/scripts/config-set.sh project.goal *), Bash(bash .claude/scripts/one-shot-check.sh *), Bash(bash .claude/scripts/one-shot-run.sh *), Bash(find prototypes/*), Bash(timeout 900 npm run smoke), Bash(timeout 900 godot --headless *), Bash(git rev-parse *), Bash(git add design/*), Bash(git commit -m *), request_user_input, clarify
 model: sonnet
 ---
 

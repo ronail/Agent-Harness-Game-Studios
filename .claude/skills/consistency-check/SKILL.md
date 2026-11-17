@@ -3,7 +3,7 @@ name: consistency-check
 description: "Scan GDDs against the entity registry for cross-document conflicts. Grep-first approach targets conflicting sections, different stats."
 argument-hint: "[full | since-last-review | entity:<name> | item:<name>]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Bash(bash "*/.claude/skills/consistency-check/../../hooks/yaml-helper.sh" resolve_config *), Bash(git log *), Bash(bash .claude/scripts/registry.sh validate*)
+allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Bash(bash "*/.claude/skills/consistency-check/../../hooks/yaml-helper.sh" resolve_config *), Bash(git log *), Bash(bash .claude/scripts/registry.sh validate*), request_user_input, clarify
 model: sonnet
 ---
 
@@ -32,7 +32,7 @@ catches too late.
 
 ---
 
-Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
+Every `AskUserQuestion`, `request_user_input` or `clarify` call follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt).
 
@@ -355,7 +355,7 @@ Silently append to `production/session-state/active.md` (create the file if it d
 > will never find, and nothing errors along the way. Never invent a report
 > filename here.
 
-Then close with an `AskUserQuestion` widget:
+Then close with an `AskUserQuestion`, `request_user_input` or `clarify` widget:
 
 - **Prompt**: "Consistency check complete — [N] conflicts found. What next?"
 - **Options**:

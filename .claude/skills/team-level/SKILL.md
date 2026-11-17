@@ -3,14 +3,14 @@ name: team-level
 description: "Orchestrate the level team — level-designer, narrative-director, world-builder, art-director, systems-designer, qa-tester — for complete area creation."
 argument-hint: "[level name or area to design] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, TaskCreate, TaskGet, TaskList, TaskUpdate, Bash(bash "*/.claude/skills/team-level/../../hooks/yaml-helper.sh" resolve_config *)
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, TaskCreate, TaskGet, TaskList, TaskUpdate, Bash(bash "*/.claude/skills/team-level/../../hooks/yaml-helper.sh" resolve_config *), request_user_input, clarify
 model: sonnet
 ---
 
 # Team Level
 
 If no argument is provided, output usage guidance and exit without spawning any agents or reading any design files:
-> Usage: `/team-level [level name or area to design] [--review full|lean|solo]` — specify the level or area to design (e.g., `forest temple`, `tutorial village`, `final boss arena`). Do not use `AskUserQuestion` here; output the guidance directly.
+> Usage: `/team-level [level name or area to design] [--review full|lean|solo]` — specify the level or area to design (e.g., `forest temple`, `tutorial village`, `final boss arena`). Do not use `AskUserQuestion`, `request_user_input` or `clarify` here; output the guidance directly.
 
 When this skill is invoked:
 
@@ -43,7 +43,7 @@ below), and the agents that work at them are team members, not director gates.
 - **`individual`** (default): `level-designer` only. Other agents consulted via the level-designer, not spawned separately.
 - **`small`**: + `systems-designer` + `art-director` + `qa-tester`.
 - **`studio`**: + `narrative-director` + `world-builder` + `accessibility-specialist` (the full pipeline as documented).
-A non-core agent needed at `individual` routes through the nearest active core agent with an informational note. **"Phase gate" means any phase that ends in an `AskUserQuestion` decision point this pipeline itself lists** — a transition under Decision Points above, or a **Gate** step written into the pipeline below — **whatever the `automation` mode.** `guided` and `autonomous` change how a gate is passed (it auto-advances, or is recorded with `log_decision`), not whether it is one, so bounded-exception condition (3) below holds at it in every mode. An agent restricted to "phase gates only" is spawned at those points and no others. This active-set scoping applies throughout the pipeline below: any phase that names an agent outside the active set routes through the nearest core agent rather than spawning it.
+A non-core agent needed at `individual` routes through the nearest active core agent with an informational note. **"Phase gate" means any phase that ends in an `AskUserQuestion`, `request_user_input` or `clarify` decision point this pipeline itself lists** — a transition under Decision Points above, or a **Gate** step written into the pipeline below — **whatever the `automation` mode.** `guided` and `autonomous` change how a gate is passed (it auto-advances, or is recorded with `log_decision`), not whether it is one, so bounded-exception condition (3) below holds at it in every mode. An agent restricted to "phase gates only" is spawned at those points and no others. This active-set scoping applies throughout the pipeline below: any phase that names an agent outside the active set routes through the nearest core agent rather than spawning it.
 
 **Announce the active set before Step 1 — never let the collapse be silent.**
 Before spawning anything, state in one line which agents this run will actually
@@ -116,7 +116,7 @@ file per agent, so the parallel steps never share one:
 These are working drafts; the durable record is the level design document you
 compile from them (`design/levels/[level-name].md`).
 
-> **Why this does not violate the Collaboration Protocol.** `CLAUDE.md` requires an agent to ask "May I write this to [filepath]?" before Write/Edit. A subagent spawned here writes **without** asking, and that is a deliberate, bounded exception rather than an oversight — the same call already made for `consistency-check` appending to `active.md`. The exception holds only when all three are true: (1) the path is one **you** named in the prompt, so the user approved the destination when they approved the phase; (2) it is a new artifact under `production/`, `docs/` or `tests/`, never an edit to existing source or config; (3) the phase that produced it is itself gated by an `AskUserQuestion` before the pipeline advances. Outside those three, the agent must ask. **Do not "fix" this by asking per subagent** — a prompt per agent per phase makes an orchestrator unusable, which is why the exception exists.
+> **Why this does not violate the Collaboration Protocol.** `CLAUDE.md` requires an agent to ask "May I write this to [filepath]?" before Write/Edit. A subagent spawned here writes **without** asking, and that is a deliberate, bounded exception rather than an oversight — the same call already made for `consistency-check` appending to `active.md`. The exception holds only when all three are true: (1) the path is one **you** named in the prompt, so the user approved the destination when they approved the phase; (2) it is a new artifact under `production/`, `docs/` or `tests/`, never an edit to existing source or config; (3) the phase that produced it is itself gated by an `AskUserQuestion`, `request_user_input` or `clarify` before the pipeline advances. Outside those three, the agent must ask. **Do not "fix" this by asking per subagent** — a prompt per agent per phase makes an orchestrator unusable, which is why the exception exists.
 
 3. **Orchestrate the level design team** in sequence:
 
@@ -221,7 +221,7 @@ itself; do not re-spawn `level-designer` and re-send all outputs verbatim.** Tha
 second spawn pays a fresh agent's overhead plus a full re-transmission of context
 the orchestrator already has, to move text it is already holding. After compiling
 into the level-design template format, ask the user directly via
-`AskUserQuestion`: "May I write the compiled level design to
+`AskUserQuestion`, `request_user_input` or `clarify`: "May I write the compiled level design to
 `design/levels/[level-name].md`?" On approval, write it.
 
 5. **Save to** `design/levels/[level-name].md` after that approval.
@@ -240,7 +240,7 @@ Per-agent artifacts (narrative docs, test checklists) are written by the
 sub-agent that produced them, under the **bounded exception** documented above
 under "Why this does not violate the Collaboration Protocol" — the path is one
 you named, the artifact is new under `production/`, `docs/` or `tests/`, and the
-phase is gated by an `AskUserQuestion`. A sub-agent does **not** prompt per write
+phase is gated by an `AskUserQuestion`, `request_user_input` or `clarify`. A sub-agent does **not** prompt per write
 inside those bounds; outside them it must ask. The **one exception is the final
 compiled level-design document**: the
 orchestrator already holds every input, so it compiles and writes that file

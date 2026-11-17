@@ -3,7 +3,7 @@ name: project-settings
 description: "Shows or changes a project setting and where its value comes from. Use to check or set one."
 argument-hint: "[key | key=value | --local key=value]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Bash(bash "*/.claude/skills/project-settings/../../hooks/yaml-helper.sh" resolve_setting *), Bash(bash "*/.claude/skills/project-settings/../../hooks/yaml-helper.sh" get_yaml_key *), Bash(bash "*/.claude/skills/project-settings/../../hooks/yaml-helper.sh" validate_yaml_enum *), Bash(bash "*/.claude/skills/project-settings/../../hooks/yaml-helper.sh" validate_enum_value *), Bash(bash "*/.claude/skills/project-settings/../../hooks/yaml-helper.sh" is_locally_overridable *), Bash(bash .claude/scripts/config-set.sh *), Bash(grep -B14 '^> ### RESERVED' .claude/docs/effects-map.md), Bash(grep -E '^## ')
+allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Bash(bash "*/.claude/skills/project-settings/../../hooks/yaml-helper.sh" resolve_setting *), Bash(bash "*/.claude/skills/project-settings/../../hooks/yaml-helper.sh" get_yaml_key *), Bash(bash "*/.claude/skills/project-settings/../../hooks/yaml-helper.sh" validate_yaml_enum *), Bash(bash "*/.claude/skills/project-settings/../../hooks/yaml-helper.sh" validate_enum_value *), Bash(bash "*/.claude/skills/project-settings/../../hooks/yaml-helper.sh" is_locally_overridable *), Bash(bash .claude/scripts/config-set.sh *), Bash(grep -B14 '^> ### RESERVED' .claude/docs/effects-map.md), Bash(grep -E '^## '), request_user_input, clarify
 model: sonnet
 ---
 

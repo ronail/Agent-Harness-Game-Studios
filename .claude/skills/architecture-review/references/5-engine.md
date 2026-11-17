@@ -97,7 +97,7 @@ are consistent with verified engine behaviour."
 
 Before asking, display the proposed change inline — show the current systems-index row for each flagged GDD and the proposed updated row side by side so the user can see exactly what will change.
 
-Then use `AskUserQuestion`:
+Then use `AskUserQuestion`, `request_user_input` or `clarify`:
 - "I found [N] GDD revision flag(s). May I update the systems index?"
   - [A] Yes — apply all [N] updates to the systems index now
   - [B] Show me the full diff first, then ask again
@@ -105,6 +105,6 @@ Then use `AskUserQuestion`:
 
 If [A]: apply the updates. Status field must be exactly `Needs Revision` — no parentheticals
 (other skills match that exact string and parentheticals break the match).
-If [B]: display the complete proposed systems-index section, then re-ask with `AskUserQuestion`.
+If [B]: display the complete proposed systems-index section, then re-ask with `AskUserQuestion`, `request_user_input` or `clarify`.
 
 ---

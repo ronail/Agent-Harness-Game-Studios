@@ -3,7 +3,7 @@ name: sprint-plan
 description: "New or updated sprint plan from the current milestone, completed work, and available capacity."
 argument-hint: "[new|update|status] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/sprint-plan/../../hooks/yaml-helper.sh" resolve_config *), Bash(ls production/sprints/*)
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/sprint-plan/../../hooks/yaml-helper.sh" resolve_config *), Bash(ls production/sprints/*), request_user_input, clarify
 model: sonnet
 ---
 
@@ -31,7 +31,7 @@ Extract the mode argument (`new`, `update`, or `status`).
 See `.claude/docs/director-gates.md` for the full check pattern. Individual gate definitions live in `.claude/docs/director-gates/[gate-id].md` — the spawned agent reads its own gate file; do not read it in the parent session.
 
 
-Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
+Every `AskUserQuestion`, `request_user_input` or `clarify` call follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt).
 
@@ -210,7 +210,7 @@ For `update`:
 
 1. Read the most recent sprint plan from `production/sprints/`.
 2. Present the current story list with their current statuses from `production/sprint-status.yaml`.
-3. Ask the user what to change: stories to add, remove, reprioritize, or re-estimate. Use `AskUserQuestion` to gather changes.
+3. Ask the user what to change: stories to add, remove, reprioritize, or re-estimate. Use `AskUserQuestion`, `request_user_input` or `clarify` to gather changes.
 4. Apply the changes and re-present the full revised plan for review. If the
    goal or the Must Have stories changed, check the goal's prerequisites again first.
 5. Re-run the producer feasibility gate (Phase 4) on the revised plan.

@@ -3,7 +3,7 @@ name: retrospective
 description: "Sprint or milestone retrospective from completed work, velocity, blockers. Actionable insights for the next iteration."
 argument-hint: "[sprint-N|milestone-name]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, Bash(bash "*/.claude/skills/retrospective/../../hooks/yaml-helper.sh" resolve_config *), Bash(git log *)
+allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, Bash(bash "*/.claude/skills/retrospective/../../hooks/yaml-helper.sh" resolve_config *), Bash(git log *), request_user_input, clarify
 model: sonnet
 ---
 
@@ -13,7 +13,7 @@ model: sonnet
 
 
 
-Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
+Every `AskUserQuestion`, `request_user_input` or `clarify` call follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt).
 
@@ -91,7 +91,7 @@ At `qa.level: minimal` (resolved above) tests are waived, so a story closed
 without one is not a finding; a Visual/Feel or UI story closed without its
 retained screenshot still is.
 
-Then use `AskUserQuestion` to present these options ([C] only at `workflow: minimal`):
+Then use `AskUserQuestion`, `request_user_input` or `clarify` to present these options ([C] only at `workflow: minimal`):
 
 - **[A] Provide data manually** — ask the user to paste or describe the sprint
   tasks, dates, and outcomes; use that as the source of truth for the retrospective.
@@ -267,7 +267,7 @@ At `workflow: minimal` (resolved above), which has no sprints, skip this questio
 point to the retrospective file and say its action items go into the brief's build
 order.
 
-Otherwise, use `AskUserQuestion`:
+Otherwise, use `AskUserQuestion`, `request_user_input` or `clarify`:
 - Prompt: "Retrospective complete. The action items and velocity data are ready. Would you like to start sprint planning now with this data pre-loaded?"
 - Options:
   - `[A] Yes — open sprint planning with retro action items and velocity delta pre-populated`

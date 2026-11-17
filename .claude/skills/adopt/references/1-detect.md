@@ -30,7 +30,7 @@ Use the same heuristic as `/project-stage-detect`:
 - game-concept.md (or `design/game-brief.md`) exists → Concept
 - Nothing → Fresh (not a brownfield project — suggest `/start`)
 
-If the project appears fresh (no artifacts at all), use `AskUserQuestion`:
+If the project appears fresh (no artifacts at all), use `AskUserQuestion`, `request_user_input` or `clarify`:
 - "This looks like a fresh project — no existing artifacts found. `/adopt` is for
   projects with work to migrate. What would you like to do?"
   - "Run `/start` — begin guided first-time onboarding"

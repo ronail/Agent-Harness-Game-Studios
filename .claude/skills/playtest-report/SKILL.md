@@ -3,7 +3,7 @@ name: playtest-report
 description: "Structured playtest report template, or turn existing playtest notes into structured feedback."
 argument-hint: "[new|analyze path-to-notes] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/playtest-report/../../hooks/yaml-helper.sh" resolve_config *)
+allowed-tools: Read, Glob, Grep, Write, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/playtest-report/../../hooks/yaml-helper.sh" resolve_config *), request_user_input, clarify
 model: sonnet
 ---
 
@@ -22,7 +22,7 @@ block → defaults in `.claude/docs/config-resolution.md`.
 See `.claude/docs/director-gates.md` for the full check pattern. Individual gate definitions live in `.claude/docs/director-gates/[gate-id].md` — the spawned agent reads its own gate file; do not read it in the parent session.
 
 
-Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
+Every `AskUserQuestion`, `request_user_input` or `clarify` call follows `.claude/docs/automation-modes.md`
 (collaborative asks always · guided major-only · autonomous logs and proceeds;
 `automation_always_ask` categories always prompt).
 
@@ -31,7 +31,7 @@ Determine the mode:
 - `new` → generate a blank playtest report template. This mode ends after
   Phase 2A: a blank template has nothing to route, review or save.
 - `analyze [path]` → read raw notes and fill in the template with structured findings
-- No argument → ask via `AskUserQuestion`: `[A] New blank template` /
+- No argument → ask via `AskUserQuestion`, `request_user_input` or `clarify`: `[A] New blank template` /
   `[B] Analyze notes — I'll give you the path`
 
 ---
