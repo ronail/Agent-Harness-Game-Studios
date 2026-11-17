@@ -1,6 +1,8 @@
 <p align="center">
   <h1 align="center">Agent Harness Game Studios</h1>
   <p align="center">
+    Turn an AI coding session into a full game development studio.
+    <br />
     Describe a game. Claude Code asks a few questions, writes a one-page brief,
     and builds a playable browser game from it.
     <br />
