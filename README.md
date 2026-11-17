@@ -525,7 +525,7 @@ Claude Code is the primary workflow runtime. Codex can use the project-local
 skill, hook, and rule conventions, and Antigravity discovers the `.agents/`
 customizations described above.
 
-To get started on a harness: **Run `/start`** — in Claude Code, or `/start codex` when using Codex, or
+3. **Run `/start`** — in Claude Code, or `/start codex` when using Codex, or
 `/start hermes` when using Hermes, or `/start antigravity` when using
 Antigravity. The system asks where you are (no idea,
 vague concept, clear design, existing work) and guides you to the right
@@ -544,6 +544,8 @@ Antigravity uses the same symlink for skills and its own generated agents —
 after changing a role definition, regenerate with
 `python3 .agents/generate_compat.py`. Agent wrappers are gitignored and
 created by `/start antigravity`; hooks live in `.agents/hooks.json`.
+
+### Agent Configuration Compatibility
 
 The project keeps its detailed workflow definitions in `.claude/`, so Claude
 Code remains the primary supported runtime. The configuration layers map as
