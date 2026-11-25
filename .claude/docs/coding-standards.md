@@ -19,8 +19,10 @@
   must include its `.uid` file staged alongside it — flag this in code review.
 - **A parse check is not a run.** Every story that changes something
   player-observable is launched and observed before it closes, and the
-  observation is a retained screenshot in `production/qa/evidence/`. Procedure
-  per engine: `.claude/docs/run-and-observe.md`. Not waived at
+  observation is a retained screenshot in `production/qa/evidence/`, kept as
+  **WebP (lossy q90)** — encode with `.claude/scripts/image-webp.sh`; no encoder
+  installed means the PNG stays and `no_encoder` is recorded. Procedure per
+  engine: `.claude/docs/run-and-observe.md`. Not waived at
   `qa.level: minimal` — tests are, the look is not.
 
 # Design Document Standards

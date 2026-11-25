@@ -79,7 +79,7 @@ language and tests stay its own. W1 replaces W2 to W6 for it (W7, and Sections
    folder.
 9. **Look:** shoot the build's own `index.html` from disk:
    `bash .claude/scripts/page-shot.sh <build folder>/index.html
-   production/qa/evidence/setup-engine-web/01-first-screen.png --software
+   production/qa/evidence/setup-engine-web/01-first-screen.webp --software
    --file-access`. `--file-access` lets the page load its module scripts and
    its own images and data, as it does from a server. Read the image and say
    what is on screen, with any `uncaught` lines (the game's own errors, which
@@ -241,7 +241,7 @@ After `npm ci`, run each and report its command, exit code and result:
      100 MB to your home folder), then run the tests again. Declined: the
      browser tests are `NOT ASSESSED — no browser`, by name.
 3. Keep one screenshot: `bash .claude/scripts/page-shot.sh dist-single/index.html
-   production/qa/evidence/setup-engine-web/01-title.png`. Read the image and say
+   production/qa/evidence/setup-engine-web/01-title.webp`. Read the image and say
    what is on screen; the title screen shows the game's name and its controls.
    This is the project's first retained evidence.
 

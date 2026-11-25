@@ -38,8 +38,8 @@ filename listed here with no file beside it does not satisfy the gate.
 
 | # | Filename | What It Shows | Acceptance Criterion |
 |---|----------|--------------|----------------------|
-| 1 | `[filename.png]` | [brief description of what is visible] | AC-1 |
-| 2 | `[filename.png]` | | AC-2 |
+| 1 | `[filename.webp]` | [brief description of what is visible] | AC-1 |
+| 2 | `[filename.webp]` | | AC-2 |
 
 *If video: note the timestamp and what it demonstrates.*
 

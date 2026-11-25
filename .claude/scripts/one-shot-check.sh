@@ -31,7 +31,7 @@
 #   --record          the one-shot's small check: boots, shot and outlines given (pass, fail,
 #                     or not_run:not-assessed:<why>), each refused as a pass the rows do not
 #                     show (a crash or a blank screen, no screenshot of play on disk, no
-#                     evidence/figures.png), and refused while a brief word is unlisted or an
+#                     evidence/figures.webp), and refused while a brief word is unlisted or an
 #                     emoji is in the game's code; brief-words and emoji are written from the
 #                     rows, the step time as a measure. Refused too while a brief checklist
 #                     item is unlisted or a pass has no evidence; each item goes in under
@@ -300,7 +300,7 @@ if [ "$RECORD" = 1 ]; then
         if (miss != "") bad("the small check needs all three given rows; missing:" miss)
         if (r["boots"] == "pass" && crash != "") bad("boots: the rows show" substr(crash, 2) ": a fix-round finding, never a pass")
         if (r["shot"] == "pass" && !nsh) bad("shot: no screenshot of play is on disk in evidence/: take one, look at it, then give shot=pass")
-        if (r["outlines"] == "pass" && !exists(dir "/evidence/figures.png")) bad("outlines: no evidence/figures.png: shoot the figures scene, look at each outline, then give outlines=pass")
+        if (r["outlines"] == "pass" && !exists(dir "/evidence/figures.webp")) bad("outlines: no evidence/figures.webp: shoot the figures scene, look at each outline, then give outlines=pass")
         if (bwbad != "") bad("brief words:" bwbad ": the person wrote them; build each and list it in evidence/brief-words.tsv with the shot that shows it, or write miss: <why>")
         if (emo != "") bad("emoji: an emoji in the game code (" substr(emo, 2) "): never art unless the brief asks for emoji; draw it")
         while ((getline l < clf) > 0) {
@@ -338,7 +338,7 @@ if [ "$RECORD" = 1 ]; then
           if (w[id] != "") print "    why: " q(w[id]) > out
           print "    evidence:" > out
           if (id == "shot") for (j = 1; j <= nsh; j++) print "      - " q(shots[j]) > out
-          else if (id == "outlines") print "      - \"evidence/figures.png\"" > out
+          else if (id == "outlines") print "      - \"evidence/figures.webp\"" > out
           else print "      - \"evidence/self-check.tsv\"" > out
         }
         print "  - id: brief-words\n    result: pass" > out
@@ -397,7 +397,7 @@ brief_words >> "$REPORT"
 checklist_rows >> "$REPORT"
 emoji_rows >> "$REPORT"
 
-run() { # run <lane> <out.png> <args...>: one-shot-run.sh into $TMP/<lane>.tsv
+run() { # run <lane> <out.webp> <args...>: one-shot-run.sh into $TMP/<lane>.tsv
   _lane="$1"; _out="$2"; shift 2
   # stdin from /dev/null: inside a while-read loop the run must never eat the loop's lines.
   bash "$HERE/one-shot-run.sh" "$DIR" "$_out" --root "$ROOT" "$@" > "$TMP/$_lane.tsv" < /dev/null
@@ -420,7 +420,7 @@ shot_rows() { # shot_rows <label> <path> <lane>: what was on the screen it took
 }
 
 # ---- The run: the keys from a fresh start, and the screenshot where it stops ----------------
-run play "$EV/play.png" --log "$KEYS" --limit 60; RC=$?
+run play "$EV/play.webp" --log "$KEYS" --limit 60; RC=$?
 if [ "$RC" = 3 ] || awk -F'\t' '$1 == "not_assessed" { f = 1 } END { exit !f }' "$TMP/play.tsv"; then
   awk -F'\t' -v OFS='\t' '$1 == "not_assessed" { print "not_assessed", "scripted run", $2 }' "$TMP/play.tsv" | tee -a "$REPORT"
   cp "$REPORT" "$EV/self-check.tsv"; exit 3
@@ -434,15 +434,15 @@ fi
 printf 'run\n' >> "$RUNS" # the run played: it counts toward the round's two
 awk -F'\t' -v OFS='\t' '$1 == "ua" && !u { print "browser", $2; u = 1 } $1 == "webgl" && !g { print "webgl", $2; g = 1 }' "$TMP/play.tsv" >> "$REPORT"
 lane_rows play >> "$REPORT"
-shot_rows play "$(rel "$EV/play.png")" play >> "$REPORT"
+shot_rows play "$(rel "$EV/play.webp")" play >> "$REPORT"
 
 # ---- Responds: the keys in play against no input, from the same start ------------------------
 _k=$(awk -F'\t' '$1 == "playinput" { print $2; exit }' "$TMP/play.tsv")
 if [ -z "$_k" ]; then
   printf 'not_assessed\tresponds\tno key reached the play scene: start --keys with what leaves the title\n' >> "$REPORT"
 else
-  run resp-in "$TMP/responds-input.png" --log "$KEYS" --trace "$_k" --stop $((_k + 60))
-  run resp-quiet "$TMP/responds-quiet.png" --log "$KEYS" --quiet "$_k" --trace "$_k" --stop $((_k + 60))
+  run resp-in "$TMP/responds-input.webp" --log "$KEYS" --trace "$_k" --stop $((_k + 60))
+  run resp-quiet "$TMP/responds-quiet.webp" --log "$KEYS" --quiet "$_k" --trace "$_k" --stop $((_k + 60))
   _a=$(awk -F'\t' '$1 == "screen" { h = $4 } END { print h }' "$TMP/resp-in.tsv")
   _b=$(awk -F'\t' '$1 == "screen" { h = $4 } END { print h }' "$TMP/resp-quiet.tsv")
   if [ -z "$_a" ] || [ -z "$_b" ]; then printf 'not_assessed\tresponds\ta replay did not finish\n' >> "$REPORT"

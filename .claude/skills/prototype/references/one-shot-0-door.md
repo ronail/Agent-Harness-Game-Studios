@@ -140,7 +140,7 @@ remake instead:
   a new game can be made from it here?" Then `door-in.sh <path>` copies it there. No tag, no
   `config.js` offer.
 - One screenshot of its first screen: `bash .claude/scripts/page-shot.sh
-  references/<name>/index.html references/<name>-first.png`.
+  references/<name>/index.html references/<name>-first.webp`.
 - A brief from what can be seen and read (Twine passages and Bitsy text are readable), then the
   offer: **Remake it here**, which builds a new one-shot from that brief (One-shot 1).
 - For Godot or Unity also say: "To keep working on this game itself, bring its project, not the

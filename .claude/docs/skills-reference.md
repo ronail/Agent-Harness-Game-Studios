@@ -100,7 +100,7 @@
 
 | Command | Purpose |
 |---------|---------|
-| `/godot-screenshot` | Capture an in-game PNG from Godot's viewport for visual evidence; never uses system screenshots |
+| `/godot-screenshot` | Capture an in-game screenshot from Godot's viewport for visual evidence (saved as WebP); never uses system screenshots |
 
 ## Production
 

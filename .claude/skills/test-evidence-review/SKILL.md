@@ -120,7 +120,7 @@ contains the story slug or its system. Test files are named per
   - Also check `production/qa/playtests/` for playtest records mentioning the story
 
 **Visual/Feel and UI stories**: Glob `production/qa/evidence/` for a retained image
-(`*.png`, `*.jpg`, `*.gif`) belonging to this story, and for
+(`*.webp`, `*.png`, `*.jpg`, `*.gif`) belonging to this story, and for
 `[story-slug]-evidence.*`
 
 **Config/Data stories**: Glob `production/qa/smoke-*.md` (any smoke check report)
@@ -208,7 +208,7 @@ What closes the story follows the evidence table in
 ### Screenshot / artefact completeness
 
 For Visual/Feel stories: Glob `production/qa/evidence/` for a retained image
-(`*.png`, `*.jpg`, `*.gif`) belonging to this story. A doc that describes a
+(`*.webp`, `*.png`, `*.jpg`, `*.gif`) belonging to this story. A doc that describes a
 visual check but retains no image is INCOMPLETE — this gate is BLOCKING by
 default, and a description is an assertion rather than evidence.
 

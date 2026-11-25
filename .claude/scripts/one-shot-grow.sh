@@ -24,7 +24,7 @@
 #            game the same way after a story (/dev-story) and compares it with the last run the
 #            person accepted (accepted.tsv), or the reference when none was accepted yet
 #   accept   the last story run becomes the one later stories are compared with: story.tsv and
-#            story.png copied to accepted.tsv and accepted.png (the person said its change was
+#            story.webp copied to accepted.tsv and accepted.webp (the person said its change was
 #            meant)
 #   record   project.yaml's engine.name Web and engine.version (Vite's, from package.json),
 #            written only when engine.name is unset; a set Web is left as it is. On Web, CLAUDE.md's
@@ -374,8 +374,8 @@ replay() {
     dir="$t/game"
   fi
 
-  bash "$HERE/one-shot-run.sh" "$dir" "$EVD/$AS.png" "$@" --root "$ROOT" > "$EVD/$AS.tsv" 2>"$t/err"; rc=$?
-  printf 'run\t%s\t%s\t%s\t%s\n' "$AS" "$EVD/$AS.tsv" "$EVD/$AS.png" "$rc"
+  bash "$HERE/one-shot-run.sh" "$dir" "$EVD/$AS.webp" "$@" --root "$ROOT" > "$EVD/$AS.tsv" 2>"$t/err"; rc=$?
+  printf 'run\t%s\t%s\t%s\t%s\n' "$AS" "$EVD/$AS.tsv" "$EVD/$AS.webp" "$rc"
   if [ "$rc" = 3 ] || [ ! -s "$EVD/$AS.tsv" ]; then
     awk -F'\t' '$1 == "not_assessed"' "$EVD/$AS.tsv"
     [ -s "$t/err" ] && sed 's/^/not_assessed\t/' "$t/err" | head -3
@@ -384,7 +384,7 @@ replay() {
   printf 'errors\t%s\n' "$(awk -F'\t' '$1 == "crash" || $1 == "error" || ($1 == "uncaught" && $2 + 0 > 0) { n++ } END { print n + 0 }' "$EVD/$AS.tsv")"
 
   if [ "$AS" = reference ]; then
-    bash "$HERE/one-shot-run.sh" "$dir" "$t/again.png" "$@" --root "$ROOT" > "$EVD/reference-again.tsv" 2>/dev/null
+    bash "$HERE/one-shot-run.sh" "$dir" "$t/again.webp" "$@" --root "$ROOT" > "$EVD/reference-again.tsv" 2>/dev/null
     printf 'run\treference-again\t%s\t-\t%s\n' "$EVD/reference-again.tsv" "$?"
     d=$(firstdiff "$EVD/reference.tsv" "$EVD/reference-again.tsv")
     said exact "$d"
@@ -405,8 +405,8 @@ replay() {
 accept() {
   [ -f "$EVD/story.tsv" ] || { printf 'not_assessed\tno story run: replay --as story first\n'; exit 4; }
   cp "$EVD/story.tsv" "$EVD/accepted.tsv" || exit 1
-  [ -f "$EVD/story.png" ] && { cp "$EVD/story.png" "$EVD/accepted.png" || exit 1; }
-  printf 'accepted\t%s\t%s\n' "$EVD/accepted.tsv" "$EVD/accepted.png"
+  [ -f "$EVD/story.webp" ] && { cp "$EVD/story.webp" "$EVD/accepted.webp" || exit 1; }
+  printf 'accepted\t%s\t%s\n' "$EVD/accepted.tsv" "$EVD/accepted.webp"
 }
 
 # ---- record --------------------------------------------------------------------------------

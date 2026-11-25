@@ -17,7 +17,7 @@ starting values and the person's notes after play.
 | 1 | boots | the run shows no `crash`, `error`, `nonfinite` or `uncaught` above 0, and no blank screen |
 | 2 | shot | a screenshot of play is on disk in `evidence/`, and you looked at it |
 | 3 | brief words | every look, view and reference word in In your words is in `evidence/brief-words.tsv`, and `evidence/nearest-game.txt` names the nearest game and how this one differs |
-| 4 | emoji and outlines | no emoji in the game's code, and `evidence/figures.png` shows every enemy kind and unit with its own outline |
+| 4 | emoji and outlines | no emoji in the game's code, and `evidence/figures.webp` shows every enemy kind and unit with its own outline |
 
 ## 1. Write the brief words
 
@@ -33,12 +33,12 @@ bash .claude/scripts/one-shot-check.sh prototypes/<name> --keys "<inputs>"
 
 `--keys` is a short run in `one-shot-run.sh --log`'s format: what leaves the title (`Enter`,
 `click:text=Start`), then a few seconds of the game's own keys (`ArrowRight:1.5 Space wait:1`).
-It plays once from a fresh start, screenshots where it stops (`evidence/play.png`), measures the
+It plays once from a fresh start, screenshots where it stops (`evidence/play.webp`), measures the
 text on that screen, and plays the keys again against no input to see the game responds. It
 writes `evidence/self-check.tsv`. Then shoot the figures:
 
 ```bash
-bash .claude/scripts/page-shot.sh prototypes/<name>/index.html prototypes/<name>/evidence/figures.png --query scene=figures
+bash .claude/scripts/page-shot.sh prototypes/<name>/index.html prototypes/<name>/evidence/figures.webp --query scene=figures
 ```
 
 `not_assessed` rows say what could not run and why: no browser, a browser that stopped, a served
@@ -49,7 +49,7 @@ time: use that picture.
 
 ## 3. Read the rows, fix once
 
-- **Look at `play.png`** and at `figures.png` against the brief's Look and references: the view
+- **Look at `play.webp`** and at `figures.webp` against the brief's Look and references: the view
   and camera as named, every figure drawn, no two enemy kinds or units with one outline.
 - **`crash`, `error`, `nonfinite`, `uncaught` above 0, `console` errors, a blank `screen`:** fix.
 - **`responds same`:** the keys changed nothing in play. Check the keys first (the game's own

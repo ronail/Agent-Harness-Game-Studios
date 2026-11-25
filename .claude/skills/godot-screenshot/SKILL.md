@@ -42,8 +42,8 @@ game's actual render output and avoids capturing unrelated desktop content.
 7. After a successful readback, yield one more frame and use
    `call_deferred("quit")` rather than immediately quitting the scene tree.
    This avoids tearing down the renderer while its texture readback completes.
-8. Verify that the PNG exists, is non-empty, and can be opened. Report the
-   absolute path and dimensions. If capture fails, report the exact Godot
+8. Verify that the saved WebP exists, is non-empty, and can be opened. Report
+   the absolute path and dimensions. If capture fails, report the exact Godot
    error and do not substitute a system screenshot.
 
 ## Constraints
@@ -55,7 +55,11 @@ game's actual render output and avoids capturing unrelated desktop content.
   cleaned up afterward.
 - Preserve the running game's state where possible; avoid restarting it unless
   the chosen Godot-native capture path requires a restart.
-- Use PNG for lossless evidence unless the user requests another format.
+- Godot's image API writes PNG (`save_png()`), and it has no WebP encoder. Save
+  the frame, then encode it:
+  `bash .claude/scripts/image-webp.sh <shot.png> <final>.webp`, and keep the
+  `.webp`. No encoder installed is not a failure — keep the PNG and report
+  `no_encoder` beside the path.
 - Keep capture filenames descriptive and timestamped when multiple captures
   are possible.
 

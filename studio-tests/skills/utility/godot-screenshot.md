@@ -5,7 +5,7 @@
 - [ ] Declares `name: godot-screenshot` and a Godot viewport capture description
 - [ ] Is user-invocable and includes file, shell, and inspection tools
 - [ ] Explicitly forbids system-level screenshots
-- [ ] Requires verification of the saved PNG and reporting its path
+- [ ] Requires verification of the saved WebP (encoded from Godot's PNG) and reporting its path
 - [ ] Requires a real display renderer rather than `--headless` for viewport readback
 - [ ] Waits for `RenderingServer.frame_post_draw`, validates the image/write result, and defers shutdown after capture
 
@@ -17,7 +17,8 @@
 
 **Expected behavior:** Uses an existing Godot-native capture hook or a
 project-local viewport capture script, waits for
-`RenderingServer.frame_post_draw`, saves and validates a PNG, yields another
+`RenderingServer.frame_post_draw`, saves PNG and encodes it to WebP with
+`.claude/scripts/image-webp.sh`, yields another
 frame before deferred shutdown, and reports the absolute path and dimensions.
 
 ### Case 2: No running game

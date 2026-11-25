@@ -127,7 +127,7 @@ Take each acceptance criterion in turn:
   block. `Not tested yet` is UNTESTED, and keeps the verdict at best NOT ASSESSED until
   someone checks it. On a grown game, a criterion the same-seed run's screenshot plainly
   shows is seen on screen (below) and is not asked: `production/qa/evidence/grow-<name>/`
-  `story.png`, or the image `/dev-story`'s OBSERVED line names, once you opened it.
+  `story.webp`, or the image `/dev-story`'s OBSERVED line names, once you opened it.
 - **Seen on screen:** a criterion about something visible is covered by a retained
   image under `production/qa/evidence/[story-slug]/` (`[story-slug]`: the story
   file's name without `.md`) that you opened and saw it in.
@@ -143,7 +143,7 @@ Then map each criterion to what covers it: a test under the test root, a
 | Criterion | Covered by | Status |
 |-----------|------------|--------|
 | AC-1: [text] | tests/unit/[system]/[file]::[test] | COVERED |
-| AC-2: [text] | production/qa/evidence/[slug]/01-[what].png | COVERED |
+| AC-2: [text] | production/qa/evidence/[slug]/01-[what].webp | COVERED |
 | AC-3: [text] | — | UNTESTED |
 ```
 

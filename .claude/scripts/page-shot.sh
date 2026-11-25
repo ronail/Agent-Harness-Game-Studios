@@ -6,12 +6,15 @@
 # scene; the self-check builds on it. It looks and reports; whether the picture reads, and
 # whether a console line matters, is the skill's call.
 #
-# Usage: bash .claude/scripts/page-shot.sh <page.html> <out.png> [--query TEXT] [--size WxH]
+# Usage: bash .claude/scripts/page-shot.sh <page.html> <out.(png|webp)> [--query TEXT] [--size WxH]
 #                                          [--wait MS] [--root DIR] [--profile DIR] [--software]
 #                                          [--file-access] [--full] [--once]
 #        bash .claude/scripts/page-shot.sh --which
 #   <page.html>    the page, relative to the project or absolute
-#   <out.png>      where the screenshot goes, relative to the project or absolute
+#   <out.(png|webp)>  where the screenshot goes, relative to the project or absolute.
+#                  .webp is the retained-evidence format (lossy q90); Chrome writes WebP when
+#                  the name ends in .webp, otherwise image-webp.sh encodes it and a no_encoder
+#                  row means the PNG was kept
 #   --query TEXT   added to the address after ?, for example scene=look or seed=7; render=cheap
 #                  follows it unless --full
 #   --size WxH     the window, default 1280x720
@@ -63,7 +66,7 @@
 #                                      so the shot was taken in real time, by <real s> at most
 #   stopped       <path> <why>         the browser stopped without a picture, and the headless
 #                                      shell in the next browser row tries instead
-#   shot          <out.png> <bytes>
+#   shot          <out> <bytes>
 #   console       <line> <message>     one row per console message, in order
 #   uncaught      <count>              messages that are uncaught errors
 #   not_assessed  <why>                no browser found, or it stopped without a picture: how
@@ -260,7 +263,19 @@ awk '
   }
   END { printf "uncaught\t%d\n", u + 0 }' "$LOG"
 
+# A .webp output is encoded after the shot when the browser did not write WebP
+# itself. Chrome's headless screenshot honours a .webp name (verified: it emits a
+# RIFF/VP8 frame), but an engine-native capture handed to this script, or an older
+# build, leaves PNG bytes under the name — so image-webp.sh re-encodes. The encoder
+# is optional by design: with none installed the PNG is kept as it is and a
+# `no_encoder` row says so, so evidence never fails for want of a tool.
 if [ -s "$OUT" ]; then
+  case "$OUT" in
+    *.webp)
+      _conv=$(bash "$HERE/image-webp.sh" "$OUT" "$OUT" 2>/dev/null); _crc=$?
+      if [ "$_crc" = 0 ]; then printf '%s\n' "$_conv"
+      else printf 'no_encoder\t%s\t%s\n' "$OUT" "kept PNG; install cwebp or ImageMagick to encode WebP"; fi ;;
+  esac
   printf 'shot\t%s\t%s\n' "$OUT" "$(wc -c < "$OUT" | tr -d ' ')"
   exit 0
 fi

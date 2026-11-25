@@ -8,12 +8,12 @@
 # of a run by playing it again, and the cold play run plays one turn at a time this way. It
 # reports; what a row means is the skill's call.
 #
-# Usage: bash .claude/scripts/one-shot-run.sh <folder> <out.png> [--log TEXT | --bot end|lose]
+# Usage: bash .claude/scripts/one-shot-run.sh <folder> <out.webp> [--log TEXT | --bot end|lose]
 #            [--stop STEP] [--quiet STEP [--press KEY]] [--trace STEP] [--cap SECONDS]
-#            [--seed N] [--limit SECONDS] [--audio SECONDS] [--profile DIR] [--cold [--prev PNG]]
+#            [--seed N] [--limit SECONDS] [--audio SECONDS] [--profile DIR] [--cold [--prev IMAGE]]
 #            [--hookless] [--size WxH] [--root DIR]
 #   <folder>       the game's folder, prototypes/<name>
-#   <out.png>      where the screenshot goes
+#   <out.webp>     where the retained screenshot goes (WebP; see page-shot.sh)
 #   --log TEXT     inputs, in order: Enter (a press), ArrowRight:1.5 (hold 1.5 s),
 #                  ArrowLeft+Space:0.5 (hold both), wait:2, click:640,360 (a point of the
 #                  1280x720 window), click:text=Clock_in (the button with these words,

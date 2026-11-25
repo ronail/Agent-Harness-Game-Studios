@@ -273,10 +273,10 @@ Only the feel half of a Visual/Feel criterion (timing, weight) is DEFERRED to
 the game from one seed with the same inputs and kept that run. After every story, whatever
 its type and after the parse check's `npm run smoke`, play it again: `npm run build:single`, then
 `bash .claude/scripts/one-shot-grow.sh replay <name> --as story`. It plays the built game
-the same way, takes a screenshot (`story.png` in that folder) and compares the run with the
+the same way, takes a screenshot (`story.webp` in that folder) and compares the run with the
 last one the person accepted (its `against` row: `accepted`, else the grow step's
-`reference`). Open `story.png` beside that run's screenshot (`accepted.png` or
-`reference.png`), then report one line, plain text starting `Same-seed run:`:
+`reference`). Open `story.webp` beside that run's screenshot (`accepted.webp` or
+`reference.webp`), then report one line, plain text starting `Same-seed run:`:
 
 - **`match yes`:** `Same-seed run: SAME — nothing broke`, with the screenshot's path.
 - **`match no`:** the story changed how the game plays. Never pass over it, in any

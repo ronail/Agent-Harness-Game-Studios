@@ -166,7 +166,7 @@ Fixture defaults.
 - `project.yaml`: `engine.name: godot`, `modes.review_mode: full`
 - `production/epics/combat/story-004-hit-flash.md` (slug `hit-flash`): Story Type Visual/Feel
 - `production/qa/evidence/hit-flash-evidence.md` references every acceptance criterion, has every sign-off filled, and is dated after the sprint start
-- No `*.png`, `*.jpg` or `*.gif` for this story exists in `production/qa/evidence/`
+- No `*.webp`, `*.png`, `*.jpg` or `*.gif` for this story exists in `production/qa/evidence/`
 
 **Input:** `/test-evidence-review production/epics/combat/story-004-hit-flash.md`
 
@@ -191,8 +191,8 @@ Fixture defaults.
 **Fixture:**
 - `project.yaml`: `engine.name: godot`
 - `production/epics/ui/story-007-inventory-screen.md` (slug `inventory-screen`): Story Type UI; its
-  `## Test Evidence` names `production/qa/evidence/inventory-screen-populated.png` and
-  `production/qa/evidence/inventory-screen-empty.png` — one per screen state it touches
+  `## Test Evidence` names `production/qa/evidence/inventory-screen-populated.webp` and
+  `production/qa/evidence/inventory-screen-empty.webp` — one per screen state it touches
 - Both images exist and are dated after the sprint start
 - No `inventory-screen-evidence.md`, no sign-off record and no walkthrough log exist
 

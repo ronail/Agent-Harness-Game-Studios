@@ -49,7 +49,7 @@ are.
 
 ## 4. Look at it
 
-Look at the screenshots (`first.png`, `start.png`, `play-10s.png`, `play-30s.png`): the Pitch,
+Look at the screenshots (`first.webp`, `start.webp`, `play-10s.webp`, `play-30s.webp`): the Pitch,
 the look and sound in words, and what is visibly there. No screenshots: say so in the record.
 
 ## 5. The brief

@@ -114,13 +114,13 @@ run it again. N is the iteration number section 8 counts.
    - **`unreadable`:** a pin the script could not read: write it again as `<key> <value>`.
    - **`not_assessed keep`:** the Keep list was not checked; say why, from the row.
 2. **Play it once, always:** `bash .claude/scripts/one-shot-run.sh prototypes/<name>
-   prototypes/<name>/evidence/iteration-<N>-play.png --log "<inputs>"`, the inputs a few seconds
+   prototypes/<name>/evidence/iteration-<N>-play.webp --log "<inputs>"`, the inputs a few seconds
    that leave the title and use what the change touched. Errors are any `crash`, `error`,
    `nonfinite` or `console` row, or `uncaught` above 0. An error the change caused: fix it and
    play once more. Once: what is still wrong goes in the block as it is. A `not_assessed` row
    (no browser): the block says "not checked: <why>", never "none".
 3. **Look at what the change touched.** Each shot is `one-shot-run.sh prototypes/<name>
-   prototypes/<name>/evidence/iteration-<N>-<what>.png --log "<inputs>"`, the inputs that reach
+   prototypes/<name>/evidence/iteration-<N>-<what>.webp --log "<inputs>"`, the inputs that reach
    it (`--stop <step>` from the play run's `scene` rows):
    - **Text or screens:** a shot of each screen it touched, and one of them again with `--size
      800x450`, a small window, where text spills first.

@@ -111,13 +111,13 @@ if [ "$MODE" = shots ]; then
       play-10s) L="$LOGP"; S=$((pre + 600)) ;;
       play-30s) L="$LOGP"; S=$((pre + 1800)) ;;
     esac
-    bash "$HERE/one-shot-run.sh" "$D" "$OUTD/$w.png" --hookless --log "$L" --stop "$S" --limit 300 --root "$ROOT" > "$OUTD/$w.tsv" 2>/dev/null
+    bash "$HERE/one-shot-run.sh" "$D" "$OUTD/$w.webp" --hookless --log "$L" --stop "$S" --limit 300 --root "$ROOT" > "$OUTD/$w.tsv" 2>/dev/null
     r=$?
-    if [ "$r" = 3 ] || [ ! -f "$OUTD/$w.png" ]; then
+    if [ "$r" = 3 ] || [ ! -f "$OUTD/$w.webp" ]; then
       printf 'not_assessed\t%s\t%s\n' "$w" "$(awk -F'\t' '$1 == "not_assessed" { print $2; exit }' "$OUTD/$w.tsv")"; rc=3; continue
     fi
     sc=$(awk -F'\t' '$1 == "screen" { h = $4; b = $5 } END { print h "\t" b }' "$OUTD/$w.tsv")
-    printf 'shot\t%s\t%s\t%s\n' "$w" "$OUTD/$w.png" "$sc"
+    printf 'shot\t%s\t%s\t%s\n' "$w" "$OUTD/$w.webp" "$sc"
     printf 'errors\t%s\t%s\n' "$w" "$(awk -F'\t' '$1 == "crash" || $1 == "error" || ($1 == "uncaught" && $2 + 0 > 0) { n++ } END { print n + 0 }' "$OUTD/$w.tsv")"
     if [ "$CHECK" = 1 ]; then
       was=$(awk -F'\t' '$1 == "screen" { h = $4 } END { print h }' "$B/$w.tsv" 2>/dev/null)

@@ -66,7 +66,7 @@ Fixture defaults.
 - The `/dev-story` checkpoint in `production/session-state/active.md` names this
   story as **Current task** and carries `Run result: OBSERVED — the light leaves
   the floor and the inventory count rises —
-  production/qa/evidence/story-light-pickup/01-pickup.png`; that image exists
+  production/qa/evidence/story-light-pickup/01-pickup.webp`; that image exists
 - Implementation files listed in the story exist in the code root
 - A sprint plan in `production/sprints/` has other READY / NOT STARTED Must Have stories
 
@@ -107,7 +107,7 @@ Fixture defaults.
 **Fixture:**
 - As Case 1, plus two more criteria:
   - (a) "Player sees correct animation on pickup" — no automated test; a frame of
-    the animation is retained at `production/qa/evidence/story-light-pickup/02-pickup-anim.png`
+    the animation is retained at `production/qa/evidence/story-light-pickup/02-pickup-anim.webp`
   - (b) "Pickup state persists across a full level run" — needs a full game build
 - 1 of the 5 criteria ends up with no covering test
 
@@ -125,7 +125,7 @@ Fixture defaults.
 
 **Assertions:**
 - [ ] Skill asks the user about the unverifiable criterion rather than assuming it passes, batching up to 4 such questions per call — a behaviour criterion is never marked verified from reading the code
-- [ ] Before the report says what `02-pickup-anim.png` shows, the image is opened with `Read`; the checkpoint's `Run result:` text is quoted as `/dev-story`'s description, never restated as the skill's own observation
+- [ ] Before the report says what `02-pickup-anim.webp` shows, the image is opened with `Read`; the checkpoint's `Run result:` text is quoted as `/dev-story`'s description, never restated as the skill's own observation
 - [ ] The playtest-only criterion is marked `DEFERRED — requires playtest session`
 - [ ] Verdict is COMPLETE WITH NOTES, and the report lists the DEFERRED criterion — neither BLOCKED nor NOT ASSESSED, since a DEFERRED criterion does not block and does not fire the NOT ASSESSED trigger
 - [ ] The deferred criterion is named in the Completion Notes `Criteria:` line, with the untested-criteria recommendation
@@ -240,7 +240,7 @@ Fixture defaults.
   `story-002-shop-panel.md` (`Status: In Progress`) and `story-003-*.md` (`Status: Ready`)
 - `story-002-shop-panel.md` has `Type: UI` and two criteria: "The shop panel shows
   all 6 item slots inside the frame at 1280x720" and "Each slot shows its price"
-- `production/qa/evidence/story-002-shop-panel/01-shop-open.png` exists and shows
+- `production/qa/evidence/story-002-shop-panel/01-shop-open.webp` exists and shows
   both; the checkpoint carries `Run result: OBSERVED` with that path; there is no
   evidence doc and no sign-off
 

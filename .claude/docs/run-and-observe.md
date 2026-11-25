@@ -15,9 +15,20 @@ before it closes**, and the observation is a **retained screenshot** in
 `production/qa/evidence/`. Compiling proves the code loads. Tests prove the
 logic. Neither proves the text fits in the box.
 
-The agent can see images: Claude Code's `Read` tool renders a PNG. The whole
-problem is getting a picture out of the engine unattended, and every supported
-engine has a native way.
+The agent can see images: Claude Code's `Read` tool renders an image, and WebP
+is supported by all three harnesses — verified on Claude Code 2.1.312, Codex
+0.166.0 (`codex exec -i`) and Antigravity (`agy --print`). The whole problem is
+getting a picture out of the engine unattended, and every supported engine has a
+native way.
+
+**Evidence is retained as WebP, lossy q90.** Measured on a realistic 1280x720
+game frame, that is ~22% of the PNG's size (~78% saved); lossless WebP saves
+only ~14%, because PNG is already lossless. The tradeoff is accepted and stated:
+glyph edges soften (max channel delta 56 in a text band at q90), so cite a
+legibility defect from the code or the run, never from a softened edge. Encode
+with `.claude/scripts/image-webp.sh` (q90 via `cwebp`/`magick`/`convert`/`gm`).
+No encoder installed is **not** a failure: keep the PNG and record why, per the
+portability rule — evidence must never be lost for want of an optional tool.
 
 ## The procedure
 
@@ -32,13 +43,17 @@ engine has a native way.
    from a launch argument (a scene path, a map URL, a `--scene` flag).
 3. **Wait, capture, quit.** Let the engine render real frames — 60 is a safe
    floor — capture one, and exit. Each engine's mechanism is below.
-4. **Look.** `Read` the PNG. Compare what is on screen to the acceptance
+4. **Look.** `Read` the WebP. Compare what is on screen to the acceptance
    criteria. Clipped text, an overflowing panel, a missing element, the wrong
    colour — these are defects, and this is the only step that finds them.
 5. **Retain.** Capture straight into the story's evidence folder, so nothing
    needs copying: `mkdir -p production/qa/evidence/[story-slug]`, then pass
-   `production/qa/evidence/[story-slug]/[NN]-[what-it-shows].png` as the capture
-   path (Godot adds its frame number to the name). `[story-slug]` is the story
+   `production/qa/evidence/[story-slug]/[NN]-[what-it-shows].webp` as the capture
+   path (Godot adds its frame number to the name). `.webp` is the required
+   extension; where an engine can only write PNG, encode it with
+   `bash .claude/scripts/image-webp.sh <shot.png> <shot.webp>` and keep the WebP,
+   deleting the PNG. No encoder installed: keep the PNG, and say so in the run
+   result (`no_encoder`). `[story-slug]` is the story
    file's name without `.md`: `story-003-light-pickup` for
    `production/epics/core/story-003-light-pickup.md`. Reference the image from
    the evidence doc. A screenshot that was taken and discarded is an
@@ -52,20 +67,26 @@ engine has a native way.
 
 | `engine.name` | Launch | Capture | Output lands in | Never use | Scaffold needed |
 |---|---|---|---|---|---|
-| Godot 4 | `godot --path . --windowed --resolution 1280x720 <scene>.tscn` | `--write-movie <path>.png --quit-after <N>` | beside the given path, `<name>00000000.png` … | `--headless` | **none** |
-| Unity 6 | built player `.exe -screen-width 1280 -screen-height 720 -screen-fullscreen 0 --scene <Name>` | `ScreenCapture.CaptureScreenshot(<abs path>)` from a bootstrap script | the absolute path you pass | `-batchmode`, `-nographics` | one MonoBehaviour |
-| Unreal 5 | `MSYS_NO_PATHCONV=1 "<UE root>/Engine/Binaries/Win64/UnrealEditor.exe" "$(pwd -W 2>/dev/null || pwd)/<Game>.uproject" <MapURL> -game -windowed -ResX=1280 -ResY=720` | `HighResShot 1280x720 filename=<abs path>` console command | the path you pass (else `Saved/Screenshots/WindowsEditor/`) | `-nullrhi`, `-unattended` alone | one actor or `-ExecCmds` |
-| Web (a browser game) | `bash .claude/scripts/page-shot.sh <page>.html <path>.png --query <state>`; a web project's page is `dist-single/index.html`, after `npm run build:single` | the same command: headless Chrome, Edge or Chromium | the path you pass | `commands.run` (a dev server) | **none** |
+| Godot 4 | `godot --path . --windowed --resolution 1280x720 <scene>.tscn` | `--write-movie <path>.png --quit-after <N>`, then encode to `.webp` | beside the given path, `<name>00000000.png` … | `--headless` | **none** |
+| Unity 6 | built player `.exe -screen-width 1280 -screen-height 720 -screen-fullscreen 0 --scene <Name>` | `ScreenCapture.CaptureScreenshot(<abs path>.png)`, then encode to `.webp` | the absolute path you pass | `-batchmode`, `-nographics` | one MonoBehaviour |
+| Unreal 5 | `MSYS_NO_PATHCONV=1 "<UE root>/Engine/Binaries/Win64/UnrealEditor.exe" "$(pwd -W 2>/dev/null || pwd)/<Game>.uproject" <MapURL> -game -windowed -ResX=1280 -ResY=720` | `HighResShot 1280x720 filename=<abs path>.png`, then encode to `.webp` | the path you pass (else `Saved/Screenshots/WindowsEditor/`) | `-nullrhi`, `-unattended` alone | one actor or `-ExecCmds` |
+| Web (a browser game) | `bash .claude/scripts/page-shot.sh <page>.html <path>.webp --query <state>`; a web project's page is `dist-single/index.html`, after `npm run build:single` | the same command: headless Chrome, Edge or Chromium, which writes WebP when the output ends in `.webp` | the path you pass | `commands.run` (a dev server) | **none** |
+
+**Only the Web path writes WebP directly.** Godot, Unity and Unreal have no WebP
+encoder: they write PNG at the path you give, so shoot to a `.png`, then run
+`bash .claude/scripts/image-webp.sh <shot.png> <final>.webp` and keep the `.webp`.
+That script prints `no_encoder` when nothing can encode, and then the PNG stays as
+the evidence with `no_encoder` recorded — never drop the picture.
 
 ### Web — headless Chrome or Edge
 
 ```
-bash .claude/scripts/page-shot.sh index.html production/qa/evidence/shop-panel/01-shop-open.png --query scene=shop --wait 2000
+bash .claude/scripts/page-shot.sh index.html production/qa/evidence/shop-panel/01-shop-open.webp --query scene=shop --wait 2000
 ```
 
 **A web project (`engine.name: Web`)** is shot from its single-file build, never
 from the dev server (`commands.run` never exits): `npm run build:single`, then
-`page-shot.sh dist-single/index.html <path>.png --query <state>`. A page opened
+`page-shot.sh dist-single/index.html <path>.webp --query <state>`. A page opened
 from disk cannot load the folder build's module script; the single file has
 everything inlined. A one-shot is shot as it is, from its own `index.html`. An
 existing project with no `build:single` (`/setup-engine web`, W1) is shot from
@@ -93,10 +114,13 @@ check, not headless's.
 
 ```
 godot --path . --windowed --resolution 1280x720 --write-movie shots/shop.png --quit-after 60 res://scenes/shop.tscn
+bash .claude/scripts/image-webp.sh shots/shop00000059.png production/qa/evidence/shop-panel/01-shop-open.webp
 ```
 
 `--write-movie` is Movie Maker mode: with a `.png` target it writes a frame
-sequence and `--quit-after` sets the frame count. Filenames carry **8**
+sequence and `--quit-after` sets the frame count. Godot has no WebP writer, so
+the sequence is PNG and the last frame is encoded afterwards with
+`image-webp.sh`. Filenames carry **8**
 zero-padded digits — `shop00000000.png` through `shop00000059.png` — so take the
 last; a `shop.wav` lands beside them. `--fixed-fps` is applied automatically. The
 scene path is positional; any `.tscn` can be launched directly, which is how step
@@ -110,7 +134,9 @@ Capture-on-trigger alternative, for a state a scene launch cannot reach: an
 autoload that on the wanted condition awaits
 `RenderingServer.frame_post_draw`, retains the viewport image in a local,
 rejects a null image, checks `save_png(path)`, yields one more process frame,
-then calls `get_tree().call_deferred("quit")`. Do not synchronously quit while
+then calls `get_tree().call_deferred("quit")`. `save_png` writes PNG, so encode
+the kept frame afterwards (`bash .claude/scripts/image-webp.sh <shot.png>
+<final>.webp`). Do not synchronously quit while
 the texture readback is still completing. Launch with an explicit writable
 `--log-file` as well: a restricted default `user://logs` path can abort the
 engine before the result is reported.
@@ -122,6 +148,7 @@ editor in play mode. The player is the robust path:
 
 ```
 Builds/Win64/Game.exe -screen-width 1280 -screen-height 720 -screen-fullscreen 0 --scene Shop --screenshot C:/abs/path/shop.png --after 60
+bash .claude/scripts/image-webp.sh C:/abs/path/shop.png production/qa/evidence/shop-panel/01-shop-open.webp
 ```
 
 `-screen-*` are Unity's own player arguments. `--scene`, `--screenshot` and
@@ -205,6 +232,9 @@ Command` on BeginPlay after a short delay, then `quit`) or from the launch line:
 -ExecCmds="HighResShot 1280x720 filename=C:/abs/path/shop.png"
 ```
 
+then `bash .claude/scripts/image-webp.sh C:/abs/path/shop.png production/qa/evidence/shop-panel/01-shop-open.webp` —
+Unreal writes PNG only.
+
 The size (or a multiplier such as `2`) comes **before** `filename=`:
 `HighResShot filename=…` alone is rejected as bad input and saves nothing.
 Without `filename=` the file lands in `Saved/Screenshots/WindowsEditor/`.
@@ -247,7 +277,9 @@ Exactly one of three shapes, in the implementation summary:
 
 - **`Run result: OBSERVED — <what was on screen, one line>`** with the retained
   path. *"Shop panel renders, all 6 slots inside the frame, prices legible at
-  720p — `production/qa/evidence/shop-panel/01-shop-open.png`."*
+  720p — `production/qa/evidence/shop-panel/01-shop-open.webp`."* A path ending in
+  `.png` means no encoder was found: say so (`no_encoder`) rather than passing it
+  off as the WebP evidence.
 - **`Run result: NOT VERIFIED — <reason>`**. Engine binary not found,
   `commands.run` unset, launch crashed, screenshot empty. This is a **blocker**
   at the default gate level for Visual/Feel and UI stories, not a note — a

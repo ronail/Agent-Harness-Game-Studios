@@ -347,7 +347,7 @@ Fixture defaults.
 5. This session builds the game at its own effort; a builder runs only when the
    person named another effort, and the handover's Effort line says which
 6. Before the handover the small check has run: `evidence/self-check.tsv`,
-   `evidence/play.png` and `evidence/figures.png` exist, and no `bot.js` is written
+   `evidence/play.webp` and `evidence/figures.webp` exist, and no `bot.js` is written
 7. Every tuning number is a `config.js` entry with value, min, max and step, read
    through `tune.<name>`; no `Math.random` in game code
 8. Before the handover card, the brief's Features are marked `[x]` for what the
@@ -385,7 +385,7 @@ Fixture defaults.
 4. The card carries the small check's rows and ends "Not yet played by a person"
 
 **Assertions:**
-- [ ] `evidence/self-check.tsv` and `evidence/play.png` are kept
+- [ ] `evidence/self-check.tsv` and `evidence/play.webp` are kept
 - [ ] A failed row is fixed and checked once more, or named on the card as Still broken
 - [ ] The check refuses a third run in a round; a later fix is checked with the one run it needs
 - [ ] With no browser, the rows that could not run are *not assessed* by name, never passed

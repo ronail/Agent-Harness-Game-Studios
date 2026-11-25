@@ -51,12 +51,12 @@ Build order give the reasons.
   changed game gets the light check, never the small check again: the small check is the
   build's, and `one-shot-check.sh --record` records only that, so never run it here. First see
   whether a light check is newer than every game file. For each marker on disk,
-  `evidence/changes.tsv` (a change's light check) and `evidence/cut-end.png` (an earlier /cut's),
+  `evidence/changes.tsv` (a change's light check) and `evidence/cut-end.webp` (an earlier /cut's),
   run `find prototypes/<name> -type f -newer prototypes/<name>/evidence/<marker> ! -path '*/evidence/*' ! -path '*/dist/*' ! -name brief.md ! -name feel-log.md ! -name polish-list.md`.
   - **One prints nothing:** that light check is fresh, so run nothing. Errors and a bot stop on
     `changes.tsv`'s last line that the polish list lacks become rows.
   - **Otherwise,** run the light check once, as `.claude/skills/prototype/references/one-shot-4-change.md` section 7 does before accept: its step 1 (keep) and step 2 (play it once), the shot
-    `prototypes/<name>/evidence/cut-end.png`. A `not_assessed` row: say "not checked: <why>"
+    `prototypes/<name>/evidence/cut-end.webp`. A `not_assessed` row: say "not checked: <why>"
     in one line. Fix nothing: each error, bot stop and `changed` or `gone` keep row becomes a
     polish row.
 

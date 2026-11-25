@@ -188,8 +188,8 @@ placeholders, as `/setup-engine` does, so no session loads another engine's refe
   `web:pass`), and `npm run smoke`. A failure stops here, named.
 - **The record:** `production/qa/evidence/grow-<name>/grow.md`: a table of the five steps with
   each result (`exact`, `match`, the tests' counts, the checks), the screenshot it was seen in
-  (`typescript.png`), a line naming what was NOT ASSESSED, or "nothing", and one naming what is
-  still `Loose`. Look at `typescript.png` beside `reference.png` before writing it.
+  (`typescript.webp`), a line naming what was NOT ASSESSED, or "nothing", and one naming what is
+  still `Loose`. Look at `typescript.webp` beside `reference.webp` before writing it.
 
 Commit (`chore: <name> grown: engine Web, record and screenshot`), with `CLAUDE.md` in it when
 the row said `written`, then `git tag grown/<name>`.
@@ -218,11 +218,11 @@ next. No stories, epics, design documents or gates: they run only when the perso
 - **Build it** in `src/`, its new values in `data/config.json` with a line each in
   `data/config-notes.md`.
 - **Check what it touched:** `npm run smoke`, then `npm run build:single` and `bash .claude/scripts/one-shot-grow.sh replay <name> --as story`.
-  Open `story.png` beside the last accepted run's screenshot. An error the feature caused: fix it
+  Open `story.webp` beside the last accepted run's screenshot. An error the feature caused: fix it
   and check once more. A `match no` row is expected when the feature changes play: say in plain
   words what changed. What the run cannot reach is not checked, and the person's play covers it.
   Write no robot player or tests of your own.
-- **Keep or undo:** show `story.png` and `Added: <what>` / `Errors: none | <each> | not checked:
+- **Keep or undo:** show `story.webp` and `Added: <what>` / `Errors: none | <each> | not checked:
   <why>`, then ask "Keep this feature? It becomes a commit." Options: Keep / Undo it. Keep: mark
   its Features line `[x]` in `design/game-brief.md` (add one when the brief has none), run
   `one-shot-grow.sh accept <name>` when the run changed, then `git add -- <the files it changed>
